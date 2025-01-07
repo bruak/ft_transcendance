@@ -1,12 +1,8 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:13
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypass
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -16,16 +12,13 @@ services:
     build:
      context: ./Django
     volumes:
-      - ./Django/django service:/app
+      - ./Django/djangoservice:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      DB_NAME: mydb
-      DB_USER: myuser
-      DB_PASSWORD: mypass
-      DB_HOST: db
-
+    env_file:
+      - .env
+      
 volumes:
   postgres_data:
