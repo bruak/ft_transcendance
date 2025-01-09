@@ -7,7 +7,7 @@ from django.core.management import execute_from_command_line, call_command
 
 def main():
     i = 0
-    while i < 10:
+    while 1:
         try:
             conn = psycopg2.connect(
                 dbname=os.environ.get("POSTGRES_DB", "mydb"),
@@ -20,6 +20,9 @@ def main():
                 conn.close()
                 print("Bağlantı başarılı!")
                 break
+            elif i == 10:
+                print("Bağlantı başarısız! Tekrar deneyin...")
+                sys.exit(1)
         except psycopg2.OperationalError as e:
             print("Bağlantı başarısız! Tekrar deneyin...")
             i += 1
