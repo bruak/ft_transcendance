@@ -1,14 +1,13 @@
 services:
-  db:
+  user_db:
     image: postgres:13
+    container_name: user_db
     env_file:
       - .env
     networks:
       - webnet
     expose:
       - 5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
   web:
     build:
@@ -20,16 +19,38 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - user_db
     env_file:
       - .env
-      
+
 networks:
   webnet:
     driver: bridge
 
-volumes:
-  postgres_data:
 
 
-# Diger servisler eklenecek 
+# Diger servisler eklenecek Ornek:
+
+  # friend_db:
+  #   image: postgres:13
+  #   container_name: friend_db
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - webnet
+  #   expose:
+  #     - 5432
+
+  # friend:
+  #   build:
+  #     context: ./Django
+  #   volumes:
+  #     - ./Django/srcs:/app
+  #   networks:
+  #     - webnet
+  #   ports:
+  #     - "8001:8000"
+  #   depends_on:
+  #     - friend_db
+  #   env_file:
+  #     - .env
