@@ -14,7 +14,7 @@ services:
     build:
      context: ./Django
     volumes:
-      - ./Django/djangoservice:/app
+      - ./Django/srcs:/app
     networks:
       - webnet
     ports:
@@ -30,3 +30,6 @@ networks:
 
 volumes:
   postgres_data:
+
+
+# Diger servisler eklenecek 
