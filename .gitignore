@@ -1,0 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg
+*.egg-info/
+dist/
+build/
+*.wheel
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+*.pyo
+
+# Media files
+media/
+uploads/
+
+# Static files
+staticfiles/
+static/
+
+# Local settings
+local_settings.py
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# macOS specific
+.DS_Store
+
+# Test coverage
+.coverage
+*.cover
+.hypothesis/
+
+# mypy
+.mypy_cache/
+
+# Pytest
+.pytest_cache/
+
+# Environment variables
+.env
+.env.*
