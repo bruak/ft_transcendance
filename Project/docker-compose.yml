@@ -1,39 +1,15 @@
-volumes:
-  postgres_data:
-
-networks:
-  trans_net:
-    name: trans_net
-    driver: bridge
-
 services:
-<<<<<<< HEAD
-  web_db:
-    container_name: postgresql
-=======
   user_db:
->>>>>>> origin/Tufan
     image: postgres:13
     container_name: user_db
     env_file:
       - .env
-<<<<<<< HEAD
-    expose:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - trans_net
-    #restart: always
-=======
     networks:
       - webnet
     expose:
       - 5432
->>>>>>> origin/Tufan
 
-  django:
-    container_name: django
+  web:
     build:
      context: ./Django
     volumes:
@@ -43,15 +19,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-<<<<<<< HEAD
-      - web_db
-    networks:
-      - trans_net
-    env_file:
-      - .env
-    #restart: always
-      
-=======
       - user_db
     env_file:
       - .env
@@ -87,4 +54,3 @@ networks:
   #     - friend_db
   #   env_file:
   #     - .env
->>>>>>> origin/Tufan
