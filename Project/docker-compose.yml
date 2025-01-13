@@ -8,8 +8,10 @@ services:
       - webnet
     expose:
       - 5432
+    environment:
+      - POSTGRES_DB=users
 
-  web:
+  users:
     build:
      context: ./Django
     volumes:
@@ -22,35 +24,43 @@ services:
       - user_db
     env_file:
       - .env
+    environment:
+      - DB_HOST=user_db
+      - POSTGRES_DB=users
+
+
+  friend_db:
+    image: postgres:13
+    container_name: friend_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=friends
+
+  friend:
+    build:
+      context: ./Friend
+    volumes:
+      - ./Friend/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8001:8000"
+    depends_on:
+      - friend_db
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=friend_db
+      - POSTGRES_DB=friends
+
+
+
 
 networks:
   webnet:
     driver: bridge
-
-
-
-# Diger servisler eklenecek Ornek:
-
-  # friend_db:
-  #   image: postgres:13
-  #   container_name: friend_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-
-  # friend:
-  #   build:
-  #     context: ./Django
-  #   volumes:
-  #     - ./Django/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8001:8000"
-  #   depends_on:
-  #     - friend_db
-  #   env_file:
-  #     - .env
