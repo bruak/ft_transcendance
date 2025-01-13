@@ -57,7 +57,7 @@ def user_update(request, pk):
 		try:
 			user = User.objects.get(pk=pk)
 			user.delete()
-			return (HttpResponse("Başarılı"))
+			return (HttpResponse("user deleted, user name is " + user.username))
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 
