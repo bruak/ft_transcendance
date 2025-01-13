@@ -7,11 +7,17 @@ networks:
     driver: bridge
 
 services:
+<<<<<<< HEAD
   web_db:
     container_name: postgresql
+=======
+  user_db:
+>>>>>>> origin/Tufan
     image: postgres:13
+    container_name: user_db
     env_file:
       - .env
+<<<<<<< HEAD
     expose:
       - "5432:5432"
     volumes:
@@ -19,16 +25,25 @@ services:
     networks:
       - trans_net
     #restart: always
+=======
+    networks:
+      - webnet
+    expose:
+      - 5432
+>>>>>>> origin/Tufan
 
   django:
     container_name: django
     build:
      context: ./Django
     volumes:
-      - ./Django/djangoservice:/app
+      - ./Django/srcs:/app
+    networks:
+      - webnet
     ports:
       - "8000:8000"
     depends_on:
+<<<<<<< HEAD
       - web_db
     networks:
       - trans_net
@@ -36,3 +51,40 @@ services:
       - .env
     #restart: always
       
+=======
+      - user_db
+    env_file:
+      - .env
+
+networks:
+  webnet:
+    driver: bridge
+
+
+
+# Diger servisler eklenecek Ornek:
+
+  # friend_db:
+  #   image: postgres:13
+  #   container_name: friend_db
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - webnet
+  #   expose:
+  #     - 5432
+
+  # friend:
+  #   build:
+  #     context: ./Django
+  #   volumes:
+  #     - ./Django/srcs:/app
+  #   networks:
+  #     - webnet
+  #   ports:
+  #     - "8001:8000"
+  #   depends_on:
+  #     - friend_db
+  #   env_file:
+  #     - .env
+>>>>>>> origin/Tufan
