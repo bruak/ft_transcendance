@@ -29,7 +29,7 @@
             border-radius: 5px;
         }
 
-        input[type="text"], input[type="email"], button {
+        input[type="text"], input[type="email"], input[type="file"], button {
             margin: 10px 5px;
             padding: 10px;
         }
@@ -56,13 +56,14 @@
     <h1 style="text-align: center;">User Management</h1>
 
     <!-- User Creation Form -->
-    <form id="user-form">
+    <form id="user-form" enctype="multipart/form-data">
         <h2>Add New User</h2>
         <input type="text" id="first_name" placeholder="First Name" required>
         <input type="text" id="last_name" placeholder="Last Name" required>
         <input type="text" id="username" placeholder="Username" required>
         <input type="email" id="email" placeholder="Email" required>
         <input type="text" id="password" placeholder="Password" required>
+        <input type="file" id="avatar" accept="image/*">
         <button type="submit">Add User</button>
     </form>
 
@@ -133,22 +134,22 @@
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const avatarFile = document.getElementById('avatar').files[0]; // Avatar dosyasını al
 
-            const newUser = {
-                first_name: firstName,
-                last_name: lastName,
-                username: username,
-                email: email,
-                password: password,
-            };
+            const newUser = new FormData();
+            newUser.append('first_name', firstName);
+            newUser.append('last_name', lastName);
+            newUser.append('username', username);
+            newUser.append('email', email);
+            newUser.append('password', password);
+            if (avatarFile) {
+                newUser.append('avatar', avatarFile); // Avatar dosyasını ekle
+            }
 
             try {
                 const response = await fetch(POST_API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(newUser),
+                    body: newUser
                 });
 
                 if (!response.ok) {
