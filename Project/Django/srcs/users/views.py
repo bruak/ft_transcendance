@@ -35,18 +35,33 @@ def user_create(request):
 
 @csrf_exempt
 def user_update(request, pk):
-	if request.method != "PUT":
-		return JsonResponse({"error": "Only PUT method is allowed."}, status=405)
-	try:
-		user = User.objects.get(pk=pk)
-		data = JSONParser().parse(request)
-		serializer = UserSerializer(user, data=data)
-		if (serializer.is_valid()):
-			serializer.save()
-			return (JsonResponse(serializer.data, status=200))
-		return JsonResponse(serializer.errors, status=400)
-	except Exception as e:
-		return JsonResponse({"error": str(e)}, status=500)
+	if request.method == "PUT":
+		try:
+			user = User.objects.get(pk=pk)
+			data = JSONParser().parse(request)
+			serializer = UserSerializer(user, data=data)
+			if (serializer.is_valid()):
+				serializer.save()
+				return (JsonResponse(serializer.data, status=200))
+			return JsonResponse(serializer.errors, status=400)
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500)
+	elif request.method == "GET" :
+		try:
+			user = User.objects.get(pk=pk)
+			serializer = UserSerializer(user)
+			return JsonResponse(serializer.data)
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500)
+	elif request.method == "DELETE":
+		try:
+			user = User.objects.get(pk=pk)
+			user.delete()
+			return (HttpResponse("Başarılı"))
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500)
+
+
 
 class UserViewSet(generics.ListCreateAPIView):
 	queryset = User.objects.all()
