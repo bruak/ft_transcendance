@@ -18,24 +18,24 @@ def main():
             )
             if conn:
                 conn.close()
-                print("Bağlantı başarılı!")
+                print("CONNECTION SUCCES, SUCCES, SUCCES, SUCCES!")
                 break
             elif i == 10:
-                print("Bağlantı başarısız! Tekrar deneyin...")
+                print("CONNECTION FAILLL!!!!!!!!!! TRY AGAIN!!!!!!!!")
                 sys.exit(1)
         except psycopg2.OperationalError as e:
-            print("Bağlantı başarısız! Tekrar deneyin...")
+            print("CONNECTION FAILLL!!!!!!!!!! TRY AGAIN!!!!!!!!")
             i += 1
             time.sleep(2)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "user_service.settings")
-    django.setup()  # Django başlatılıyor
+    django.setup()
 
     try:
         call_command("makemigrations")
         call_command("migrate")
     except Exception as e:
-        print(f"Migrations başarısız!\n{e}")
+        print(f"MIGRATION FAILUREEEE!\n{e}")
 
     sys.argv = ["manage.py", "runserver", "0.0.0.0:8000"]
     execute_from_command_line(sys.argv)

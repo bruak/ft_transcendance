@@ -7,17 +7,18 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
 
-
+# user list
 def user_list(request):
-	if request.method != "GET":
-		return JsonResponse({"error": "Only GET method is allowed."}, status=405)
-	try:
-		obj = User.objects.all()
-		serializer = UserSerializer(obj, many=True)
-		return JsonResponse(serializer.data, safe=False)
-	except Exception as e:
-		return JsonResponse({"error": str(e)}, status=500)
+    if request.method != "GET":
+        return JsonResponse({"error": "Only GET method is allowed."}, status=405)
+    try:
+        obj = User.objects.all()
+        serializer = UserSerializer(obj, many=True, context={"request": request})
+        return JsonResponse(serializer.data, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
+# user create
 @csrf_exempt
 def user_create(request):
 	if request.method != "POST":
@@ -33,6 +34,7 @@ def user_create(request):
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
 
+# json response
 @csrf_exempt
 def user_update(request, pk):
 	if request.method == "PUT":
@@ -60,7 +62,6 @@ def user_update(request, pk):
 			return (HttpResponse("user deleted, user name is " + user.username))
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
-
 
 
 class UserViewSet(generics.ListCreateAPIView):

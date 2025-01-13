@@ -1,4 +1,5 @@
 from django.db import models
+import os
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
@@ -7,6 +8,11 @@ class User(models.Model):
     username = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=100)
+    avatar = models.ImageField(
+    upload_to='avatars/',  # Göreli bir yol belirtiyoruz
+    default='avatars/default.jpg'  # Varsayılan avatar
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
