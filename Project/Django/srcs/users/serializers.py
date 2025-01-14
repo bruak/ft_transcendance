@@ -7,7 +7,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-
     def get_avatar(self, obj):
         # Tam URL oluşturmak için request bağlamını kullanıyoruz
         request = self.context.get('request')
