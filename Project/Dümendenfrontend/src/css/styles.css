@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+    background-image: url('https://i.pinimg.com/236x/4b/5e/3a/4b5e3a31a844231660c7d313da33e49d.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: white;
+}
+
+header {
+    width: 30%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 10px;
+    margin-top: 20px;
+
+    animation: rotate 5s linear infinite;
+}
+
+header:hover {
+    animation-play-state: paused;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+section h2 {
+    color: white;
+}
+
+main {
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+form {
+    margin: auto;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    color: rgb(224, 224, 224);
+    width: 500px;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    transition: background-color 0.3s ease;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #ff0000;
+    color: rgb(126, 55, 55);
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
