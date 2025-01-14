@@ -1,0 +1,61 @@
+h3 {
+    color: #fc0000;
+    font-size: 2em;
+    margin-bottom: 0.5em;
+}
+form {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    margin: auto;
+    max-width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+form h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #fff;
+}
+
+form article {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #222;
+    color: #fff;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00041a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #032a55;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Sayfası Uygulaması</title>
+    <!-- Stil dosyası bağlantısı -->
+    <link rel="stylesheet" href="css/improved.css">
+    <!-- Bootstrap CSS bağlantısı -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS bağlantısı -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background-image: url('../img/genel.webp');">
+    <main>
+        <!-- Navbar -->
+        <nav class="navbar navbar-light bg-dark text-white justify-content-center">
+            <a class="navbar-brand" href="#">
+                <img src="../img/pong.webp" width="50" class="d-inline-block align-top" alt="" loading="lazy">
+            </a>
+            <h3>GİRİŞ YAP</h3>
+        </nav>
+        <!-- Navbar Sonu -->
+        <!-- Form -->
+        <section>
+            <form id="login-form">
+                <h1>Giriş Yap</h1>
+                <article>
+                    <label for="login-username">Kullanıcı Adı:</label>
+                    <input type="text" id="login-username" name="username" required>
+                </article>
+                <article>
+                    <label for="login-email">E-posta:</label>
+                    <input type="email" id="login-email" name="email" required>
+                </article>
+                <article>
+                    <label for="login-password">Şifre:</label>
+                    <input type="password" id="login-password" name="password" required>
+                </article>
+                <article>
+                    <button type="submit">Giriş Yap</button>
+                </article>
+                <article>
+                    <a href="kayit.html" style="text-decoration: none;">Hesabım yok</a> <br> <br>
+                    <a href="genel.html" style="text-decoration: none;">dümenden giris</a>
+                </article>
+            </form>
+        </section>
+        <!-- Form Sonu -->
+    </main>
+    <!-- JavaScript dosyası bağlantısı -->
+    <script src="js/scripts.js"></script>
+</body>
+</html>
