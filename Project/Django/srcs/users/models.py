@@ -9,9 +9,7 @@ class User(models.Model):
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=100)
     avatar = models.ImageField(
-    upload_to='avatars/',  # Göreli bir yol belirtiyoruz
-    default='avatars/default.jpg'  # Varsayılan avatar
-    )
+    upload_to='avatars/', default='avatars/default.jpg')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
