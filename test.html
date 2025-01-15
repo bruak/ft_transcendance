@@ -100,15 +100,15 @@
                 }
 
                 const users = await response.json();
+                console.log(users)
                 const tableBody = document.getElementById('user-table-body');
                 tableBody.innerHTML = ''; // Clear table body
 
                 // Populate table with user data
                 users.forEach(user => {
                     const row = document.createElement('tr');
-
                     row.innerHTML = `
-                        <td><img src="${user.avatar || 'http://127.0.0.1:8000/media/avatars/default.jpg'}" class="avatar" alt="Avatar"></td>
+                        <td><img src="${user.avatar}" class="avatar" alt="Avatar"></td>
                         <td>${user.id}</td>
                         <td>${user.first_name}</td>
                         <td>${user.last_name}</td>
@@ -135,6 +135,7 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const avatarFile = document.getElementById('avatar').files[0]; // Avatar dosyasını al
+
 
             const newUser = new FormData();
             newUser.append('first_name', firstName);
