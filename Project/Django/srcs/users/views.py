@@ -1,15 +1,13 @@
-from django.shortcuts import render
 from .models import User
 from .serializers import UserSerializer
-from rest_framework import generics
 from django.shortcuts import redirect
-
-import requests
-from requests.auth import HTTPBasicAuth
-from django.views import View
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+import os, requests
 from django.http import HttpResponse, JsonResponse
-from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from rest_framework import generics
 
 # user list
 def user_list(request):
@@ -34,13 +32,19 @@ def user_create(request):
 		email = request.POST.get('email')
 		password = request.POST.get('password')
 		avatar = request.FILES.get('avatar', None)
+		avatar_url = None
+		if avatar:
+			avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
+			avatar_url = default_storage.url(avatar_url)
+		else:
+			avatar_url = User._meta.get_field('avatar').default
 		user = User(
 			first_name=first_name,
 			last_name=last_name,
 			username=username,
 			email=email,
 			password=password,
-			avatar=avatar
+			avatar = avatar_url
 		)
 		user.save()
 		serializer = UserSerializer(user)
@@ -85,45 +89,77 @@ def login(request):
 
 
 def callback(request):
-    code = request.GET.get('code')
-    if not code:
-        return JsonResponse({"error": "Authorization code not found"}, status=400)
+	code = request.GET.get('code')
+	if not code:
+		return JsonResponse({"error": "Authorization code not found"}, status=400)
 
-    UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-    SECRET = "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"
-    redirect_uri = "http://localhost:8000/api/callback/"
-    token_url = "https://api.intra.42.fr/oauth/token"
+	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
+	SECRET = "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"
+	redirect_uri = "http://localhost:8000/api/callback/"
+	token_url = "https://api.intra.42.fr/oauth/token"
+	data = {
+		'grant_type': 'authorization_code',
+		'client_id': UID,
+		'client_secret': SECRET,
+		'code': code,
+		'redirect_uri': redirect_uri
+	}
+	response = requests.post(token_url, data=data)
+	if response.status_code != 200:
+		return JsonResponse({"error": "Unable to fetch access token"}, status=response.status_code)
+	token = response.json()
+	access_token = token.get('access_token')
+	if not access_token:
+		return JsonResponse({"error": "Access token not found"}, status=400)
+	# Kullanıcı bilgilerini çekmek için token'ı kullanın
+	user_info_url = "https://api.intra.42.fr/v2/me"
+	headers = {
+		'Authorization': f'Bearer {access_token}'
+	}
+	user_response = requests.get(user_info_url, headers=headers)
+	if user_response.status_code != 200:
+		return JsonResponse({"error": "Unable to fetch user data"}, status=user_response.status_code)
+	user_data = user_response.json()
 
-    data = {
-        'grant_type': 'authorization_code',
-        'client_id': UID,
-        'client_secret': SECRET,
-        'code': code,
-        'redirect_uri': redirect_uri
-    }
+	first_name = user_data.get('first_name')
+	last_name = user_data.get('last_name')
+	username = user_data.get('login')
+	mail = user_data.get('email')
+	avatar_url = user_data.get('image').get('link')
+	if avatar_url:
+		try:
+			# Avatarı URL'den indir
+			response = requests.get(avatar_url)
+			response.raise_for_status()  # Eğer istekte hata olursa, bunu yakala
 
-    response = requests.post(token_url, data=data)
-    if response.status_code != 200:
-        return JsonResponse({"error": "Unable to fetch access token"}, status=response.status_code)
+			# Dosya adı URL'den çıkarılır
+			filename = os.path.basename(avatar_url)
 
-    token = response.json()
-    access_token = token.get('access_token')
+			# Dosya kaydetme işlemi için file_path oluşturuluyor
+			file_path = 'avatars/' + filename  # Kaydedilecek dosyanın yolu
 
-    if not access_token:
-        return JsonResponse({"error": "Access token not found"}, status=400)
+			# İndirilen dosya içeriği
+			avatar_file = ContentFile(response.content)
 
-    # Kullanıcı bilgilerini çekmek için token'ı kullanın
-    user_info_url = "https://api.intra.42.fr/v2/me"
-    headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
+			# Dosyayı kaydet ve dosya yolunu al
+			file_path = default_storage.save(file_path, avatar_file)
 
-    user_response = requests.get(user_info_url, headers=headers)
-    if user_response.status_code != 200:
-        return JsonResponse({"error": "Unable to fetch user data"}, status=user_response.status_code)
-
-    user_data = user_response.json()
-    return JsonResponse({'user_data': user_data})
+			# Kaydedilen dosyanın URL'sini al
+			avatar_url = default_storage.url(file_path)
+		except requests.exceptions.RequestException as e:
+			JsonResponse({'Avatar indirme hatası:': e})
+			avatar_url = None
+	user = User.objects.create(
+		first_name = first_name,
+		last_name = last_name,
+		username = username,
+		password = "asfa",
+		avatar = avatar_url,
+		email = mail
+	)
+	user.save()
+	serializer = UserSerializer(user);
+	return JsonResponse(serializer.data, status=201)
 
 def intra(reuest):
 	# Uygulamanızın UID ve SECRET bilgilerini buraya girin
