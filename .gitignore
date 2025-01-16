@@ -38,7 +38,7 @@ static/
 
 __pycache__/
 *pycache*
-
+__pycache__/*
 # Local settings
 local_settings.py
 
