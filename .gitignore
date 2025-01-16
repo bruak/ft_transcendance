@@ -28,13 +28,15 @@ db.sqlite3
 *.pyo
 
 # Media files
-media/
+media/*.jpg
 uploads/
 
 # Static files
 staticfiles/
 static/
 
+
+__pycache__/
 # Local settings
 local_settings.py
 
