@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.parsers import JSONParser
+from .models import Friends
 import requests
 
 
@@ -10,15 +11,29 @@ import requests
 def add_friend(request):
     if request.method != "POST":
         return JsonResponse({"error": "Only POST method is allowed."}, status=405)
-    
+
     try:
         data = JSONParser().parse(request)
         username = data.get('username')
         friendname = data.get('friend')
-        
         # Kullanıcıyı API'den çekiyoruz
-        user_response = requests.get(f"http://127.0.0.1:8000/api/get/{username}")
-        friend_response = requests.get(f"http://127.0.0.1:8000/api/get/{friendname}")
+        if not username or not friendname:
+            return JsonResponse({"error": "Both 'username' and 'friend' fields are required."}, status=400)
+
+        # API çağrıları
+        base_url = "http://localhost:8000/api/getuser/"
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        user_response = requests.get(f"{base_url}{username}", headers=headers)
+        friend_response = requests.get(f"{base_url}{friendname}", headers=headers)
+
+        # Yanıtların kontrolü
+        if user_response.status_code != 200:
+            return JsonResponse({"error": f"User '{username}' not found."}, status=404)
+        if friend_response.status_code != 200:
+            return JsonResponse({"error": f"Friend '{friendname}' not found."}, status=404)
 
         if user_response.status_code != 200 or friend_response.status_code != 200:
             return JsonResponse({"message": "Böyle bir kullanıcı yok."})
@@ -40,12 +55,12 @@ def add_friend(request):
 
         if friend_model and friend_model2:
             return JsonResponse({'message': "Arkadaş ekleme başarılı."})
-        
+
         if friend_model:
             friend_model.delete()
         if friend_model2:
             friend_model2.delete()
-        
+
         return JsonResponse({'message': "Kullanıcı ekleme başarısız."})
 
     except Exception as e:

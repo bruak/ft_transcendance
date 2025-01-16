@@ -49,6 +49,18 @@ def user_create(request):
 		return JsonResponse({"error": str(e)}, status=500)
 
 
+def user_get(request, username):
+	if request.method != "GET":
+		return JsonResponse({'message': "Get değil"})
+	try:
+		user = User.objects.get(username=username)  # Tek bir kullanıcı döner
+		serializer = UserSerializer(user)  # Tekil kullanıcı için many=False (varsayılan)
+		return JsonResponse(serializer.data, status=200)
+	except User.DoesNotExist:
+		return JsonResponse({"message": "User not found"}, status=404)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
+
 @csrf_exempt
 def user_update(request, pk):
 	if request.method == "PUT":
