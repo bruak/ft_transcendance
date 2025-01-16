@@ -1,13 +1,11 @@
-from .models import User
-from .serializers import UserSerializer
 from django.shortcuts import redirect
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-import os, requests
+import requests
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .models import User, Friends
+from .serializers import UserSerializer
+from .tools import username_check, image_to_url, image_intra_create
 from rest_framework.parsers import JSONParser
-from rest_framework import generics
 
 # user list
 def user_list(request):
@@ -32,12 +30,10 @@ def user_create(request):
 		email = request.POST.get('email')
 		password = request.POST.get('password')
 		avatar = request.FILES.get('avatar', None)
-		avatar_url = None
-		if avatar:
-			avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
-			avatar_url = default_storage.url(avatar_url)
-		else:
-			avatar_url = User._meta.get_field('avatar').default
+		avatar_url = image_to_url(avatar)
+
+		if username_check(username):
+			return JsonResponse({'message': "bu username var"})
 		user = User(
 			first_name=first_name,
 			last_name=last_name,
@@ -52,7 +48,33 @@ def user_create(request):
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
 
-# json response
+def add_friend(request):
+	if request.method != "POST":
+		return JsonResponse({"error": "Only POST method is allowed."}, status=405)
+	try:
+		data = JSONParser().pase(request)
+		username = data.get('username')
+		friend = data.get('firend')
+
+		if not username or not friend:
+			return JsonResponse({"message": "Böyle Bir kullanıcı Yok"})
+		elif username == friend:
+			return JsonResponse({"message": "kendine istek gönderemezsin"})
+		elif Friends.objects.filter(user_id = username.id, firend_id = friend.id).exists():
+			return JsonResponse({"message": "zaten arkadaşsınız"})
+		friend_model = Friends.objects.create(user_id=username, friend_id=friend)
+		friend_model2 = Friends.objects.create(user_id=friend, friend_id=username)
+
+		if friend_model and friend_model2:
+			return JsonResponse({'message': "Arkdaş ekleme başarılı"})
+		if friend_model:
+			friend_model.delete()
+		if friend_model2:
+			friend_model2.delete()
+		return JsonResponse({'message': "Kullanıcı Ekleme başarısız"})
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
+
 @csrf_exempt
 def user_update(request, pk):
 	if request.method == "PUT":
@@ -128,24 +150,7 @@ def callback(request):
 	avatar_url = user_data.get('image').get('link')
 	if avatar_url:
 		try:
-			# Avatarı URL'den indir
-			response = requests.get(avatar_url)
-			response.raise_for_status()  # Eğer istekte hata olursa, bunu yakala
-
-			# Dosya adı URL'den çıkarılır
-			filename = os.path.basename(avatar_url)
-
-			# Dosya kaydetme işlemi için file_path oluşturuluyor
-			file_path = 'avatars/' + filename  # Kaydedilecek dosyanın yolu
-
-			# İndirilen dosya içeriği
-			avatar_file = ContentFile(response.content)
-
-			# Dosyayı kaydet ve dosya yolunu al
-			file_path = default_storage.save(file_path, avatar_file)
-
-			# Kaydedilen dosyanın URL'sini al
-			avatar_url = default_storage.url(file_path)
+			avatar_url = image_intra_create(avatar_url)
 		except requests.exceptions.RequestException as e:
 			JsonResponse({'Avatar indirme hatası:': e})
 			avatar_url = None
@@ -153,7 +158,7 @@ def callback(request):
 		first_name = first_name,
 		last_name = last_name,
 		username = username,
-		password = "asfa",
+		password = "default",
 		avatar = avatar_url,
 		email = mail
 	)
@@ -161,48 +166,6 @@ def callback(request):
 	serializer = UserSerializer(user);
 	return JsonResponse(serializer.data, status=201)
 
-def intra(reuest):
-	# Uygulamanızın UID ve SECRET bilgilerini buraya girin
-	UID = ""
-	SECRET = ""
-	# Token almak için gerekli URL
-	token_url = "https://api.intra.42.fr/oauth/token"
-	data = {
-		'grant_type': 'client_credentials',
-		'client_id': UID,
-		'client_secret': SECRET
-	}
-	# POST isteğiyle token alıyoruz
-	response = requests.post(token_url, data=data)
-	# JSON formatında dönen yanıtı alıyoruz
-	if response.status_code != 200:
-		return JsonResponse({"error": "Unable to get token"}, status=400)
-	##if response.headers['Content-Type'] != 'application/json':
-	##	return JsonResponse({"message": "amk"})
-	token = response.json()
-	access_token = token.get('access_token')
-	JsonResponse({"message": access_token})
-	if not access_token:
-		return JsonResponse({"error": "Access token not found"}, status=400)
-	# Erişim token'ını başlıkta kullanarak isteği yapıyoruz
-	headers = {
-		'Authorization': f'Bearer {access_token}'
-	}
-	# 42 Cursus'undaki kullanıcıları almak için URL
-	users_url = "https://api.intra.42.fr/v2/users/albozkur"
-	users_response = requests.get(users_url, headers=headers)
-	# Kullanıcı verilerini alıyoruz
-	if users_response.status_code != 200:
-		return JsonResponse({"error": "Unable to fetch users"}, status=400)
-	users_data = users_response.json()
-	return JsonResponse({'user_count': len(users_data), 'users': users_data})
 
 
 
-class UserViewSet(generics.ListCreateAPIView):
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
-
-class UserDeleteView(generics.RetrieveUpdateDestroyAPIView):
-	queryset = User.objects.all()
-	serializer_class = UserSerializer

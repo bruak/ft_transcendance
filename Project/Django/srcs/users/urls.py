@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import UserViewSet, UserDeleteView, user_list, user_create, user_update, intra, login, callback
+from .views import UserViewSet, UserDeleteView, user_list, user_create, user_update, intra, login, callback, add_friend
 
 urlpatterns = [
+	path('friend/', add_friend, name='friend'),
 	path('login/', login, name='login'),
 	path('callback/', callback, name='callback'),
 	path('42/', intra, name='get_cursus_users'),
