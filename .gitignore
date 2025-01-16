@@ -37,8 +37,8 @@ static/
 
 
 __pycache__/
-__pycache__/*
-ft_transcendance/Project/Django/srcs/users/__pycache__/
+*pycache*
+
 # Local settings
 local_settings.py
 
