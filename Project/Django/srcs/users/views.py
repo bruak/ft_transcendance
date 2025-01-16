@@ -48,22 +48,27 @@ def user_create(request):
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
 
+
+@csrf_exempt
 def add_friend(request):
 	if request.method != "POST":
 		return JsonResponse({"error": "Only POST method is allowed."}, status=405)
 	try:
-		data = JSONParser().pase(request)
+		data = JSONParser().parse(request)
 		username = data.get('username')
-		friend = data.get('firend')
+		friendname  = data.get('friend')
 
-		if not username or not friend:
+		user = User.objects.filter(username=username).first()
+		friend = User.objects.filter(username=friendname).first()
+
+		if not user or not friend:
 			return JsonResponse({"message": "Böyle Bir kullanıcı Yok"})
-		elif username == friend:
+		elif user == friend:
 			return JsonResponse({"message": "kendine istek gönderemezsin"})
-		elif Friends.objects.filter(user_id = username.id, firend_id = friend.id).exists():
+		elif Friends.objects.filter(user_id = user.id, friend_id = friend.id).exists():
 			return JsonResponse({"message": "zaten arkadaşsınız"})
-		friend_model = Friends.objects.create(user_id=username, friend_id=friend)
-		friend_model2 = Friends.objects.create(user_id=friend, friend_id=username)
+		friend_model = Friends.objects.create(user_id=user, friend_id=friend)
+		friend_model2 = Friends.objects.create(user_id=friend, friend_id=user)
 
 		if friend_model and friend_model2:
 			return JsonResponse({'message': "Arkdaş ekleme başarılı"})
@@ -73,7 +78,7 @@ def add_friend(request):
 			friend_model2.delete()
 		return JsonResponse({'message': "Kullanıcı Ekleme başarısız"})
 	except Exception as e:
-		return JsonResponse({"error": str(e)}, status=500)
+		return JsonResponse({"error a": str(e)}, status=500)
 
 @csrf_exempt
 def user_update(request, pk):
@@ -165,6 +170,7 @@ def callback(request):
 	user.save()
 	serializer = UserSerializer(user);
 	return JsonResponse(serializer.data, status=201)
+
 
 
 
