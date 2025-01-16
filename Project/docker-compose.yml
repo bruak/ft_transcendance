@@ -58,6 +58,17 @@ services:
       - DB_HOST=friend_db
       - POSTGRES_DB=friends
 
+  mail:
+    build:
+      context: ./Mail
+    volumes:
+      - ./Mail/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8002:8000"
+    env_file:
+      - .env
 
 
 
