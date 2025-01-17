@@ -7,27 +7,27 @@ from django.core.management import execute_from_command_line, call_command
 from django.contrib.auth import get_user_model
 
 def main():
-    # i = 0
-    # while 1:
-    #     try:
-    #         conn = psycopg2.connect(
-    #             dbname=os.environ.get("POSTGRES_DB", "mydb"),
-    #             user=os.environ.get("POSTGRES_USER", "myuser"),
-    #             password=os.environ.get("POSTGRES_PASSWORD", "mypass"),
-    #             host=os.environ.get("DB_HOST", "db"),
-    #             port=os.environ.get("DB_PORT", "5432")
-    #         )
-    #         if conn:
-    #             conn.close()
-    #             print("Bağlantı başarılı!")
-    #             break
-    #         elif i == 10:
-    #             print("Bağlantı başarısız! Tekrar deneyin...")
-    #             sys.exit(1)
-    #     except psycopg2.OperationalError as e:
-    #         print("Bağlantı başarısız! Tekrar deneyin...")
-    #         i += 1
-    #         time.sleep(2)
+    i = 0
+    while 1:
+        try:
+            conn = psycopg2.connect(
+                dbname=os.environ.get("POSTGRES_DB", "mydb"),
+                user=os.environ.get("POSTGRES_USER", "myuser"),
+                password=os.environ.get("POSTGRES_PASSWORD", "mypass"),
+                host=os.environ.get("DB_HOST", "db"),
+                port=os.environ.get("DB_PORT", "5432")
+            )
+            if conn:
+                conn.close()
+                print("Bağlantı başarılı!")
+                break
+            elif i == 10:
+                print("Bağlantı başarısız! Tekrar deneyin...")
+                sys.exit(1)
+        except psycopg2.OperationalError as e:
+            print("Bağlantı başarısız! Tekrar deneyin...")
+            i += 1
+            time.sleep(2)
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mail_service.settings')
     django.setup()  # Django başlatılıyor
