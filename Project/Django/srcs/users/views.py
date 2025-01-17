@@ -63,11 +63,11 @@ def user_get(request, username):
 		return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
-def user_update(request, pk):
+def user_update(request, username):
 	if request.method != "POST":
 			return JsonResponse({"error": "Only POST method is allowed."}, status=405)
 	try:
-		user = User.objects.get(pk=pk)
+		user = User.objects.get(username=username)
 
 		data = request.POST
 		files = request.FILES.get('avatar', None)
