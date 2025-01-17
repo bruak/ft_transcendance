@@ -74,7 +74,7 @@ services:
     environment:
       - DB_HOST=message_db
       - POSTGRES_DB=message
-
+ 
   message_db:
     image: postgres:13
     container_name: message_db
