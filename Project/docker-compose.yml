@@ -1,3 +1,7 @@
+networks:
+  webnet:
+    driver: bridge
+
 services:
   user_db:
     image: postgres:13
@@ -70,14 +74,14 @@ services:
     env_file:
       - .env
     depends_on:
-      - message_db
+      - mail_db
     environment:
-      - DB_HOST=message_db
-      - POSTGRES_DB=message
+      - DB_HOST=mail_db
+      - POSTGRES_DB=mail
  
-  message_db:
+  mail_db:
     image: postgres:13
-    container_name: message_db
+    container_name: mail_db
     env_file:
       - .env
     networks:
@@ -85,9 +89,5 @@ services:
     expose:
       - 5432
     environment:
-      - POSTGRES_DB=message
+      - POSTGRES_DB=mail
 
-
-networks:
-  webnet:
-    driver: bridge
