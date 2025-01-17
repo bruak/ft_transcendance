@@ -7,13 +7,19 @@ from django.core.files.base import ContentFile
 def username_check(username):
 	return User.objects.filter(username=username).exists()
 
-def image_to_url(avatar):
-	if avatar:
-		avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
-		avatar_url = default_storage.url(avatar_url)
-	else:
-		avatar_url = User._meta.get_field('avatar').default
-	return (avatar_url)
+def image_to_url(avatar, username):
+    if avatar:
+        # Dosya uzantısını korumak için uzantıyı alıyoruz
+        file_extension = os.path.splitext(avatar.name)[1]  # Örneğin: '.jpg', '.png'
+        # Kullanıcı adını dosya adı olarak ayarlıyoruz
+        new_filename = f"{username}{file_extension}"
+        # Yeni dosya adını belirterek kaydediyoruz
+        avatar.name = new_filename
+        avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
+        avatar_url = default_storage.url(avatar_url)
+    else:
+        avatar_url = User._meta.get_field('avatar').default
+    return avatar_url
 
 def image_intra_create(avatar_url):
 	response = requests.get(avatar_url)

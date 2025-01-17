@@ -5,8 +5,9 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User, Friends
 from .serializers import UserSerializer
 from .tools import username_check, image_to_url, image_intra_create
-from rest_framework.parsers import JSONParser
-
+from rest_framework.parsers import JSONParser, MultiPartParser , FormParser
+from rest_framework.decorators import parser_classes
+import os
 # user list
 def user_list(request):
 	if request.method != "GET":
@@ -30,7 +31,7 @@ def user_create(request):
 		email = request.POST.get('email')
 		password = request.POST.get('password')
 		avatar = request.FILES.get('avatar', None)
-		avatar_url = image_to_url(avatar)
+		avatar_url = image_to_url(avatar, username)
 
 		if username_check(username):
 			return JsonResponse({'message': "bu username var"})
@@ -63,31 +64,32 @@ def user_get(request, username):
 
 @csrf_exempt
 def user_update(request, pk):
-	if request.method == "PUT":
-		try:
-			user = User.objects.get(pk=pk)
-			data = JSONParser().parse(request)
-			serializer = UserSerializer(user, data=data)
-			if (serializer.is_valid()):
-				serializer.save()
-				return (JsonResponse(serializer.data, status=200))
-			return JsonResponse(serializer.errors, status=400)
-		except Exception as e:
-			return JsonResponse({"error": str(e)}, status=500)
-	elif request.method == "GET" :
-		try:
-			user = User.objects.filter(username=pk)
-			serializer = UserSerializer(user)
-			return JsonResponse(serializer.data)
-		except Exception as e:
-			return JsonResponse({"error": str(e)}, status=500)
-	elif request.method == "DELETE":
-		try:
-			user = User.objects.get(pk=pk)
-			user.delete()
-			return (HttpResponse("user deleted, user name is " + user.username))
-		except Exception as e:
-			return JsonResponse({"error": str(e)}, status=500)
+	if request.method != "POST":
+			return JsonResponse({"error": "Only POST method is allowed."}, status=405)
+	try:
+		user = User.objects.get(pk=pk)
+
+		data = request.POST
+		files = request.FILES.get('avatar', None)
+		if files:
+			avatar = image_to_url(files, data.get('username', user.username))
+
+		user.first_name = data.get('first_name', user.first_name)
+		user.last_name = data.get('last_name', user.last_name)
+		user.username = data.get('username', user.username)
+		user.email = data.get('email', user.email)
+		user.password = data.get('password', user.password)
+		if files:
+			if user.avatar and os.path.exists(f"/app{user.avatar}"):
+				os.remove(f"/app{user.avatar}")
+			user.avatar = avatar
+		user.save()
+		serializer = UserSerializer(user)
+		return JsonResponse(serializer.data, status=200)
+	except User.DoesNotExist:
+		return JsonResponse({"error": "User not found"}, status=404)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
 
 def login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
@@ -149,7 +151,7 @@ def callback(request):
 		email = mail
 	)
 	user.save()
-	serializer = UserSerializer(user);
+	serializer = UserSerializer(user)
 	return JsonResponse(serializer.data, status=201)
 
 

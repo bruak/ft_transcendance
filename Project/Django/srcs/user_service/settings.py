@@ -27,6 +27,10 @@ SECRET_KEY = 'django-insecure-l42qq%@rh&#z%chken%c1)($(3v$ql@yn1(@zg&o1_3k-qca7w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'friend', '*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mail', '*']
 
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+#! resimlerin boyutunu degistiren midilware varmis bak 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

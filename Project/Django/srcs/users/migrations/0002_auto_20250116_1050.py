@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='avatar',
-            field=models.CharField(default='/media/avatars/default.jpeg', max_length=200),
+            field=models.CharField(default='/media/avatars/default.jpg', max_length=200),
         ),
         migrations.CreateModel(
             name='Friends',
