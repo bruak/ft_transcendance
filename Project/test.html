@@ -142,36 +142,39 @@
         {
             event.preventDefault();
                 const userId = document.getElementById('edit_id').value;
-                console.log(userId);
+            
+ 
+                const formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('first_name', document.getElementById('edit_first_name').value);
+                formData.append('last_name', document.getElementById('edit_last_name').value);
+                formData.append('username', document.getElementById('edit_username').value);
+                formData.append('email', document.getElementById('edit_email').value);
+                formData.append('password', document.getElementById('edit_password').value);
 
-                const data = {
-                    first_name: document.getElementById('edit_first_name').value,
-                    last_name: document.getElementById('edit_last_name').value,
-                    username: document.getElementById('edit_username').value,
-                    email: document.getElementById('edit_email').value,
-                    password: document.getElementById('edit_password').value,
-                    avatar: document.getElementById('edit_avatar').value
-                };
-
-                        try {
-                const response = await fetch(`${PUT_API_URL}${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Failed to update user. Status: ${response.status}, Response: ${errorText}`);
+                const avatarFile = document.getElementById('edit_avatar').files[0];
+                if (avatarFile) {
+                    formData.append('avatar', avatarFile);
                 }
 
-                const updatedUser = await response.json();
-                alert(`User updated successfully: ${updatedUser.username}`);
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
+                try {
+                    const response = await fetch(`http://localhost:8000/api/put/${userId}`, {
+                        method: 'POST', // Burada POST kullanılıyor
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Failed to update user. Status: ${response.status}, Response: ${errorText}`);
+                    }
+
+                    const updatedUser = await response.json();
+                    alert(`User updated successfully: ${updatedUser.username}`);
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+                fetchUsers();
+
         }
         // Load users on page load
         document.addEventListener('DOMContentLoaded', fetchUsers);
