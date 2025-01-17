@@ -56,11 +56,21 @@ def reset_password(request, token):
 			profile = Profile.objects.get(reset_token=token)
 			username = profile.username
 			user_response = requests.get(f"http://project-users-1:8000/api/getuser/{username}")
+			user_data = user_response.json()
+			payload = {
+				"password" : new_password
+			}
 
-
-			profile.reset_token = None  # Tokenı geçersiz yap
-			profile.save()
-			return HttpResponse("Şifreniz başarıyla değiştirildi. Giriş yapabilirsiniz.")
+			headers = {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+			update_response = requests.post(f"http://project-users-1:8000/api/put/{username}", data=payload,  headers=headers)
+			if update_response.status_code == 200:
+				profile.reset_token = None
+				profile.save()
+				return HttpResponse("Şifreniz başarıyla değiştirildi. Giriş yapabilirsiniz.")
+			else:
+				return HttpResponse("Şifre güncellenirken bir hata oluştu.", status=400)
 		except Profile.DoesNotExist:
 			return HttpResponse("Geçersiz veya süresi dolmuş bir bağlantı.")
 	return render(request, 'reset_password.html', {'token': token})
