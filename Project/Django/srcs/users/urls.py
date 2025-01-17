@@ -1,7 +1,11 @@
 from django.urls import path
-from .views import UserViewSet, UserDeleteView
+from .views import user_list, user_create, user_update, login, callback, user_get
 
 urlpatterns = [
-    path('users/', UserViewSet.as_view(), name='users'),
-    path('users/<int:pk>/', UserDeleteView.as_view(), name='user-delete'),
+	path('login/', login, name='login'),
+	path('callback/', callback, name='callback'),
+	path('put/<int:pk>', user_update, name='user-update'),
+	path('getuser/<str:username>', user_get, name='user_get'),
+	path('get/', user_list, name='user-list'),
+	path('post/', user_create, name='user-create'),
 ]
