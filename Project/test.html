@@ -93,127 +93,129 @@
         </tbody>
     </table>
     <script>
-        const DOMAIN = "http://localhost:8000"//window.location.origin;
-        const GET_API_URL = `${DOMAIN}/api/get/`;
-        const POST_API_URL = `${DOMAIN}/api/post/`;
-        const PUT_API_URL = `${DOMAIN}/api/put/`;
-        // Fetch users and display in table
-        async function fetchUsers() {
-            try {
-                const response = await fetch(GET_API_URL);
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
-                }
-                const users = await response.json();
-                const tableBody = document.getElementById('user-table-body');
-                tableBody.innerHTML = ''; // Clear table body
-                // Populate table with user data
-                users.forEach(user => {
-                const avatarUrl = user.avatar.startsWith('http') ? user.avatar : `${DOMAIN}/${user.avatar}`;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><img src="${avatarUrl}" class="avatar" alt="Avatar"></td>
-                    <td>${user.id}</td>
-                    <td>${user.first_name}</td>
-                    <td>${user.last_name}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td>
-                        <button onclick="editUser(${user.id}, '${user.first_name}', '${user.last_name}', '${user.username}', '${user.email}')">Edit</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-            } catch (error) {
-                console.error('Failed to fetch users:', error);
-            }
+        const DOMAIN = "http://localhost:8000"; // window.location.origin;
+const GET_API_URL = `${DOMAIN}/api/get/`;
+const POST_API_URL = `${DOMAIN}/api/postjson/`;
+const PUT_API_URL = `${DOMAIN}/api/postjson/`;
+
+// Fetch users and display in table
+async function fetchUsers() {
+    try {
+        const response = await fetch(GET_API_URL);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
-        // Open edit form with user data
-        function editUser(id, firstName, lastName, username, email) {
-            document.getElementById('edit_id').value = id;
-            document.getElementById('edit_first_name').value = firstName;
-            document.getElementById('edit_last_name').value = lastName;
-            document.getElementById('edit_username').value = username;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit-form').style.display = 'block';
+        const users = await response.json();
+        const tableBody = document.getElementById('user-table-body');
+        tableBody.innerHTML = ''; // Clear table body
+        // Populate table with user data
+        users.forEach(user => {
+            const avatarUrl = user.avatar.startsWith('http') ? user.avatar : `${DOMAIN}/${user.avatar}`;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${avatarUrl}" class="avatar" alt="Avatar"></td>
+                <td>${user.id}</td>
+                <td>${user.first_name}</td>
+                <td>${user.last_name}</td>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>
+                    <button onclick="editUser(${user.id}, '${user.first_name}', '${user.last_name}', '${user.username}', '${user.email}')">Edit</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Failed to fetch users:', error);
+    }
+}
+
+// Open edit form with user data
+function editUser(id, firstName, lastName, username, email) {
+    document.getElementById('edit_id').value = id;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_username').value = username;
+    document.getElementById('edit_email').value = email;
+    document.getElementById('edit-form').style.display = 'block';
+}
+
+// Update user
+async function updateUser(event) {
+    event.preventDefault();
+    const userId = document.getElementById('edit_id').value;
+
+    const updatedUser = {
+        first_name: document.getElementById('edit_first_name').value,
+        last_name: document.getElementById('edit_last_name').value,
+        username: document.getElementById('edit_username').value,
+        email: document.getElementById('edit_email').value,
+        password: document.getElementById('edit_password').value,
+        avatar: document.getElementById('edit_avatar').files[0] ? document.getElementById('edit_avatar').files[0].name : null
+    };
+
+    try {
+        const response = await fetch(`${PUT_API_URL}${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedUser)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update user. Status: ${response.status}, Response: ${errorText}`);
         }
-        // Update user
-        async function updateUser(event) 
-        {
-            event.preventDefault();
-                const userId = document.getElementById('edit_id').value;
-            
- 
-                const formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('first_name', document.getElementById('edit_first_name').value);
-                formData.append('last_name', document.getElementById('edit_last_name').value);
-                formData.append('username', document.getElementById('edit_username').value);
-                formData.append('email', document.getElementById('edit_email').value);
-                formData.append('password', document.getElementById('edit_password').value);
 
-                const avatarFile = document.getElementById('edit_avatar').files[0];
-                if (avatarFile) {
-                    formData.append('avatar', avatarFile);
-                }
+        const updatedUserResponse = await response.json();
+        alert(`User updated successfully: ${updatedUserResponse.username}`);
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+    fetchUsers();
+}
 
-                try {
-                    const response = await fetch(`http://localhost:8000/api/put/${userId}`, {
-                        method: 'POST', // Burada POST kullanılıyor
-                        body: formData,
-                    });
+// Load users on page load
+document.addEventListener('DOMContentLoaded', fetchUsers);
 
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Failed to update user. Status: ${response.status}, Response: ${errorText}`);
-                    }
+// Add event listener to the forms
+document.getElementById('user-form').addEventListener('submit', addUser);
+document.getElementById('edit-form').addEventListener('submit', updateUser);
 
-                    const updatedUser = await response.json();
-                    alert(`User updated successfully: ${updatedUser.username}`);
-                } catch (error) {
-                    alert(`Error: ${error.message}`);
-                }
-                fetchUsers();
+// Add new user function
+async function addUser(event) {
+    event.preventDefault();
+    const newUser = {
+        first_name: document.getElementById('first_name').value,
+        last_name: document.getElementById('last_name').value,
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        avatar: document.getElementById('avatar').files[0] ? document.getElementById('avatar').files[0].name : null
+    };
 
+    try {
+        const response = await fetch(POST_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newUser)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
-        // Load users on page load
-        document.addEventListener('DOMContentLoaded', fetchUsers);
-        // Add event listener to the forms
-        document.getElementById('user-form').addEventListener('submit', addUser);
-        document.getElementById('edit-form').addEventListener('submit', updateUser);
-        // Add new user function (remains the same)
-        async function addUser(event) {
-            event.preventDefault();
-            const firstName = document.getElementById('first_name').value;
-            const lastName = document.getElementById('last_name').value;
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const avatarFile = document.getElementById('avatar').files[0];
-            const newUser = new FormData();
-            newUser.append('first_name', firstName);
-            newUser.append('last_name', lastName);
-            newUser.append('username', username);
-            newUser.append('email', email);
-            newUser.append('password', password);
-            if (avatarFile) {
-                newUser.append('avatar', avatarFile);
-            }
-            try {
-                const response = await fetch(POST_API_URL, {
-                    method: 'POST',
-                    body: newUser,
-                });
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
-                }
-                console.log('User added successfully:', await response.json());
-                document.getElementById('user-form').reset();
-                fetchUsers();
-            } catch (error) {
-                console.error('Failed to add user:', error);
-            }
-        }
+
+        console.log('User added successfully:', await response.json());
+        document.getElementById('user-form').reset();
+        fetchUsers();
+    } catch (error) {
+        console.error('Failed to add user:', error);
+    }
+}
+
     </script>
 </body>
 </html>
