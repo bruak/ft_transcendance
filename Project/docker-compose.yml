@@ -91,3 +91,32 @@ services:
     environment:
       - POSTGRES_DB=mail
 
+  auth:
+    build:
+      context: ./Auth 
+    volumes:
+      - ./Auth/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8003:8000"
+    env_file:
+      - .env
+    depends_on:
+      - auth_db
+    environment:
+      - DB_HOST=auth_db
+      - POSTGRES_DB=auth 
+ 
+  auth_db:
+    image: postgres:13
+    container_name: auth_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=auth
+
