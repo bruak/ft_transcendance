@@ -7,11 +7,14 @@ if [ "$#" -ne 1 ]; then
 fi
 
 SERVICE=$1
+LOWSERVICE=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+UPSERVICE=$(echo "${LOWSERVICE:0:1}" | tr '[:lower:]' '[:upper:]')${LOWSERVICE:1}
+
 COMPOSE="Project/docker-compose.yml"
 PORT_BASE=8000
 MAX_ATTEMPTS=100
-SETTINGS="Project/${SERVICE}/srcs/${SERVICE}_service/settings.py"
-SERVICE_DIR="./Project/${SERVICE}"
+SERVICE_DIR="./Project/${UPSERVICE}"
+SETTINGS="${SERVICE_DIR}/srcs/${SERVICE}_service/settings.py"
 NEW_CONTENT="DATABASES = {\n    'default': {\n        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),\n        'NAME': os.environ.get('POSTGRES_DB', 'db.sqlite3'),\n        'USER': os.environ.get('POSTGRES_USER', 'myuser'),\n        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'mypass'),\n        'HOST': os.environ.get('DB_HOST', 'localhost'),\n        'PORT': os.environ.get('DB_PORT', '5432'),\n    }"
 
 
@@ -28,20 +31,21 @@ find_free_port() {
     echo "Hata: Kullanılabilir port bulunamadı." >&2
     exit 1
 }
-
 # Kullanılmayan port seçimi
 FREE_PORT=$(find_free_port)
 
 if [ -f "Project/Django/Dockerfile" ] && [ ! -d "Project/${SERVICE}" ]; then
 
 # docker-compose.yml dosyasına hizmeti ekleme
+if ! grep -q "$LOWSERVICE:" "$COMPOSE" 2>/dev/null; then
+  
 cat << EOF >> $COMPOSE
 
-  $SERVICE:
+  $LOWSERVICE:
     build:
-      context: ./$SERVICE 
+      context: ./$UPSERVICE 
     volumes:
-      - ./$SERVICE/srcs:/app
+      - ./$UPSERVICE/srcs:/app
     networks:
       - webnet
     ports:
@@ -49,14 +53,14 @@ cat << EOF >> $COMPOSE
     env_file:
       - .env
     depends_on:
-      - ${SERVICE}_db
+      - ${LOWSERVICE}_db
     environment:
-      - DB_HOST=${SERVICE}_db
-      - POSTGRES_DB=$SERVICE
+      - DB_HOST=${LOWSERVICE}_db
+      - POSTGRES_DB=$LOWSERVICE
  
-  ${SERVICE}_db:
+  ${LOWSERVICE}_db:
     image: postgres:13
-    container_name: ${SERVICE}_db
+    container_name: ${LOWSERVICE}_db
     env_file:
       - .env
     networks:
@@ -64,21 +68,23 @@ cat << EOF >> $COMPOSE
     expose:
       - 5432
     environment:
-      - POSTGRES_DB=$SERVICE
+      - POSTGRES_DB=$LOWSERVICE
 EOF
-
+fi
+  APP="    '$LOWSERVICE',"
 # Django projesi ve dizin yapısını oluşturma
     mkdir -p "${SERVICE_DIR}/srcs"
-    django-admin startproject ${SERVICE}_service "${SERVICE_DIR}/srcs"
-    django-admin startapp $SERVICE
-    mv $SERVICE "${SERVICE_DIR}/srcs/"
+    django-admin startproject ${LOWSERVICE}_service "${SERVICE_DIR}/srcs"
+    django-admin startapp $LOWSERVICE
+    mv $LOWSERVICE "${SERVICE_DIR}/srcs/"
     cp "Project/Django/Dockerfile" "${SERVICE_DIR}/"
     cp "Project/Django/srcs/entrypoint.py" "${SERVICE_DIR}/srcs"
-    sed -i "s|user_service|${SERVICE}_service|g" "${SERVICE_DIR}/srcs/entrypoint.py"
+    sed -i "s|user_service|${LOWSERVICE}_service|g" "${SERVICE_DIR}/srcs/entrypoint.py"
     sed -i '/DATABASES = {/,/}/c\'"$NEW_CONTENT" $SETTINGS
     sed -i '14i\import os' $SETTINGS
+    sed "41i $(printf '%s' "${APP}")" "$SETTINGS" > temp && mv temp "$SETTINGS"
     echo -e "Django>=3.2,<4.0\npsycopg2-binary>=2.8" > ${SERVICE_DIR}/requirements.txt
-    echo "Yeni Django projesi $SERVICE oluşturuldu. Port: $FREE_PORT"
+    echo "Yeni Django projesi $LOWSERVICE oluşturuldu. Port: $FREE_PORT"
 else
     echo "Hata: Gerekli dosya ve dizinler mevcut değil."
     exit 1
