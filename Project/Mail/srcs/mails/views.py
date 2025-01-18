@@ -76,6 +76,26 @@ def reset_password(request, token):
 	return render(request, 'reset_password.html', {'token': token})
 
 
+@csrf_exempt
+def send_verification_email(request):
+	# `request` parametresini doğru şekilde kullanıyoruz
+	subject = "Verify Mail"
+	data = JSONParser().parse(request)
+	# Token ve mail adresini request'ten alıyoruz
+	message = data.get("token")  # GET ile alınan parametre
+	mail = data.get("email")  # mail parametresi de GET ile alınıyor
+	# Mail gönderme işlemi
+	from_email = 'lmrnbzkrt0@gmail.com'
+	# Email gönderimi
+	send_mail(
+		subject=subject,
+		message=message,
+		from_email=from_email,
+		recipient_list=[mail],  # Alıcıyı liste halinde veriyoruz
+		fail_silently=False  # Eğer bir hata olursa yakalansın
+	)
+	# Başarılı olduğunda bir JsonResponse dönüyoruz
+	return JsonResponse({"message": mail, "status": 200})
 
 def mail_send(request):
 	subject = "Test Email"
