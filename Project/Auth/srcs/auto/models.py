@@ -28,3 +28,12 @@ class MailTokens(models.Model):
 	expiration = models.DateTimeField(null=True, blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+class TwofactorCodes(models.Model):
+	id = models.AutoField(primary_key=True)
+	user = models.ForeignKey(Users, on_delete=models.CASCADE)
+	code = models.CharField(max_length=4)
+	status = models.BooleanField(default=True)
+	expiration = models.DateTimeField(null=True, blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
