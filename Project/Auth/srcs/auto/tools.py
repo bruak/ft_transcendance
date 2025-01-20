@@ -36,4 +36,4 @@ def image_intra_create(avatar_url):
 	return avatar_url
 
 def generate_random_code():
-return "".join([str(random.randint(0, 9)) for _ in range(4)])
+	return "".join([str(random.randint(0, 9)) for _ in range(4)])
