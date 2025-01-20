@@ -148,3 +148,61 @@ services:
       - 5432
     environment:
       - POSTGRES_DB=game
+
+  monitoring:
+    build:
+      context: ./Monitoring 
+    volumes:
+      - ./Monitoring/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8004:8000"
+    env_file:
+      - .env
+    depends_on:
+      - monitoring_db
+    environment:
+      - DB_HOST=monitoring_db
+      - POSTGRES_DB=monitoring
+ 
+  monitoring_db:
+    image: postgres:13
+    container_name: monitoring_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=monitoring
+
+  chat:
+    build:
+      context: ./Chat 
+    volumes:
+      - ./Chat/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8006:8000"
+    env_file:
+      - .env
+    depends_on:
+      - chat_db
+    environment:
+      - DB_HOST=chat_db
+      - POSTGRES_DB=chat
+ 
+  chat_db:
+    image: postgres:13
+    container_name: chat_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=chat
