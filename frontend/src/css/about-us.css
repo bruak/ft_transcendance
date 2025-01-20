@@ -1,0 +1,141 @@
+/* Genel stil ayarları */
+body {
+    margin: 0; /* Sayfa kenar boşlukları */
+    padding: 0; /* Sayfa iç boşlukları */
+    font-family: 'Arial', sans-serif; /* Yazı tipi */
+    background-color: #00041a; /* Arka plan rengi */
+    color: #ddd; /* Metin rengi */
+}
+
+/* Header stili */
+header {
+    background-color: #1a1a2e; /* Header arka plan rengi */
+    color: white; /* Header metin rengi */
+    padding: 20px 0; /* Header iç boşluk */
+    text-align: center; /* Header metin hizalama */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Header gölge */
+    font-family: 'Arial', sans-serif; /* Header yazı tipi */
+
+}
+
+/* Header başlık stili */
+header h1 {
+    font-size: 2.5rem; /* Header başlık yazı boyutu */
+    margin: 0; /* Header başlık kenar boşluk */
+}
+
+/* Header alt başlık stili */
+header p {
+    font-size: 1.2rem; /* Header alt başlık yazı boyutu */
+    margin: 10px 0 0; /* Header alt başlık kenar boşluk */
+}
+
+/* Başlık ve alt başlık stil ayarları */
+h1, h2 {
+    font-family: 'Arial', sans-serif; /* Yazı tipi */
+    margin-bottom: 20px; /* Alt boşluk */
+}
+
+h1 {
+    font-size: 3rem; /* Yazı boyutu */
+    text-shadow: 2px 2px #000; /* Gölge efekti */
+}
+
+h2 {
+    font-size: 2.5rem; /* Yazı boyutu */
+    text-shadow: 1px 1px #000; /* Gölge efekti */
+}
+
+/* Paragraf stil ayarları */
+p {
+    font-family: 'Arial', sans-serif; /* Yazı tipi */
+    font-size: 1.2rem; /* Yazı boyutu */
+    color: #ddd; /* Metin rengi */
+    /* text-align: justify; /* Metin hizalama */
+}
+
+
+/* Kart stil ayarları */
+.card {
+    border: 1px solid #1a1a2e; /* Kenarlık rengi */
+    border-radius: 5px; /* Köşe yuvarlama */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Gölge efekti */
+    transition: transform 0.3s; /* Geçiş efekti */
+    background-color: #1c1c1c; /* Arka plan rengi */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Hover efekti */
+}
+
+/* Kart başlık stil ayarları */
+.card-title {
+    font-size: 1.5rem; /* Yazı boyutu */
+    font-weight: bold; /* Yazı kalınlığı */
+    color: #4ca1af; /* Yazı rengi */
+}
+
+/* Kart metin stil ayarları */
+.card-text {
+    font-size: 1.1rem; /* Yazı boyutu */
+    color: #bbb; /* Metin rengi */
+}
+
+/* Birincil buton stil ayarları */
+.btn-primary {
+    background-color: #4ca1af; /* Arka plan rengi */
+    border: none; /* Kenarlık */
+    border-radius: 5px; /* Köşe yuvarlama */
+    padding: 12px 24px; /* İç boşluklar */
+    font-size: 1.1rem; /* Yazı boyutu */
+    transition: background-color 0.3s; /* Geçiş efekti */
+}
+
+.btn-primary:hover {
+    background-color: #2c3e50; /* Hover arka plan rengi */
+}
+
+/* Form stil ayarları */
+form {
+    background-color: #1c1c1c; /* Arka plan rengi */
+    padding: 40px; /* İç boşluklar */
+    border-radius: 5px; /* Köşe yuvarlama */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Gölge efekti */
+}
+
+/* Form etiket stil ayarları */
+form .form-label {
+    font-weight: bold; /* Yazı kalınlığı */
+    color: #4ca1af; /* Yazı rengi */
+}
+
+/* Form girdi stil ayarları */
+form .form-control {
+    border-radius: 5px; /* Köşe yuvarlama */
+    padding: 12px; /* İç boşluklar */
+    font-size: 1.1rem; /* Yazı boyutu */
+    border: 1px solid #4ca1af; /* Kenarlık rengi */
+    background-color: #333; /* Arka plan rengi */
+    color: #fff; /* Yazı rengi */
+}
+
+/* Form buton stil ayarları */
+form .btn-primary {
+    width: 100%; /* Genişlik */
+    padding: 12px; /* İç boşluklar */
+    font-size: 1.2rem; /* Yazı boyutu */
+    background-color: #4ca1af; /* Arka plan rengi */
+    border-radius: 5px; /* Köşe yuvarlama */
+}
+
+/* Footer stili */
+footer {
+    background-color: #1a1a2e; /* Footer arka plan rengi */
+    color: white; /* Footer metin rengi */
+    padding: 10px 0; /* Footer iç boşluk */
+    text-align: center; /* Footer metin hizalama */
+    font-size: 0.9rem; /* Footer yazı boyutu */
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5); /* Footer gölge */
+    display: flex; /* Flexbox kullanımı */
+    justify-content: center; /* İçeriği ortalama */
+}
