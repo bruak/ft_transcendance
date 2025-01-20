@@ -22,4 +22,7 @@ document.getElementById('switch-to-login').addEventListener('click', function(ev
   }, 500);
 });
 
-
+document.getElementById('42ile').addEventListener('click', function(event) {
+  event.preventDefault();
+  alert('42 ile girilecek');
+});
