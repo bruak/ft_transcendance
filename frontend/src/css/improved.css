@@ -59,3 +59,17 @@ form button {
 form button:hover {
     background-color: #032a55;
 }
+
+.social-btn {
+    background-color: #474d54;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.social-btn:hover {
+    background-color: #5a6470;
+}
