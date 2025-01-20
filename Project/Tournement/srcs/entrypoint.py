@@ -29,7 +29,7 @@ def main():
             i += 1
             time.sleep(2)
 
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "monitoring_service.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tournement_service.settings")
     django.setup()  # Django başlatılıyor
 
     try:
