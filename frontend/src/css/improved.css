@@ -69,7 +69,35 @@ form button:hover {
     cursor: pointer;
     font-size: 16px;
 }
+.social-btn-icon {
+    margin-right: 5px;
+}
 
 .social-btn:hover {
     background-color: #5a6470;
 }
+
+
+.hidden {
+    display: none;
+}
+
+.form-container {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-container.slide-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+.form-container.slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+
+

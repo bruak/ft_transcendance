@@ -1,52 +1,25 @@
-// Bu dosya, web sayfasındaki etkileşimli işlevsellik için JavaScript kodunu içerecektir. 
+// Bu dosya, web sayfasındaki etkileşimli işlevsellik için JavaScript kodunu içerecektir.
 // Şu anda herhangi bir işlevsellik eklenmemiştir.
-let sayac = document.getElementById("sayac");
-let arti = document.getElementById("arti");
-let eksi = document.getElementById("eksi");
-let reset = document.getElementById("reset");
-
-let sayi = 0;
-
-arti.addEventListener("click", () => {
-  sayi++;
-  sayac.textContent = sayi;
+document.getElementById('switch-to-register').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('login-form').classList.add('slide-out');
+  document.getElementById('register-form').classList.remove('hidden');
+  document.getElementById('register-form').classList.add('slide-in');
+  setTimeout(function() {
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('login-form').classList.remove('slide-out');
+  }, 500);
 });
 
-eksi.addEventListener("click", () => {
-  sayi--;
-  sayac.textContent = sayi;
+document.getElementById('switch-to-login').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('register-form').classList.add('slide-out');
+  document.getElementById('login-form').classList.remove('hidden');
+  document.getElementById('login-form').classList.add('slide-in');
+  setTimeout(function() {
+      document.getElementById('register-form').classList.add('hidden');
+      document.getElementById('register-form').classList.remove('slide-out');
+  }, 500);
 });
 
-reset.addEventListener("click", () => {
-  sayi = 0;
-  sayac.textContent = sayi;
-});
 
-
-let ekleBtn = document.getElementById("ekle");
-let yeniUrunInput = document.getElementById("yeniUrun");
-let liste = document.getElementById("liste");
-
-ekleBtn.addEventListener("click", () => {
-  let urun = yeniUrunInput.value;
-  if (urun.trim() === "") {
-    alert("Ürün adı boş olamaz!");
-    return;
-  }
-
-  let li = document.createElement("li");
-  li.textContent = urun;
-
-  let silBtn = document.createElement("button");
-  silBtn.textContent = "Sil";
-  silBtn.style.marginLeft = "10px";
-
-  silBtn.addEventListener("click", () => {
-    liste.removeChild(li);
-  });
-
-  li.appendChild(silBtn);
-  liste.appendChild(li);
-
-  yeniUrunInput.value = ""; // Input'u temizle
-});
