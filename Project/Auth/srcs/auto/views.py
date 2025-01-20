@@ -1,13 +1,14 @@
 from django.shortcuts import render
-from .models import Users, MailTokens
+from .models import Users, MailTokens, TwofactorCodes
+from .tokenService import TokenService
+from .tools import generate_random_code
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.crypto import get_random_string
 import uuid
 import requests
 from django.views.decorators.csrf import csrf_exempt
-
-
 from rest_framework.parsers import JSONParser
 from .tools import image_to_url
 
@@ -52,21 +53,21 @@ def signup(request):
 			"email": email,
 			"first_name": first_name,
 			"last_name": last_name,
-			#"source_id": user.id,
 			"avatar": avatar_url,
 		}
+
+		mail_url = f"http://127.0.0.1:8003/verify-account/{token}"
 		mail_data = {
-			"token": token,
+			"token": mail_url,
 			"username" : username,
 			"email": email,
 		}
+		# verify-account/
 		mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
 		if (mail_response.status_code != 200):
 			return JsonResponse({'message': "Mail Gönderilmedi"})
-		else:
-			return JsonResponse({'message': mail_response.text})
 
-		user_response = requests.post(f"http://project-users-1:8000/api/post/", json=user_data, headers=headers)
+		user_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
 		if user_response.status_code != 201:
 			user.delete()
 			return JsonResponse({'message': "User Service Error"})
@@ -74,7 +75,7 @@ def signup(request):
 	except Exception as e:
 		return JsonResponse({'message': "Sigup Error", 'error': str(e)})
 
-
+@csrf_exempt
 def signin(request):
 	if request.method == "POST":
 		data = JSONParser().parse(request)
@@ -86,13 +87,73 @@ def signin(request):
 				if "@" in signin
 				else Users.objects.get(username=signin)
 			)
+			if (password != user.password):
+				return (JsonResponse({'message': "User Password Error"}))
+			code = generate_random_code()
+			TwofactorCodes.objects.create(
+				user = user,
+				code = code,
+				expiration = TokenService.create_expiration_date(15)
+			)
+
+			mail_data = {
+				"email": user.email,
+				"code": code
+			}
+			headers = {"Accept-Language": "application/json"}
+			mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
+			if (mail_response.status_code != 200):
+				return JsonResponse({"message": "Mail Gönderilemedi"})
+			return (JsonResponse({"message": "Başarılı"}))
 		except Exception as e:
 			return (JsonResponse({'message': "Not Found User"}))
 
+@csrf_exempt
+def twofactor(request):
+	if request.method != "POST":
+		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
+	try:
+		data = JSONParser().parse(request)
+		username = data.get('username')
+		code = data.get('code')
+		user = Users.objects.get(username=username)
+		if not user.is_active:
+			return (JsonResponse({"message": "Hesap Doğrulanma Yapılmadı"}, status=400))
+		twofactor = TwofactorCodes.objects.get(user=user, code=code, status=True)
+		if TokenService.is_mail_token_expired(twofactor.expiration):
+			twofactor.status = False;
+			twofactor.save()
+			return (JsonResponse({'message': "Invalid code"}))
+		# Burası hem user hemde towfocter için 2 try ctach'e alınabilir
+	except Exception as e:
+		return (JsonResponse({'message': "Not  Found"}))
+
+	access_token, access_exp = TokenService.generate_access_token(user.username)
+	refresh_token, refresh_exp = TokenService.generate_refresh_token(user.username)
+
+	token = {
+		"username": user.username,
+		"access_token": {"token": access_token, "expiration_date": access_exp},
+		"refresh_token": {
+			"token": refresh_token,
+			"expiration_date": refresh_exp,
+		},
+	}
+	user.refresh_token = refresh_token
+	user.access_token = access_token
+	user.save()
+
+	twofactor.status = False
+	twofactor.save()
+	return JsonResponse({'message': token})
+
+@csrf_exempt
 def verifyAccount(request, verify_token):
+	if request.method != "POST":
+		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
 	mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
 	#Böyle bir token varmı diye bir kontrol ypa
-	if timezone.now > mail_token.expiration:
+	if timezone.now() > mail_token.expiration:
 		mail_token.status = False
 		mail_token.save()
 		new_token = str(uuid.uuid4())
