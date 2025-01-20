@@ -31,7 +31,7 @@ services:
     environment:
       - DB_HOST=user_db
       - POSTGRES_DB=users
-
+ 
 
   friend_db:
     image: postgres:13
