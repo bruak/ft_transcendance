@@ -2,7 +2,7 @@ from .models import Users
 from django.core.files.storage import default_storage
 import os, requests
 from django.core.files.base import ContentFile
-
+import random
 
 def username_check(username):
 	return Users.objects.filter(username=username).exists()

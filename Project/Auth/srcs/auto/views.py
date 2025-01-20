@@ -1,7 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from .models import Users, MailTokens, TwofactorCodes
 from .tokenService import TokenService
-from .tools import generate_random_code
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
@@ -10,7 +9,7 @@ import uuid
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .tools import image_to_url
+from .tools import image_to_url, generate_random_code, image_intra_create
 
 #Test Etmen lazım
 @csrf_exempt
@@ -35,7 +34,6 @@ def signup(request):
 			email=email,
 			password=password,
 			is_active = False,
-			#avatar = avatar_url
 		)
 
 		token = str(uuid.uuid4())
@@ -169,3 +167,67 @@ def verifyAccount(request, verify_token):
 	user.is_active = True
 	user.save()
 	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+
+def intra_login(request):
+	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
+	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
+	return redirect(auth_url)
+
+def callback(request):
+	code = request.GET.get('code')
+	if not code:
+		return JsonResponse({"error": "Authorization code not found"}, status=400)
+
+	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
+	SECRET = "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"
+	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	token_url = "https://api.intra.42.fr/oauth/token"
+	data = {
+		'grant_type': 'authorization_code',
+		'client_id': UID,
+		'client_secret': SECRET,
+		'code': code,
+		'redirect_uri': redirect_uri
+	}
+	response = requests.post(token_url, data=data)
+	if response.status_code != 200:
+		return JsonResponse({"error": "Unable to fetch access token"}, status=response.status_code)
+	token = response.json()
+	access_token = token.get('access_token')
+	if not access_token:
+		return JsonResponse({"error": "Access token not found"}, status=400)
+	# Kullanıcı bilgilerini çekmek için token'ı kullanın
+	user_info_url = "https://api.intra.42.fr/v2/me"
+	headers = {
+		'Authorization': f'Bearer {access_token}'
+	}
+	user_response = requests.get(user_info_url, headers=headers)
+	if user_response.status_code != 200:
+		return JsonResponse({"error": "Unable to fetch user data"}, status=user_response.status_code)
+	data = user_response.json()
+
+	username = data.get('login')
+	intra_access_token, access_exp = TokenService.generate_access_token(username)
+	refresh_token, refresh_exp = TokenService.generate_refresh_token(username)
+
+	Users.objects.create(
+		username = username,
+		email= data["email"],
+		is_active= True,
+		refresh_token= refresh_token,
+		access_token= intra_access_token
+	)
+
+	avatar_url =  data.get('image').get('link')
+	headers = {"Accept-Language": "application/json"}
+	user_data = {
+		"first_name" : data.get('first_name'),
+		"last_name" : data.get('last_name'),
+		"username" : data.get('login'),
+		"mail" : data.get('email'),
+		"avatar" : image_intra_create(avatar_url)
+	}
+
+	user_service_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
+	return(JsonResponse({'message': "başarılı"}))
