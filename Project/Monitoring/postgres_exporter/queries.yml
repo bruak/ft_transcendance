@@ -1,0 +1,49 @@
+# User DB Metrics
+user_db:
+  query: "SELECT * FROM pg_stat_activity WHERE datname = 'users'"
+  metrics:
+    - name: "user_db_active_connections"
+      type: gauge
+      help: "Active connections for user_db"
+      labels:
+        - datname
+
+# Friend DB Metrics
+friend_db:
+  query: "SELECT * FROM pg_stat_activity WHERE datname = 'friends'"
+  metrics:
+    - name: "friend_db_active_connections"
+      type: gauge
+      help: "Active connections for friend_db"
+      labels:
+        - datname
+
+# Mail DB Metrics
+mail_db:
+  query: "SELECT * FROM pg_stat_activity WHERE datname = 'mail'"
+  metrics:
+    - name: "mail_db_active_connections"
+      type: gauge
+      help: "Active connections for mail_db"
+      labels:
+        - datname
+
+# Auth DB Metrics
+auth_db:
+  query: "SELECT * FROM pg_stat_activity WHERE datname = 'auth'"
+  metrics:
+    - name: "auth_db_active_connections"
+      type: gauge
+      help: "Active connections for auth_db"
+      labels:
+        - datname
+
+# Game DB Metrics
+game_db:
+  query: "SELECT * FROM pg_stat_activity WHERE datname = 'game'"
+  metrics:
+    - name: "game_db_active_connections"
+      type: gauge
+      help: "Active connections for game_db"
+      labels:
+        - datname
