@@ -148,7 +148,7 @@ services:
       - 5432
     environment:
       - POSTGRES_DB=game
-
+ 
   monitoring:
     build:
       context: ./Monitoring 
