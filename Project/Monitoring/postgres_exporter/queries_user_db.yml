@@ -1,0 +1,6 @@
+queries:
+  - name: "pg_stat_activity_user_db"
+    query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
+    metrics:
+      - active_connections_user_db
+    data_source_name: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
