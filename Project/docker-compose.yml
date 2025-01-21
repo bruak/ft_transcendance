@@ -186,6 +186,24 @@ services:
       POSTGRES_DB: users
       DATA_SOURCE_NAME: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
 
+  postgres_exporter_dbs:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter_dbs
+    ports:
+      - "9188:9187"
+    networks:
+      - webnet
+    volumes:
+      - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: some_user
+      POSTGRES_PASSWORD: abc123
+      POSTGRES_HOST: user_db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: users
+
   node_exporter:
     image: prom/node-exporter
     container_name: node_exporter
