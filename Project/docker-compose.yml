@@ -120,6 +120,21 @@ services:
     environment:
       - POSTGRES_DB=auth
 
+  nginx:
+    build:
+      context: ./Nginx
+    container_name: nginx
+    networks:
+      - webnet
+    ports:
+      - 443:443
+    depends_on:
+      - users
+      - friend
+    volumes:
+      - ./Nginx/Frontend:/run/nginx/html
+
+
   # game:
   #   build:
   #     context: ./Game 
@@ -198,10 +213,7 @@ services:
   #     - webnet
   #   command: 
   #     - '--collector.hwmon'
-#database connection problem
 
-
-   
   # postgres_exporter:
   #   image: prometheuscommunity/postgres-exporter
   #   container_name: postgres_exporter
