@@ -35,3 +35,10 @@ queries:
     metrics:
       - active_connections_chat_db
     data_source_name: "postgresql://some_user:abc123@chat_db:5432/chat?sslmode=disable"
+
+  - name: "pg_stat_activity_user_db"
+    query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
+    metrics:
+      - pg_stat_activity_user_db
+    data_source_name: "postresql://some_user:abc123@user_db:5432/users?sslmode=disable"
+  
