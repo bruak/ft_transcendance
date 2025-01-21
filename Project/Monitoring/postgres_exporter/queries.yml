@@ -1,44 +1,37 @@
 # queries.yml
-
 queries:
-  - name: "pg_stat_activity_user_db"
-    query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
-    metrics:
-      - active_connections_user_db
-    data_source_name: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
-
   - name: "pg_stat_activity_friend_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_friend_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@friend_db:5432/friends?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@friend_db:5432/friends?sslmode=disable"
 
   - name: "pg_stat_activity_mail_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_mail_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@mail_db:5432/mail?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@mail_db:5432/mail?sslmode=disable"
 
   - name: "pg_stat_activity_auth_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_auth_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@auth_db:5432/auth?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@auth_db:5432/auth?sslmode=disable"
 
   - name: "pg_stat_activity_game_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_game_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@game_db:5432/game?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@game_db:5432/game?sslmode=disable"
 
   - name: "pg_stat_activity_tournament_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_tournament_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tournament_db:5432/tournament?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@tournament_db:5432/tournament?sslmode=disable"
 
   - name: "pg_stat_activity_chat_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - active_connections_chat_db
-    data_source_name: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@chat_db:5432/chat?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@chat_db:5432/chat?sslmode=disable"
