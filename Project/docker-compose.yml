@@ -1,7 +1,7 @@
 networks:
   webnet:
     driver: bridge
- 
+
 services:
   user_db:
     image: postgres:13
@@ -31,7 +31,7 @@ services:
     environment:
       - DB_HOST=user_db
       - POSTGRES_DB=users
- 
+
 
   friend_db:
     image: postgres:13
@@ -78,7 +78,7 @@ services:
     environment:
       - DB_HOST=mail_db
       - POSTGRES_DB=mail
- 
+
   mail_db:
     image: postgres:13
     container_name: mail_db
@@ -93,7 +93,7 @@ services:
 
   auth:
     build:
-      context: ./Auth 
+      context: ./Auth
     volumes:
       - ./Auth/srcs:/app
     networks:
@@ -106,8 +106,8 @@ services:
       - auth_db
     environment:
       - DB_HOST=auth_db
-      - POSTGRES_DB=auth 
- 
+      - POSTGRES_DB=auth
+
   auth_db:
     image: postgres:13
     container_name: auth_db
@@ -127,7 +127,7 @@ services:
     networks:
       - webnet
     ports:
-      - 443:443
+      - 80:80
     depends_on:
       - users
       - friend
@@ -137,7 +137,7 @@ services:
 
   # game:
   #   build:
-  #     context: ./Game 
+  #     context: ./Game
   #   volumes:
   #     - ./Game/srcs:/app
   #   networks:
@@ -151,7 +151,7 @@ services:
   #   environment:
   #     - DB_HOST=game_db
   #     - POSTGRES_DB=game
- 
+
   # game_db:
   #   image: postgres:13
   #   container_name: game_db
@@ -164,7 +164,7 @@ services:
   #   environment:
   #     - POSTGRES_DB=game
 
-# MONITORING START HERE 
+# MONITORING START HERE
 # ITS HAS TO DOIN FINE TUNE
   # prometheus:
   #   image: prom/prometheus
@@ -211,7 +211,7 @@ services:
   #     - "9100:9100"
   #   networks:
   #     - webnet
-  #   command: 
+  #   command:
   #     - '--collector.hwmon'
 
   # postgres_exporter:
@@ -231,7 +231,7 @@ services:
 
   # chat:
   #   build:
-  #     context: ./Chat 
+  #     context: ./Chat
   #   volumes:
   #     - ./Chat/srcs:/app
   #   networks:
@@ -245,7 +245,7 @@ services:
   #   environment:
   #     - DB_HOST=chat_db
   #     - POSTGRES_DB=chat
- 
+
   # chat_db:
   #   image: postgres:13
   #   container_name: chat_db
@@ -260,7 +260,7 @@ services:
 
   # tournement:
   #   build:
-  #     context: ./Tournement 
+  #     context: ./Tournement
   #   volumes:
   #     - ./Tournement/srcs:/app
   #   networks:
@@ -274,7 +274,7 @@ services:
   #   environment:
   #     - DB_HOST=tournement_db
   #     - POSTGRES_DB=tournement
- 
+
   # tournement_db:
   #   image: postgres:13
   #   container_name: tournement_db
