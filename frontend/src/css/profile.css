@@ -1,85 +1,209 @@
+/* Genel Stil */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #00041a;
+}
+
+/* Header ve Başlık Stilleri */
+h1, h2 {
+    font-family: 'Arial', sans-serif;
+    color: #4ca1af;
+    text-shadow: 1px 1px #000;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+/* Yeni Bölüm Başlıkları */
+h2, h3{
+    font-size: 2rem;
+    color: #4ca1af;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px #000;
+}
+
+h3 {
+	font-size: 1.5rem;
+	color: cadetblue;
+}
+
+/* Paragraf */
+p {
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+/* Profil Kartı */
 .card {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	max-width: 100%;
-	margin: auto;
-	text-align: center;
+    background-color: #1c1c1c;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
 }
 
-.title {
-	color: grey;
-	font-size: 18px;
+.card:hover {
+    transform: scale(1.05);
 }
 
-button {
-	border: none;
-	outline: 0;
-	display: inline-block;
-	padding: 8px;
-	color: white;
-	background-color: #000;
-	text-align: center;
-	cursor: pointer;
-	width: 100%;
-	font-size: 18px;
-}
-
-a {
-	text-decoration: none;
-	font-size: 22px;
-	color: black;
-}
-
-button:hover, a:hover {
-	opacity: 0.7;
-}
-
-/* The side navigation menu */
+/* Sidenav */
 .sidenav {
-	height: 100%; /* 100% Full-height */
-	width: 0; /* 0 width - change this with JavaScript */
-	position: fixed; /* Stay in place */
-	z-index: 1; /* Stay on top */
-	top: 0; /* Stay at the top */
-	left: 0;
-	background-color: #111; /* Black*/
-	overflow-x: hidden; /* Disable horizontal scroll */
-	padding-top: 60px; /* Place content 60px from the top */
-	transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
 }
 
-/* The navigation menu links */
 .sidenav a {
-	padding: 8px 8px 8px 32px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+}
+
+/* Menü İkonu */
+.menu-icon {
+    font-size: 30px;
+    cursor: pointer;
+    margin: 10px;
+    color: #4ca1af;
+}
+
+/* Footer */
+footer {
+    background-color: #1a1a2e;
+    color: #ddd;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Portföy Görselleri */
+img {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+img:hover {
+    transform: scale(1.05);
+}
+
+/* Listeler */
+.list-group-item {
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* The Overlay (background) */
+.overlay {
+	height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	background-color: rgba(0,0,0, 0.9);
+	overflow-x: hidden;
+	transition: 0.5s;
+}
+
+/* Position the content inside the overlay */
+.overlay-content {
+	position: relative;
+	top: 25%;
+	width: 100%;
+	text-align: center;
+	margin-top: 30px;
+}
+
+/* The navigation links inside the overlay */
+.overlay a {
+	padding: 8px;
 	text-decoration: none;
-	font-size: 25px;
+	font-size: 36px;
 	color: #818181;
 	display: block;
 	transition: 0.3s;
 }
 
 /* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
+.overlay a:hover, .overlay a:focus {
 	color: #f1f1f1;
 }
 
-/* Position and style the close button (top right corner) */
-.sidenav .closebtn {
+/* Position the close button (top right corner) */
+.overlay .closebtn {
 	position: absolute;
-	top: 0;
-	right: 25px;
-	font-size: 36px;
-	margin-left: 50px;
+	top: 20px;
+	right: 45px;
+	font-size: 60px;
 }
 
-/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-#main {
-	transition: margin-left .5s;
-	padding: 20px;
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
 @media screen and (max-height: 450px) {
-	.sidenav {padding-top: 15px;}
-	.sidenav a {font-size: 18px;}
+	.overlay a {font-size: 20px}
+	.overlay .closebtn {
+		font-size: 40px;
+		top: 15px;
+		right: 35px;
+	}
 }
 
+/* Carousel */
+.carousel-item img {
+    height: 400px;
+    object-fit: cover;
+}
+
+/* Modal */
+.modal-content {
+	background-color: #1c1c1c;
+	color: #ddd;
+	border: 1px solid #1a1a2e;
+}
+
+.modal-header, .modal-footer {
+	border-bottom: 1px solid #1a1a2e;
+}
+
+.modal-header .btn-close {
+	filter: invert(1);
+}
+
+/* .btn-primary {
+	background-color: #062d32;
+	border: none;
+}
+
+.btn-primary:hover {
+	background-color: #4ca1af;
+} */
+
+.form-control {
+	background-color: #e3e0e0;
+
+}
