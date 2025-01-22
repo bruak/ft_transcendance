@@ -132,7 +132,7 @@ services:
       - users
       - friend
     volumes:
-      - ./Nginx/Frontend:/run/nginx/html
+      - ./Frontend:/run/nginx/html
 
 
   # game:
