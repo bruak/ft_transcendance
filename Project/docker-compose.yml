@@ -1,7 +1,10 @@
 networks:
   webnet:
     driver: bridge
- 
+
+volumes:
+  static_user:
+
 services:
   user_db:
     image: postgres:13
@@ -31,7 +34,7 @@ services:
     environment:
       - DB_HOST=user_db
       - POSTGRES_DB=users
- 
+
 
   friend_db:
     image: postgres:13
@@ -78,7 +81,7 @@ services:
     environment:
       - DB_HOST=mail_db
       - POSTGRES_DB=mail
- 
+
   mail_db:
     image: postgres:13
     container_name: mail_db
@@ -93,7 +96,7 @@ services:
 
   auth:
     build:
-      context: ./Auth 
+      context: ./Auth
     volumes:
       - ./Auth/srcs:/app
     networks:
@@ -106,8 +109,8 @@ services:
       - auth_db
     environment:
       - DB_HOST=auth_db
-      - POSTGRES_DB=auth 
- 
+      - POSTGRES_DB=auth
+
   auth_db:
     image: postgres:13
     container_name: auth_db
@@ -120,103 +123,72 @@ services:
     environment:
       - POSTGRES_DB=auth
 
-  # game:
-  #   build:
-  #     context: ./Game 
-  #   volumes:
-  #     - ./Game/srcs:/app
-  #   networks:
-  #     - webnet
+  nginx:
+    build:
+      context: ./Nginx
+    container_name: nginx
+    networks:
+      - webnet
+    ports:
+      - 443:443
+    volumes:
+      - ./Frontend:/run/nginx/html
+      - ./Django/srcs/staticfiles:/run/nginx/html/static_user
+      - ./Friend/srcs/staticfiles:/run/nginx/html/static_friend
+      - ./Mail/srcs/staticfiles:/run/nginx/html/static_mail
+      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
+
+
+# MONITORING START HERE
+# ITS HAS TO DOIN FINE TUNE
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
   #   ports:
-  #     - "8005:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - game_db
-  #   environment:
-  #     - DB_HOST=game_db
-  #     - POSTGRES_DB=game
- 
-  # game_db:
-  #   image: postgres:13
-  #   container_name: game_db
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./Monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - webnet
+
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
   #   env_file:
   #     - .env
   #   networks:
   #     - webnet
-  #   expose:
-  #     - 5432
+
+  # postgres_exporter_dbs:
+  #   image: prometheuscommunity/postgres-exporter
+  #   container_name: postgres_exporter_dbs
+  #   ports:
+  #     - "9188:9187"
+  #   networks:
+  #     - webnet
+  #   volumes:
+  #     - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
+  #   env_file:
+  #     - .env
   #   environment:
-  #     - POSTGRES_DB=game
+  #     POSTGRES_USER: some_user
+  #     POSTGRES_PASSWORD: abc123
+  #     POSTGRES_HOST: user_db
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_DB: users
 
-# MONITORING START HERE 
+  # node_exporter:
+  #   image: prom/node-exporter
+  #   container_name: node_exporter
+  #   ports:
+  #     - "9100:9100"
+  #   networks:
+  #     - webnet
+  #   command:
+  #     - '--collector.hwmon'
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./Monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - webnet
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    networks:
-      - webnet
-  
-  postgres_exporter_user_db:
-    image: prometheuscommunity/postgres-exporter
-    container_name: postgres_exporter_user_db
-    ports:
-      - "9187:9187"
-    networks:
-      - webnet
-    environment:
-      POSTGRES_USER: some_user
-      POSTGRES_PASSWORD: abc123
-      POSTGRES_HOST: user_db
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: users
-      DATA_SOURCE_NAME: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
-
-  postgres_exporter_dbs:
-    image: prometheuscommunity/postgres-exporter
-    container_name: postgres_exporter_dbs
-    ports:
-      - "9188:9187"
-    networks:
-      - webnet
-    volumes:
-      - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: some_user
-      POSTGRES_PASSWORD: abc123
-      POSTGRES_HOST: user_db
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: users
-
-  node_exporter:
-    image: prom/node-exporter
-    container_name: node_exporter
-    ports:
-      - "9100:9100"
-    networks:
-      - webnet
-    command: 
-      - '--collector.hwmon'
-#database connection problem
-
-
-   
   # postgres_exporter:
   #   image: prometheuscommunity/postgres-exporter
   #   container_name: postgres_exporter
@@ -231,61 +203,3 @@ services:
   #     - .env
 
 # MONITORING END HERE
-
-  # chat:
-  #   build:
-  #     context: ./Chat 
-  #   volumes:
-  #     - ./Chat/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8006:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - chat_db
-  #   environment:
-  #     - DB_HOST=chat_db
-  #     - POSTGRES_DB=chat
- 
-  # chat_db:
-  #   image: postgres:13
-  #   container_name: chat_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-  #   environment:
-  #     - POSTGRES_DB=chat
-
-  # tournement:
-  #   build:
-  #     context: ./Tournement 
-  #   volumes:
-  #     - ./Tournement/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8004:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - tournement_db
-  #   environment:
-  #     - DB_HOST=tournement_db
-  #     - POSTGRES_DB=tournement
- 
-  # tournement_db:
-  #   image: postgres:13
-  #   container_name: tournement_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-  #   environment:
-  #     - POSTGRES_DB=tournement
