@@ -53,8 +53,20 @@ def main():
     else:
         print("Süper kullanıcı zaten mevcut.")
 
-    sys.argv = ["manage.py", "runserver", "0.0.0.0:8000"]
-    execute_from_command_line(sys.argv)
+     # Son adım: DAPHNE ile server'ı başlatıyoruz
+    host = os.environ.get("APP_HOST", "0.0.0.0")
+    port = os.environ.get("APP_PORT", "8000")
+
+    # Projenizdeki asgi uygulamasının yolunu yazın:
+    asgi_app_path = "auto_service.asgi:application"
+
+    # daphne'yi çalıştır
+    cmd = f"daphne -b {host} -p {port} {asgi_app_path}"
+    print(f"Sunucu başlatılıyor: {cmd}")
+    os.system(cmd)
+
+    # sys.argv = ["manage.py", "runserver", "0.0.0.0:8000"]
+    # execute_from_command_line(sys.argv)
 
 if __name__ == "__main__":
     main()
