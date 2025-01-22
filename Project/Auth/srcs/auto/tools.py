@@ -2,7 +2,7 @@ from .models import Users
 from django.core.files.storage import default_storage
 import os, requests
 from django.core.files.base import ContentFile
-
+import random
 
 def username_check(username):
 	return Users.objects.filter(username=username).exists()
@@ -34,3 +34,6 @@ def image_intra_create(avatar_url):
 	# Kaydedilen dosyanın URL'sini al
 	avatar_url = default_storage.url(file_path)
 	return avatar_url
+
+def generate_random_code():
+	return "".join([str(random.randint(0, 9)) for _ in range(4)])

@@ -83,7 +83,7 @@ fi
     sed -i '/DATABASES = {/,/}/c\'"$NEW_CONTENT" $SETTINGS
     sed -i '14i\import os' $SETTINGS
     sed "41i $(printf '%s' "${APP}")" "$SETTINGS" > temp && mv temp "$SETTINGS"
-    echo -e "Django>=3.2,<4.0\npsycopg2-binary>=2.8" > ${SERVICE_DIR}/requirements.txt
+    echo -e "Django>=3.2,<4.0\npsycopg2-binary>=2.8\ndaphne==4.0.0" > ${SERVICE_DIR}/requirements.txt
     echo "Yeni Django projesi $LOWSERVICE oluşturuldu. Port: $FREE_PORT"
 else
     echo "Hata: Gerekli dosya ve dizinler mevcut değil."
