@@ -2,6 +2,9 @@ networks:
   webnet:
     driver: bridge
 
+volumes:
+  static_user:
+
 services:
   user_db:
     image: postgres:13
@@ -130,6 +133,10 @@ services:
       - 443:443
     volumes:
       - ./Frontend:/run/nginx/html
+      - ./Django/srcs/staticfiles:/run/nginx/html/static_user
+      - ./Friend/srcs/staticfiles:/run/nginx/html/static_friend
+      - ./Mail/srcs/staticfiles:/run/nginx/html/static_mail
+      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
 
 
 # MONITORING START HERE
