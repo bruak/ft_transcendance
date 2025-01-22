@@ -127,42 +127,10 @@ services:
     networks:
       - webnet
     ports:
-      - 80:80
-    depends_on:
-      - users
-      - friend
+      - 443:443
     volumes:
       - ./Frontend:/run/nginx/html
 
-
-  # game:
-  #   build:
-  #     context: ./Game
-  #   volumes:
-  #     - ./Game/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8005:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - game_db
-  #   environment:
-  #     - DB_HOST=game_db
-  #     - POSTGRES_DB=game
-
-  # game_db:
-  #   image: postgres:13
-  #   container_name: game_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-  #   environment:
-  #     - POSTGRES_DB=game
 
 # MONITORING START HERE
 # ITS HAS TO DOIN FINE TUNE
@@ -228,61 +196,3 @@ services:
   #     - .env
 
 # MONITORING END HERE
-
-  # chat:
-  #   build:
-  #     context: ./Chat
-  #   volumes:
-  #     - ./Chat/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8006:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - chat_db
-  #   environment:
-  #     - DB_HOST=chat_db
-  #     - POSTGRES_DB=chat
-
-  # chat_db:
-  #   image: postgres:13
-  #   container_name: chat_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-  #   environment:
-  #     - POSTGRES_DB=chat
-
-  # tournement:
-  #   build:
-  #     context: ./Tournement
-  #   volumes:
-  #     - ./Tournement/srcs:/app
-  #   networks:
-  #     - webnet
-  #   ports:
-  #     - "8004:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - tournement_db
-  #   environment:
-  #     - DB_HOST=tournement_db
-  #     - POSTGRES_DB=tournement
-
-  # tournement_db:
-  #   image: postgres:13
-  #   container_name: tournement_db
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-  #   expose:
-  #     - 5432
-  #   environment:
-  #     - POSTGRES_DB=tournement
