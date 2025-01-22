@@ -1,14 +1,14 @@
 #!/bin/sh
-mkdir -p /etc/ssl/certs /etc/ssl/certs
+mkdir -p /etc/ssl/private
 
-if [ -f "/etc/ssl/private/nginx.key" ] && [ -f "/etc/ssl/certs/ngnix.crt" ]; then
+if [ -f "/etc/ssl/private/nginx.key" ] && [ -f "/etc/ssl/private/ngnix.crt" ]; then
     echo "SSL sertificate is already created!"
     exec "$@"
 fi
 
 openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
     -keyout /etc/ssl/private/nginx.key \
-    -out /etc/ssl/certs/ngnix.crt \
+    -out /etc/ssl/private/ngnix.crt \
     -subj "/C=TR/ST=Istanbul/L=Istanbul/O=Development/OU=IT/CN=localhost"
 
 echo "SSL sertificate is created!"
