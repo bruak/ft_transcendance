@@ -92,7 +92,7 @@ def singin(request):
 			try:
 				twouser = TwofactorCodes.objects.get(user=user, status=True)
 			except Exception as e:
-				return JsonResponse('error', "Daha Önce Kod Gönderildi", 200)
+				return JsonResponse({'error': "Daha Önce Kod Gönderildi"}, status= 200)
 
 			TwofactorCodes.objects.create(
 				user = user,
