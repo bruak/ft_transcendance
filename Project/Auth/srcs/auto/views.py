@@ -9,7 +9,7 @@ import uuid
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate
+from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
 
 #Test Etmen lazım
 @csrf_exempt
@@ -24,8 +24,8 @@ def singup(request):
 		password = request.POST.get('password')
 		avatar_file = request.FILES.get('avatar', None)
 		avatar_url = image_to_url(avatar_file, username)
-		#if username_check(username):
-		#	return JsonResponse({'message': "bu username var"})
+		if username_check(username):
+			return JsonResponse({'message': "bu username var"})
 		if Users.objects.filter(email=email).exists():
 			return JsonResponse({'message': "Mail Zaten Var"})
 
@@ -35,7 +35,6 @@ def singup(request):
 			password=password,
 			is_active = False,
 		)
-
 		token = str(uuid.uuid4())
 
 		MailTokens.objects.create(
@@ -60,7 +59,6 @@ def singup(request):
 			"username" : username,
 			"email": email,
 		}
-		# verify-account/
 		mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
 		if (mail_response.status_code != 200):
 			return JsonResponse({'message': "Mail Gönderilmedi"})
@@ -88,7 +86,6 @@ def singin(request):
 			if (password != user.password):
 				return JsonResponse({'message': "User Password Error"}, status=401)  # Unauthorized
 			code = generate_random_code()
-
 			try:
 				twouser = TwofactorCodes.objects.get(user=user, status=True)
 			except Exception as e:
@@ -127,7 +124,6 @@ def twofactor(request):
 			twofactor.status = False;
 			twofactor.save()
 			return (JsonResponse({'message': "Invalid code"}))
-		# Burası hem user hemde towfocter için 2 try ctach'e alınabilir
 	except Exception as e:
 		return (JsonResponse({'message': "Not  Found"}))
 
@@ -173,8 +169,8 @@ def verifyAccount(request, verify_token):
 	user.save()
 	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
 
-
 #Test Edilcek
+@csrf_exempt
 def singout(request):
 	if request.method != "GET":
 		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)
@@ -190,8 +186,9 @@ def singout(request):
 		user.save()
 		return JsonResponse({'message': "Helal lan sana maymun cıktın"})
 	except Exception as e:
-		return (JsonResponse("Çıkış Hatalı"))
+		return (JsonResponse({'message': "Çıkış Hatalı"}))
 
+#test edilcek
 def validate_token(request):
 	if request.method != "GET":
 		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)
@@ -277,6 +274,11 @@ def callback(request):
 	username = data.get('login')
 	intra_access_token, access_exp = TokenService.generate_access_token(username)
 	refresh_token, refresh_exp = TokenService.generate_refresh_token(username)
+
+	if username_check(username):
+		return JsonResponse({'message': "bu username var"})
+	if Users.objects.filter(email=data.get('email')).exists():
+		return JsonResponse({'message': "Mail Zaten Var"})
 
 	Users.objects.create(
 		username = username,
