@@ -86,25 +86,30 @@ def singin(request):
 				else Users.objects.get(username=singin)
 			)
 			if (password != user.password):
-				return (JsonResponse({'message': "User Password Error"}))
+				return JsonResponse({'message': "User Password Error"}, status=401)  # Unauthorized
 			code = generate_random_code()
-			TwofactorCodes.objects.create(
-				user = user,
-				code = code,
-				expiration = TokenService.create_expiration_date(15)
-			)
 
-			mail_data = {
-				"email": user.email,
-				"code": code
-			}
-			headers = {"Accept-Language": "application/json"}
-			mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
-			if (mail_response.status_code != 200):
-				return JsonResponse({"message": "Mail Gönderilemedi"})
+			try:
+				twouser = TwofactorCodes.objects.get(user=user, status=True)
+			except Exception as e:
+				TwofactorCodes.objects.create(
+					user = user,
+					code = code,
+					expiration = TokenService.create_expiration_date(15),
+				)
+				mail_data = {
+					"email": user.email,
+					"code": code
+				}
+				headers = {"Accept-Language": "application/json"}
+				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
+				if (mail_response.status_code != 200):
+					return JsonResponse({"message": "Mail Gönderilemedi"})
 			return (JsonResponse({"message": "Başarılı"}))
 		except Exception as e:
 			return (JsonResponse({'message': "Not Found User"}, status=404))
+	else:
+		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
 
 @csrf_exempt
 def twofactor(request):
@@ -204,7 +209,8 @@ def validate_token(request):
 	return JsonResponse({'valid': True})
 
 # Test Edilcek
-def refresh_token(request):
+@csrf_exempt
+def retry_verification_account(request):
 	if request.method == "POST":
 		return JsonResponse({'error': "Not Post"})
 	try:
