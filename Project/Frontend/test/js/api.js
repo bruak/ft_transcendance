@@ -1,5 +1,28 @@
 document.getElementById('login-form').addEventListener('submit', handleFormSubmit);
+document.getElementById('2').addEventListener('click', auth_42);
 
+async function auth_42() {
+	event.preventDefault();
+	const response = await fetch('http://localhost:8003/intra/', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	console.log(response);
+	if (!response.ok) {
+		throw new Error('Authentication failed');
+	}
+
+	const data = await response.json();
+	alert(data.message);
+	console.log('Authentication successful:', data);
+
+	// Handle successful response (e.g., redirect to the protected resource)
+	if(response.ok) {
+		window.location.href = "http://localhost:8003/intra/";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+	}
+}
 
 async function handleFormSubmit(event) {
 	event.preventDefault();
@@ -22,7 +45,8 @@ async function handleFormSubmit(event) {
 
 	  // Yanıtı JSON formatında al
 	  const data = await response.json();
-	  alert(response.status);
+	  
+	  alert(response.message, response.status);
 	  // Başarılı giriş sonrası yapılacak işlemler (örneğin, kullanıcıyı yönlendirme veya token saklama)
 	  console.log("Giriş başarılı:", data);
 
@@ -40,3 +64,4 @@ async function handleFormSubmit(event) {
 	  alert(error.message);
 	}
   }
+
