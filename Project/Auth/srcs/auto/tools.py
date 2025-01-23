@@ -8,18 +8,18 @@ def username_check(username):
 	return Users.objects.filter(username=username).exists()
 
 def image_to_url(avatar, username):
-    if avatar:
-        # Dosya uzantısını korumak için uzantıyı alıyoruz
-        file_extension = os.path.splitext(avatar.name)[1]  # Örneğin: '.jpg', '.png'
-        # Kullanıcı adını dosya adı olarak ayarlıyoruz
-        new_filename = f"{username}{file_extension}"
-        # Yeni dosya adını belirterek kaydediyoruz
-        avatar.name = new_filename
-        avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
-        avatar_url = default_storage.url(avatar_url)
-    else:
-        avatar_url = None
-    return avatar_url
+	if avatar:
+		# Dosya uzantısını korumak için uzantıyı alıyoruz
+		file_extension = os.path.splitext(avatar.name)[1]  # Örneğin: '.jpg', '.png'
+		# Kullanıcı adını dosya adı olarak ayarlıyoruz
+		new_filename = f"{username}{file_extension}"
+		# Yeni dosya adını belirterek kaydediyoruz
+		avatar.name = new_filename
+		avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
+		avatar_url = default_storage.url(avatar_url)
+	else:
+		avatar_url = None
+	return avatar_url
 
 def image_intra_create(avatar_url):
 	response = requests.get(avatar_url)
@@ -37,3 +37,10 @@ def image_intra_create(avatar_url):
 
 def generate_random_code():
 	return "".join([str(random.randint(0, 9)) for _ in range(4)])
+
+def access_token_validate(header):
+	if (header.startswith("Bearer ")):
+		access_token = header.split(" ", 1)[1]
+		return access_token
+	else:
+		return None
