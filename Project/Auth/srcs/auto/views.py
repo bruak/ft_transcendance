@@ -88,6 +88,12 @@ def singin(request):
 			if (password != user.password):
 				return (JsonResponse({'message': "User Password Error"}))
 			code = generate_random_code()
+
+			try:
+				twouser = TwofactorCodes.objects.get(user=user, status=True)
+			except Exception as e:
+				return JsonResponse('error', "Daha Önce Kod Gönderildi", 200)
+
 			TwofactorCodes.objects.create(
 				user = user,
 				code = code,
@@ -98,6 +104,7 @@ def singin(request):
 				"email": user.email,
 				"code": code
 			}
+
 			headers = {"Accept-Language": "application/json"}
 			mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 			if (mail_response.status_code != 200):
@@ -204,7 +211,8 @@ def validate_token(request):
 	return JsonResponse({'valid': True})
 
 # Test Edilcek
-def refresh_token(request):
+@csrf_exempt
+def retry_verification_account(request):
 	if request.method == "POST":
 		return JsonResponse({'error': "Not Post"})
 	try:
