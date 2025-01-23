@@ -9,7 +9,7 @@ import uuid
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .tools import image_to_url, generate_random_code, image_intra_create
+from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate
 
 #Test Etmen lazım
 @csrf_exempt
@@ -104,7 +104,7 @@ def signin(request):
 				return JsonResponse({"message": "Mail Gönderilemedi"})
 			return (JsonResponse({"message": "Başarılı"}))
 		except Exception as e:
-			return (JsonResponse({'message': "Not Found User"}))
+			return (JsonResponse({'message': "Not Found User"}), status=404)
 
 @csrf_exempt
 def twofactor(request):
@@ -167,6 +167,67 @@ def verifyAccount(request, verify_token):
 	user.is_active = True
 	user.save()
 	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+
+
+#Test Edilcek
+def singout(request):
+	if request.method != "GET":
+		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)
+	try:
+		header = request.headers.get("Authorization")
+		if header.startswith("Bearer "):
+			access_token = header.split(" ", 1)[1]
+		else:
+			return JsonResponse({'error': "Invalid Token Error"})
+		user = Users.objects.get(access_token=access_token)
+		user.refresh_token = None
+		user.access_token = None
+		user.save()
+		return JsonResponse({'message': "Helal lan sana maymun cıktın"})
+	except Exception as e:
+		return (JsonResponse("Çıkış Hatalı"))
+
+def validate_token(request):
+	if request.method != "GET":
+		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)
+	access_token = access_token_validate(request.headers.get("Authorization"))
+	if access_token is None:
+		return JsonResponse({'error': "Invalid Token Error"})
+	username = TokenService.validate_access_token(access_token)
+
+	try:
+		user = Users.objects.get(username=username)
+	except:
+		return JsonResponse({'error': "Not Found User"})
+	if user.access_token != access_token:
+		return JsonResponse({'error': "Invalid Token Error"})
+	return JsonResponse({'valid': True})
+
+# Test Edilcek
+def refresh_token(request):
+	if request.method == "POST"
+		return JsonResponse({'error': "Not Post"})
+	try:
+		data = JSONParser().parse(request)
+		email = data.get('email')
+		user = Users.objects.get(email=email)
+		mail_token = MailTokens.objects.get(user=user, type="verify", status=True)
+		if (TokenService.is_mail_token_expired(mail_token.expiration)):
+			mail_token.status = False
+			mail_token.save()
+
+			new_token = str(uuid.uuid4())
+			MailTokens.objects.create(
+				user = user,
+				token = new_token,
+				type="verify",
+				expiration= TokenService.create_expiration_date(60*24),
+			)
+
+			return JsonResponse({'message': "Token süresi doldu. Yeni token e-postanıza gönderildi"})
+
+	except Exception as e:
+		return JsonResponse({'error': "Invalıd Token"})
 
 def intra_login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
@@ -231,3 +292,7 @@ def callback(request):
 
 	user_service_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
 	return(JsonResponse({'message': "başarılı"}))
+
+
+
+
