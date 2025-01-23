@@ -13,7 +13,7 @@ from .tools import image_to_url, generate_random_code, image_intra_create, acces
 
 #Test Etmen lazım
 @csrf_exempt
-def signup(request):
+def singup(request):
 	if request.method != "POST":
 		return JsonResponse({"error": "Only POST method is allowed."}, status=405)
 	try:
@@ -74,16 +74,16 @@ def signup(request):
 		return JsonResponse({'message': "Sigup Error", 'error': str(e)})
 
 @csrf_exempt
-def signin(request):
+def singin(request):
 	if request.method == "POST":
 		data = JSONParser().parse(request)
-		signin = data.get("sign")
+		singin = data.get("sign")
 		password = data.get("password")
 		try:
 			user = (
-				Users.objects.get(email=signin)
-				if "@" in signin
-				else Users.objects.get(username=signin)
+				Users.objects.get(email=singin)
+				if "@" in singin
+				else Users.objects.get(username=singin)
 			)
 			if (password != user.password):
 				return (JsonResponse({'message': "User Password Error"}))
@@ -104,7 +104,7 @@ def signin(request):
 				return JsonResponse({"message": "Mail Gönderilemedi"})
 			return (JsonResponse({"message": "Başarılı"}))
 		except Exception as e:
-			return (JsonResponse({'message': "Not Found User"}), status=404)
+			return (JsonResponse({'message': "Not Found User"}, status=404))
 
 @csrf_exempt
 def twofactor(request):
@@ -205,7 +205,7 @@ def validate_token(request):
 
 # Test Edilcek
 def refresh_token(request):
-	if request.method == "POST"
+	if request.method == "POST":
 		return JsonResponse({'error': "Not Post"})
 	try:
 		data = JSONParser().parse(request)
