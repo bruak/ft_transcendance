@@ -20,6 +20,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/auth'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-8hw$i%p!c!dp=dmt2(-!y3$5k05ff@7c^t8@g5=%=^8=u1gb!p'
 
