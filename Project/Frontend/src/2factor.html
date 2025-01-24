@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Onay Bekleniyor</title>
+	<!-- Bootstrap CSS bağlantısı -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Özel CSS bağlantısı -->
+    <link rel="stylesheet" href="css/2factor.css">
+</head>
+<body>
+	<section style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" class="container">
+		<article id="onay-formu">
+			<h1 class="text-center">Onay Kodunu Gir</h1>
+			<form id="onay-form" method="POST">
+				<div class="mb-3">
+					<fieldset class="p-get_started_confirmation_code__input_fieldset">
+						<legend class="offscreen"></legend>
+						<div class="display_flex align_items_center margin_bottom_50" data-qa="confirmation_code_input" data-state="">
+						  <div class="split_input_item">
+							  <input id="digit-1" type="text" maxlength="1" aria-label="digit 1 of 6" aria-disabled="false" aria-invalid="false" value="">
+						  </div>
+						  <div class="split_input_item">
+							  <input id="digit-2" type="text" maxlength="1" aria-label="digit 2 of 6" aria-disabled="false" aria-invalid="false" value="">
+						  </div>
+						  <div class="split_input_item">
+							  <input id="digit-3" type="text" maxlength="1" aria-label="digit 3 of 6" aria-disabled="false" aria-invalid="false" value="">
+						  </div>
+						  <div class="split_input_item">
+							  <input id="digit-4" type="text" maxlength="1" aria-label="digit 4 of 6" aria-disabled="false" aria-invalid="false" value="">
+						  </div>
+						</div>
+					  </fieldset>
+				</div>
+				<p id="error-message" style="display: none;">Geçersiz onay kodu. Lütfen tekrar deneyin.</p>
+				<button type="submit" class="btn btn-primary">Onayla</button>
+			</form>
+		</article>
+		<article id="onay-mesaji" style="display: none;">
+			<h1 class="text-center">E-postanız Onaylandı..</h1>
+			<a style="text-decoration: none;" class="btn btn-primary text-center d-block mt-3" href="index.html">Giriş Yapabilirsiniz</a>
+		</article>
+	</section>
+	<script>
+		document.getElementById('onay-form').addEventListener('submit', function(event) {
+			event.preventDefault();
+			const onayKodu = [
+				document.getElementById('digit-1').value,
+				document.getElementById('digit-2').value,
+				document.getElementById('digit-3').value,
+				document.getElementById('digit-4').value,
+			].join('');
+			if (onayKodu === '1234') { // Doğru onay kodu
+				document.getElementById('onay-formu').style.display = 'none';
+				document.getElementById('onay-mesaji').style.display = 'block';
+			} else {
+				document.getElementById('error-message').style.display = 'flex';
+			}
+		});
+
+		const inputs = document.querySelectorAll('.split_input_item input');
+		inputs.forEach((input, index) => {
+			input.addEventListener('input', () => {
+				if (input.value.length === 1 && index < inputs.length - 1) {
+					inputs[index + 1].focus();
+					}
+			});
+			input.addEventListener('keydown', (event) => {
+				if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
+					inputs[index - 1].focus();
+				}
+			});
+		});
+	</script>
+</body>
+</html>

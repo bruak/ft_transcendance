@@ -1,0 +1,127 @@
+/* Form stili */
+form {
+    background-color: rgba(34, 34, 34, 0.9); /* Form arka plan rengi */
+    padding: 30px; /* Form iç boşluk */
+    border-radius: 15px; /* Form köşe yuvarlama */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Form gölge */
+    width: 100%; /* Form genişliği */
+    margin: auto; /* Form ortalama */
+    max-width: 400px; /* Form maksimum genişliği */
+    position: absolute; /* Form pozisyonu */
+    top: 50%; /* Form üstten uzaklık */
+    left: 50%; /* Form soldan uzaklık */
+    transform: translate(-50%, -50%); /* Form merkezleme */
+    text-align: center; /* Form içeriği hizalama */
+}
+
+/* Form başlık stili */
+form h1 {
+    text-align: center; /* Başlık hizalama */
+    margin-bottom: 25px; /* Başlık alt boşluk */
+    color: #ededed; /* Başlık rengi */
+}
+
+/* Form içeriği stili */
+form article {
+    margin-bottom: 20px; /* İçerik alt boşluk */
+}
+
+/* Form etiket stili */
+form label {
+    display: block; /* Etiket blok görüntüleme */
+    margin-bottom: 8px; /* Etiket alt boşluk */
+    font-weight: bold; /* Etiket kalın yazı */
+    color: #ccc; /* Etiket rengi */
+}
+
+/* Form girdi stili */
+form input {
+    width: 100%; /* Girdi genişliği */
+    padding: 12px; /* Girdi iç boşluk */
+    border: 1px solid #555; /* Girdi kenarlık */
+    border-radius: 8px; /* Girdi köşe yuvarlama */
+    box-sizing: border-box; /* Girdi kutu modeli */
+    background-color: #222; /* Girdi arka plan rengi */
+    color: #fff; /* Girdi metin rengi */
+}
+
+/* Form buton stili */
+form button {
+    width: 100%; /* Buton genişliği */
+    padding: 12px; /* Buton iç boşluk */
+    background-color: #00041a; /* Buton arka plan rengi */
+    color: white; /* Buton metin rengi */
+    border: none; /* Buton kenarlık */
+    border-radius: 8px; /* Buton köşe yuvarlama */
+    cursor: pointer; /* Buton imleç */
+    font-size: 16px; /* Buton yazı boyutu */
+}
+
+/* Form buton hover stili */
+form button:hover {
+    background-color: #032a55; /* Buton hover arka plan rengi */
+}
+
+/* Sosyal buton stili */
+.social-btn {
+    background-color: #474d54; /* Sosyal buton arka plan rengi */
+    color: white; /* Sosyal buton metin rengi */
+    border: none; /* Sosyal buton kenarlık */
+    border-radius: 8px; /* Sosyal buton köşe yuvarlama */
+    padding: 12px; /* Sosyal buton iç boşluk */
+    cursor: pointer; /* Sosyal buton imleç */
+    font-size: 16px; /* Sosyal buton yazı boyutu */
+}
+
+/* Sosyal buton ikon stili */
+.social-btn-icon {
+    margin-right: 5px; /* Sosyal buton ikon sağ boşluk */
+}
+
+/* Sosyal buton hover stili */
+.social-btn:hover {
+    background-color: #5a6470; /* Sosyal buton hover arka plan rengi */
+}
+
+/* Gizli form stili */
+.hidden {
+    display: none; /* Gizli form görüntüleme */
+}
+
+/* Form konteyner stili */
+.form-container {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Form geçiş animasyonu */
+    position: absolute; /* Form pozisyonu */
+    top: 50%; /* Form üstten uzaklık */
+    left: 50%; /* Form soldan uzaklık */
+    transform: translate(-50%, -50%); /* Form merkezleme */
+}
+
+/* Form kaydırma animasyonu */
+.form-container.slide-in {
+    transform: translate(-50%, -50%); /* Form kaydırma animasyonu */
+    opacity: 1; /* Form opaklık */
+}
+
+.form-container.slide-out {
+    transform: translateX(-100%); /* Form kaydırma animasyonu */
+    opacity: 0; /* Form opaklık */
+}
+
+/* Bölücü çizgi stili */
+.divider-wrapper {
+    display: flex; /* Bölücü çizgi görüntüleme */
+    align-items: center; /* Bölücü çizgi hizalama */
+    margin: 20px 20px 20px 20px; /* Bölücü çizgi boşluk */
+    color: #ccc; /* Bölücü çizgi rengi */
+}
+
+.divider-wrapper::before,
+.divider-wrapper::after {
+    content: ''; /* Bölücü çizgi içeriği */
+    flex-grow: 1; /* Bölücü çizgi genişleme */
+    height: 1px; /* Bölücü çizgi yüksekliği */
+    background-color: #ccc; /* Bölücü çizgi arka plan rengi */
+    margin: 0 10px; /* Bölücü çizgi boşluk */
+}
+
