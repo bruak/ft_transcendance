@@ -240,3 +240,32 @@ services:
       - webnet
     expose:
       - "6379"
+
+  gateway:
+    build:
+      context: ./Gateway 
+    volumes:
+      - ./Gateway/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8005:8000"
+    env_file:
+      - .env
+    depends_on:
+      - gateway_db
+    environment:
+      - DB_HOST=gateway_db
+      - POSTGRES_DB=gateway
+ 
+  gateway_db:
+    image: postgres:13
+    container_name: gateway_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=gateway
