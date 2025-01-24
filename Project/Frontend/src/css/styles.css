@@ -1,0 +1,422 @@
+
+/* Genel Stil */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #00041a;
+}
+
+/* Profile Sayfası Stilleri */
+.profile-page h1, .profile-page h2 {
+    font-family: 'Arial', sans-serif;
+    color: #4ca1af;
+    text-shadow: 1px 1px #000;
+}
+
+.profile-page h1 {
+    font-size: 2.5rem;
+}
+
+.profile-page h2, .profile-page h3 {
+    font-size: 2rem;
+    color: #4ca1af;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px #000;
+}
+
+.profile-page h3 {
+    font-size: 1.5rem;
+    color: cadetblue;
+}
+
+.profile-page p {
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+.profile-page .card {
+    background-color: #1c1c1c;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+.profile-page .card:hover {
+    transform: scale(1.05);
+}
+
+.profile-page .sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.profile-page .sidenav a {
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.profile-page .sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.profile-page .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+}
+
+.profile-page .menu-icon {
+    font-size: 30px;
+    cursor: pointer;
+    margin: 10px;
+    color: #4ca1af;
+}
+
+.profile-page footer {
+    background-color: #1a1a2e;
+    color: #ddd;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.profile-page img {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+.profile-page img:hover {
+    transform: scale(1.05);
+}
+
+.profile-page .list-group-item {
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.profile-page .overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0, 0.9);
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.profile-page .overlay-content {
+    position: relative;
+    top: 25%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.profile-page .overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.profile-page .overlay a:hover, .profile-page .overlay a:focus {
+    color: #f1f1f1;
+}
+
+.profile-page .overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+    .profile-page .overlay a {font-size: 20px}
+    .profile-page .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}
+
+.profile-page .carousel-item img {
+    height: 400px;
+    object-fit: cover;
+}
+
+.profile-page .modal-content {
+    background-color: #1c1c1c;
+    color: #ddd;
+    border: 1px solid #1a1a2e;
+}
+
+.profile-page .modal-header, .profile-page .modal-footer {
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.profile-page .modal-header .btn-close {
+    filter: invert(1);
+}
+
+.profile-page .form-control {
+    background-color: #e3e0e0;
+}
+
+/* Log-Reg Sayfası Stilleri */
+.log-reg-page form {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    margin: auto;
+    max-width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.log-reg-page form h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #ededed;
+}
+
+.log-reg-page form article {
+    margin-bottom: 20px;
+}
+
+.log-reg-page form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+.log-reg-page form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #222;
+    color: #fff;
+}
+
+.log-reg-page form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00041a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.log-reg-page form button:hover {
+    background-color: #032a55;
+}
+
+.log-reg-page .social-btn {
+    background-color: #474d54;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.log-reg-page .social-btn-icon {
+    margin-right: 5px;
+}
+
+.log-reg-page .social-btn:hover {
+    background-color: #5a6470;
+}
+
+.log-reg-page .hidden {
+    display: none;
+}
+
+.log-reg-page .form-container {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.log-reg-page .form-container.slide-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.log-reg-page .form-container.slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.log-reg-page .divider-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 20px 20px 20px 20px;
+    color: #ccc;
+}
+
+.log-reg-page .divider-wrapper::before,
+.log-reg-page .divider-wrapper::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+/* About-Us Sayfası Stilleri */
+.about-us-page body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #00041a;
+    color: #ddd;
+}
+
+.about-us-page header {
+    background-color: #1a1a2e;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    font-family: 'Arial', sans-serif;
+}
+
+.about-us-page header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.about-us-page header p {
+    font-size: 1.2rem;
+    margin: 10px 0 0;
+}
+
+.about-us-page h1, .about-us-page h2 {
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 20px;
+}
+
+.about-us-page h1 {
+    font-size: 3rem;
+    text-shadow: 2px 2px #000;
+}
+
+.about-us-page h2 {
+    font-size: 2.5rem;
+    text-shadow: 1px 1px #000;
+}
+
+.about-us-page p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem;
+    color: #ddd;
+}
+
+.about-us-page .card {
+    border: 1px solid #1a1a2e;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+    background-color: #1c1c1c;
+}
+
+.about-us-page .card:hover {
+    transform: scale(1.05);
+}
+
+.about-us-page .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ca1af;
+}
+
+.about-us-page .card-text {
+    font-size: 1.1rem;
+    color: #bbb;
+}
+
+.about-us-page .btn-primary {
+    background-color: #4ca1af;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.about-us-page .btn-primary:hover {
+    background-color: #2c3e50;
+}
+
+.about-us-page form {
+    background-color: #1c1c1c;
+    padding: 40px;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.about-us-page form .form-label {
+    font-weight: bold;
+    color: #4ca1af;
+}
+
+.about-us-page form .form-control {
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #4ca1af;
+    background-color: #333;
+    color: #fff;
+}
+
+.about-us-page form .btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    background-color: #4ca1af;
+    border-radius: 5px;
+}
+
+.about-us-page footer {
+    background-color: #1a1a2e;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+}
