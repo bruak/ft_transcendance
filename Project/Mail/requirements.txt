@@ -1,0 +1,6 @@
+Django>=3.2,<4.0
+psycopg2-binary>=2.8
+djangorestframework
+django-cors-headers
+requests
+daphne==4.0.0
