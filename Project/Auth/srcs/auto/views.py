@@ -191,19 +191,19 @@ def singout(request):
 #test edilcek
 def validate_token(request):
 	if request.method != "GET":
-		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)
+		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)  # 405 Method Not Allowed
 	access_token = access_token_validate(request.headers.get("Authorization"))
 	if access_token is None:
-		return JsonResponse({'error': "Invalid Token Error"})
+		return JsonResponse({'error': "Invalid Token Error"}, status = 401)  # 401 Unauthorized
 	username = TokenService.validate_access_token(access_token)
 
 	try:
 		user = Users.objects.get(username=username)
 	except:
-		return JsonResponse({'error': "Not Found User"})
+		return JsonResponse({'error': "Not Found User"}, status=404) # Not Found
 	if user.access_token != access_token:
-		return JsonResponse({'error': "Invalid Token Error"})
-	return JsonResponse({'valid': True})
+		return JsonResponse({'error': "Invalid Token Error"},status=401)  # 401 Unauthorized
+	return JsonResponse({'valid': True}, status=200)  # 200 OK
 
 # Test Edilcek
 @csrf_exempt
