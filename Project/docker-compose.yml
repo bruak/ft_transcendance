@@ -203,3 +203,69 @@ services:
   #     - .env
 
 # MONITORING END HERE
+
+  game:
+    build:
+      context: ./Game 
+    volumes:
+      - ./Game/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8004:8000"
+    env_file:
+      - .env
+    depends_on:
+      - game_db
+    environment:
+      - DB_HOST=game_db
+      - POSTGRES_DB=game
+ 
+  game_db:
+    image: postgres:13
+    container_name: game_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=game
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    networks:
+      - webnet
+    expose:
+      - "6379"
+
+  gateway:
+    build:
+      context: ./Gateway 
+    volumes:
+      - ./Gateway/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8005:8000"
+    env_file:
+      - .env
+    depends_on:
+      - gateway_db
+    environment:
+      - DB_HOST=gateway_db
+      - POSTGRES_DB=gateway
+ 
+  gateway_db:
+    image: postgres:13
+    container_name: gateway_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=gateway
