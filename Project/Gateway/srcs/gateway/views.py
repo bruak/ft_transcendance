@@ -7,14 +7,16 @@ from rest_framework.response import Response
 @csrf_exempt
 def handle_post(request):
 	target_url = request.path  # Path middleware'den gelir
-	payload = JSONParser().parse(request)
+	if request.content_type == "application/json":
+		payload = JSONParser().parse(request)
+	else:
+		payload = None  # Byte'ı string'e çeviriyoruz
 	try:
 		headers = request.headers
 		response = requests.post(target_url, json=payload, headers=headers)
 		# Yanıtın boş olup olmadığını kontrol et
 		if response.text.strip() == '':
 			return JsonResponse({'error': 'Empty response from target URL'}, status=500)
-
 		# Yanıtı JSON olarak çözümle
 		response_json = response.json()
 
@@ -35,7 +37,7 @@ def handle_get(request):
 		headers = request.headers
 		response = requests.get(target_url, headers=headers)
 		if response.status_code != 200:
-			return JsonResponse({'error': 'Request failed', 'status_code': response.status_code, 'details': response.text}, status=500)
+			return JsonResponse({'error': 'Request failed ', 'status_code': response.status_code}, status=500)
 		# Yanıtın boş olup olmadığını kontrol et
 		if response.text.strip() == '':
 			return JsonResponse({'error': 'Empty response from target URL'}, status=500)
