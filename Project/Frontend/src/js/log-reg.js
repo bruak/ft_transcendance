@@ -57,7 +57,7 @@ export function initLogReg() {
                     
                     // Kullanıcıyı yönlendirme veya başka bir işlem
                     if(response.ok) {
-                      window.location.href = "/2factor";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                      window.location.href = "/2fac";  // Giriş yaptıktan sonra yönlendirilen sayfa.
                     }
                     
                     } catch (error) {

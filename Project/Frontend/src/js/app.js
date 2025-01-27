@@ -1,7 +1,7 @@
 import { initLogReg } from './log-reg.js';
 import { initProfile } from './profile.js';
 import { initAbout } from './about-us.js';
-
+import { init2fac } from './2fac.js';
 // Önbellek yapısı
 const cache = new Map();
 
@@ -26,6 +26,7 @@ const routes = {
     '/about': { html: './views/about-us.html', init: initAbout },
     // Dinamik rota örneği
     '/profile/:id': { html: './views/profile.html', init: initProfile },
+    '/2fac': { html: './views/2factor.html', init: init2fac },
 };
 
 // Router fonksiyonu
