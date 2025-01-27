@@ -1,0 +1,114 @@
+
+                <div class="col-md-3 col-sm-12 mb-4">
+                    <div class="card">
+                        <div class="card-img-top position-relative">
+                            <img src="../../img/burak.jpg" class="image card-img-top" alt="Ekip Üyesi 2">
+                            <div class="overlay">
+                                <div class="text">Burak Soykan</div>
+                                <a style="display: block; margin-top: 10px;" href="https://github.com/bruak" class="btn btn-primary" target="_blank">Github</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+/* Kaydırmalı geçiş */
+
+.about-us-page .card-img-top.position-relative {
+    position: relative;
+    width: 100%;
+}
+
+.about-us-page .image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.about-us-page .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #008CBA;
+    overflow: hidden;
+    width: 0;
+    height: 100%;
+    transition: .5s ease;
+}
+
+.about-us-page .card-img-top.position-relative:hover .overlay {
+    width: 100%;
+}
+
+.about-us-page .overlay .text {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+.about-us-page .overlay a {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}/* Kaydırmalı geçiş */
+
+.about-us-page .card-img-top.position-relative {
+    position: relative;
+    width: 100%;
+}
+
+.about-us-page .image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.about-us-page .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #008CBA;
+    overflow: hidden;
+    width: 0;
+    height: 100%;
+    transition: .5s ease;
+}
+
+.about-us-page .card-img-top.position-relative:hover .overlay {
+    width: 100%;
+}
+
+.about-us-page .overlay .text {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+.about-us-page .overlay a {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+
+
+
+Kullanıcı, giriş yaptığı zaman sağladığı bilgilerle bir profil sayfası oluştur ve ekranda görüntüle. Kullanıcı bilgileri giriş yaptıktan sonra otomatik doldurulmalı. Ayrıca, 'Arkadaş Ara' özelliği ekle. Bu özellik, kullanıcı veritabanındaki diğer kullanıcıları arayıp öneriler listelesin. Kullanıcı önerileri arasında 'Arkadaş Ekle' butonu olsun. Tüm bunları basit, mobil uyumlu bir HTML ve JavaScript yapısında uygula. (profile.html ve profile.js) 
