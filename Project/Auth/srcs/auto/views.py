@@ -11,11 +11,12 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
 
-#Test Etmen lazım
+
+# Kullanıcı Register
 @csrf_exempt
 def singup(request):
 	if request.method != "POST":
-		return JsonResponse({"error": "Only POST method is allowed."}, status=405)
+		return JsonResponse({"error": "Only POST method is allowed."}, status=405) # Method Not Allowed
 	try:
 		first_name = request.POST.get('first_name')
 		last_name = request.POST.get('last_name')
@@ -23,12 +24,14 @@ def singup(request):
 		email = request.POST.get('email')
 		password = request.POST.get('password')
 		avatar_file = request.FILES.get('avatar', None)
-		avatar_url = image_to_url(avatar_file, username)
+		# Kullanıcı adı ve email kontrolü için 409 Conflict kodu
 		if username_check(username):
-			return JsonResponse({'message': "bu username var"})
+			return JsonResponse({'message': "bu username var"}, status=409) # Conflict: Username already exists
 		if Users.objects.filter(email=email).exists():
-			return JsonResponse({'message': "Mail Zaten Var"})
+			return JsonResponse({'message': "Mail Zaten Var"}, status=409) # Conflict: Email already exists
 
+		avatar_url = image_to_url(avatar_file, username)
+		# Yeni kullanıcı oluşturma
 		user = Users.objects.create(
 			username=username,
 			email=email,
@@ -60,17 +63,19 @@ def singup(request):
 			"email": email,
 		}
 		mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
-		if (mail_response.status_code != 200):
-			return JsonResponse({'message': "Mail Gönderilmedi"})
+		if mail_response.status_code != 200:
+			return JsonResponse({'message': "Mail Gönderilmedi"}, status=500) # Internal Server Error: Failed to send email
 
 		user_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
 		if user_response.status_code != 201:
 			user.delete()
-			return JsonResponse({'message': "User Service Error"})
+			return JsonResponse({'message': "User Service Error"}, status=500) # Internal Server Error: User Service Error
+
 		return JsonResponse({'message': "işlem başarılı"})
 	except Exception as e:
-		return JsonResponse({'message': "Sigup Error", 'error': str(e)})
+		return JsonResponse({'message': "Sigup Error", 'error': str(e)}, status=500) # General error handling
 
+#Kullanıcı Login
 @csrf_exempt
 def singin(request):
 	if request.method == "POST":
@@ -101,13 +106,14 @@ def singin(request):
 				headers = {"Accept-Language": "application/json"}
 				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 				if (mail_response.status_code != 200):
-					return JsonResponse({"message": "Mail Gönderilemedi"})
-			return (JsonResponse({"message": "Başarılı"}))
+					return JsonResponse({"message": "Mail Gönderilemedi"}, status=402)
+			return (JsonResponse({"message": "Başarılı"}, status=200))
 		except Exception as e:
 			return (JsonResponse({'message': "Not Found User"}, status=404))
 	else:
 		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
 
+# Kullanıcı Two Factor Doğrulama
 @csrf_exempt
 def twofactor(request):
 	if request.method != "POST":
@@ -146,6 +152,7 @@ def twofactor(request):
 	twofactor.save()
 	return JsonResponse({'message': token})
 
+#Kullanıcı Mail Doğrulama
 @csrf_exempt
 def verifyAccount(request, verify_token):
 	if request.method != "POST":
@@ -169,7 +176,7 @@ def verifyAccount(request, verify_token):
 	user.save()
 	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
 
-#Test Edilcek
+# Kullanıcı Çıkış
 @csrf_exempt
 def singout(request):
 	if request.method != "GET":
@@ -188,7 +195,8 @@ def singout(request):
 	except Exception as e:
 		return (JsonResponse({'message': "Çıkış Hatalı"}))
 
-#test edilcek
+# Kullanıcı Accsess Token Doğrulama
+@csrf_exempt
 def validate_token(request):
 	if request.method != "GET":
 		return JsonResponse({'error': "Sadece GET isteklerine izin verilir."}, status=405)  # 405 Method Not Allowed
@@ -203,9 +211,9 @@ def validate_token(request):
 		return JsonResponse({'error': "Not Found User"}, status=404) # Not Found
 	if user.access_token != access_token:
 		return JsonResponse({'error': "Invalid Token Error"},status=401)  # 401 Unauthorized
-	return JsonResponse({'valid': True}, status=200)  # 200 OK
+	return JsonResponse({'valid': True}, status = 200)  # 200 OK
 
-# Test Edilcek
+# Test Edilcek -> Ihtiyaç Doğrultusuna göre düzenlencek
 @csrf_exempt
 def retry_verification_account(request):
 	if request.method == "POST":
@@ -232,12 +240,14 @@ def retry_verification_account(request):
 	except Exception as e:
 		return JsonResponse({'error': "Invalıd Token"})
 
+# İntra Login
 def intra_login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
 	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
 	auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
 	return redirect(auth_url)
 
+#İntra Callback
 def callback(request):
 	code = request.GET.get('code')
 	if not code:
@@ -300,7 +310,4 @@ def callback(request):
 
 	user_service_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
 	return(JsonResponse({'message': "başarılı"}))
-
-
-
 
