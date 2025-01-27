@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Sayfası Uygulaması</title>
+    <!-- Stil dosyası bağlantısı -->
+    <link rel="stylesheet" href="../css/improved.css">
+    <!-- Bootstrap CSS bağlantısı -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS bağlantısı -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background: url('../../img/ponggamebg.jpg') no-repeat center center fixed; background-size: cover;">
+    <main>
+        <!-- Header -->
+        <header class="bg-dark text-white text-center ">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <a class="navbar-brand" href="#">
+                    <img src="../img/pongbaslık-Photoroom.png" width="90" class="d-inline-block align-top" alt="" loading="lazy">
+                </a>
+                <h3 class="mb-0">Hoşgeldiniz..</h3>
+                <a class="nav-link text-white" href="about-us.html">Hakkımızda</a>
+            </div>
+        </header>
+        <!-- Header Sonu -->
+        <!-- Form -->
+        <section>
+            <!-- Giriş Formu -->
+            <form id="login-form" class="form-container">
+                <h1>Giriş Yap</h1>
+                <article>
+                    <label for="login-username">Kullanıcı Adı:</label>
+                    <input type="text" id="login-username" name="username" required>
+                </article>
+                <article>
+                    <label for="login-password">Şifre:</label>
+                    <input type="password" id="login-password" name="password" required>
+                </article>
+                <article>
+                    <button type="submit">Giriş Yap</button>
+                </article>
+                <article class="divider-wrapper">
+                    <span class="divider">YA DA</span>
+                </article>
+                <article class="social-section" id="42ile">
+                    <button class="social-btn">
+                        <img class="social-btn-icon" src="../../img/42logo.svg" alt="42" width="20">
+                        <span> ile Giriş Yap</span>
+                    </button>
+                </article>
+                <article>
+                    <a href="#" id="switch-to-register" style="text-decoration: none;">Hesabım yok</a>
+                </article>
+                <article>
+                    <a href="profile.html" style="text-decoration: none;">dümenden giris</a>
+                </article>
+            </form>
+            <!-- Kayıt Formu -->
+            <form id="register-form" class="form-container hidden">
+                <h1>Kayıt Ol</h1>
+                <article>
+                    <label for="register-username">Kullanıcı Adı:</label>
+                    <input type="text" id="register-username" name="username" required>
+                </article>
+                <article>
+                    <label for="register-email">E-posta:</label>
+                    <input type="email" id="register-email" name="email" required>
+                </article>
+                <article>
+                    <label for="register-password">Şifre:</label>
+                    <input type="password" id="register-password" name="password" required>
+                </article>
+                <article>
+                    <button type="submit">Kayıt Ol</button>
+                </article>
+                <article>
+                    <a href="#" id="switch-to-login" style="text-decoration: none;">Hesabım var</a>
+                </article>
+            </form>
+        </section>
+        <!-- Form Sonu -->
+    </main>
+    <!-- JavaScript dosyası bağlantısı -->
+    <script src="../js/scripts.js"></script>
+    <script src="../js/singin.js"></script>
+</body>
+</html>
