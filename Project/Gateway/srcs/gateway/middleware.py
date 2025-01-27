@@ -28,7 +28,7 @@ class ProxyMiddleware:
 			service_url = SERVICES.get(service)
 			if not service_url:
 				return JsonResponse({'message': "Service not found"}, status=404)  # Servis bulunamazsa 404 döneriz
-			if "singin" not in path and "twofactor" not in path and "singup" not in path and "verify-account" not in path:
+			if "signin" not in path and "twofactor" not in path and "singup" not in path and "verify-account" not in path:
 				# Token kontrolü yapıyoruz
 				token = request.headers.get('Authorization')
 				if not token:
