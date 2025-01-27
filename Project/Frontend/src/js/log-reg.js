@@ -34,17 +34,15 @@ export function initLogReg() {
         // Giriş Formu İşleme
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const username = document.getElementById('login-username').value;
+            const sign = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
-
                 try {
-                    const response = await fetch('http://localhost:8003/signin/', {
+                    const response = await fetch('https://localhost:8080/auth/signin/', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password }),
+                        headers: { 'Content-Type': 'application/json', },
+                        body: JSON.stringify({ sign, password }),
                     });
-                    
-                    alert(response.status);
+
                     if (!response.ok) {
                         alert('response not ok');
                         const errorData = await response.json().catch(() => null);
@@ -54,26 +52,19 @@ export function initLogReg() {
                     const data = await response.json();
 	  
                     alert(data.message); // its came from backend
-                    console.log("Giriş başarılı:", data);
-              
                     // Burada örnek olarak token'ı yerel depolamaya kaydediyoruz
                     //localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
-                    localStorage.setItem("username", sign);
+                    
                     // Kullanıcıyı yönlendirme veya başka bir işlem
                     if(response.ok) {
-                      window.location.href = "/profile";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                      window.location.href = "/2factor";  // Giriş yaptıktan sonra yönlendirilen sayfa.
                     }
-
-                    if (response.ok) {
-                        alert('Giriş başarılı!');
-                        const userData = await response.json();
-                        alert(userData);
-                    } 
-                } catch (error) {
-	              console.error("Hata:", error);
-	              // Kullanıcıya hata mesajını gösterebilirsiniz
-	              alert(error.message);
-	            }
+                    
+                    } catch (error) {
+	                  console.error("Hata:", error);
+	                  // Kullanıcıya hata mesajını gösterebilirsiniz
+	                  alert(error.message);
+	                }
             }
         );
 
