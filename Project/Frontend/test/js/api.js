@@ -1,5 +1,29 @@
 document.getElementById('login-form').addEventListener('submit', handleFormSubmit);
+document.getElementById('2').addEventListener('click', auth_42);
 
+async function auth_42(event) {
+	event.preventDefault();
+	const response = await fetch('http://localhost:8003/intra/', {
+		method: 'GET',
+		headers: { // headers kaldırılıp denenecek
+			'Content-Type': 'application/json',
+		},
+	});
+
+	console.log(response);
+	if (!response.ok) {
+		throw new Error('Authentication failed');
+	}
+
+	const data = await response.json();
+	alert(data.message); // its came from backend
+	console.log('Authentication successful:', data);
+
+	// Handle successful response (e.g., redirect to the protected resource)
+	if(response.ok) {
+		window.location.href = "http://localhost:8003/intra/";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+	} // burası default olarak vermek yerine yönlendirilecek path backend tarafından verilebilir.
+}
 
 async function handleFormSubmit(event) {
 	event.preventDefault();
@@ -8,22 +32,21 @@ async function handleFormSubmit(event) {
 	const password = document.getElementById("login-password").value;
 
 	try {
-	  const response = await fetch("http://localhost:8003/singin/", {
+	  const response = await fetch("http://localhost:8003/signin/", {
 		method: 'POST',
 		headers: {
-		  "Content-Type": "application/json",
-		},
+		  "Content-Type": "application/json",},
 		body: JSON.stringify({ sign, password }),
 	  });
 
+	  // if json request is problemanic
 	  if (!response.ok) {
-		throw new Error('Giriş başarısız! Lütfen bilgilerinizi kontrol edin.');
+		const errorData = await response.json().catch(() => null);
+		throw new Error(errorData?.message || "Authentication failed in sing in js");
 	  }
-
-	  // Yanıtı JSON formatında al
 	  const data = await response.json();
-	  alert(response.status);
-	  // Başarılı giriş sonrası yapılacak işlemler (örneğin, kullanıcıyı yönlendirme veya token saklama)
+	  
+	  alert(data.message); // its came from backend
 	  console.log("Giriş başarılı:", data);
 
 	  // Burada örnek olarak token'ı yerel depolamaya kaydediyoruz
@@ -40,3 +63,4 @@ async function handleFormSubmit(event) {
 	  alert(error.message);
 	}
   }
+

@@ -13,7 +13,7 @@ from .tools import image_to_url, generate_random_code, image_intra_create, acces
 
 #Test Etmen lazım
 @csrf_exempt
-def singup(request):
+def signup(request):
 	if request.method != "POST":
 		return JsonResponse({"error": "Only POST method is allowed."}, status=405)
 	try:
@@ -72,16 +72,16 @@ def singup(request):
 		return JsonResponse({'message': "Sigup Error", 'error': str(e)})
 
 @csrf_exempt
-def singin(request):
+def signin(request):
 	if request.method == "POST":
 		data = JSONParser().parse(request)
-		singin = data.get("sign")
+		signin = data.get("sign")
 		password = data.get("password")
 		try:
 			user = (
-				Users.objects.get(email=singin)
-				if "@" in singin
-				else Users.objects.get(username=singin)
+				Users.objects.get(email=signin)
+				if "@" in signin
+				else Users.objects.get(username=signin)
 			)
 			if (password != user.password):
 				return JsonResponse({'message': "User Password Error"}, status=401)  # Unauthorized
@@ -101,8 +101,8 @@ def singin(request):
 				headers = {"Accept-Language": "application/json"}
 				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 				if (mail_response.status_code != 200):
-					return JsonResponse({"message": "Mail Gönderilemedi"})
-			return (JsonResponse({"message": "Başarılı"}))
+					return JsonResponse({"message": "Mail Gönderilemedi"}, status=400)
+			return (JsonResponse({"message": "Başarılı"}, status=200))
 		except Exception as e:
 			return (JsonResponse({'message': "Not Found User"}, status=404))
 	else:
