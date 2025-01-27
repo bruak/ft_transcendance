@@ -37,25 +37,45 @@ export function initLogReg() {
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
 
-            if (username && password) {
                 try {
-                    const response = await fetch('/api/login', {
+                    const response = await fetch('http://localhost:8003/signin/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password }),
                     });
+                    
+                    alert(response.status);
+                    if (!response.ok) {
+                        alert('response not ok');
+                        const errorData = await response.json().catch(() => null);
+                        throw new Error(errorData?.message || "Authentication failed in sing in js");
+                    }
+                      
+                    const data = await response.json();
+	  
+                    alert(data.message); // its came from backend
+                    console.log("Giriş başarılı:", data);
+              
+                    // Burada örnek olarak token'ı yerel depolamaya kaydediyoruz
+                    //localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
+                    localStorage.setItem("username", sign);
+                    // Kullanıcıyı yönlendirme veya başka bir işlem
+                    if(response.ok) {
+                      window.location.href = "/profile";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                    }
+
                     if (response.ok) {
                         alert('Giriş başarılı!');
                         const userData = await response.json();
-                        console.log(userData);
-                    } else {
-                        alert('Giriş başarısız!');
-                    }
-                } catch (err) {
-                    console.error('Giriş hatası:', err);
-                }
+                        alert(userData);
+                    } 
+                } catch (error) {
+	              console.error("Hata:", error);
+	              // Kullanıcıya hata mesajını gösterebilirsiniz
+	              alert(error.message);
+	            }
             }
-        });
+        );
 
         // Kayıt Formu İşleme
         registerForm.addEventListener('submit', async (event) => {
