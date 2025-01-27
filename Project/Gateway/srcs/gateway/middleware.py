@@ -21,11 +21,14 @@ class ProxyMiddleware:
 		path_parts = request.path.strip("/").split("/")
 		if len(path_parts) >= 2:
 			service = path_parts[0]  # İlk kısım servisin adı
-			path = path_parts[1] # Servisin yol kısmı
+			path = path_parts[1]
+			 # Servisin yol kısmı
+			if len(path_parts) == 3:
+				path = path + "/" + path_parts[2]
 			service_url = SERVICES.get(service)
 			if not service_url:
 				return JsonResponse({'message': "Service not found"}, status=404)  # Servis bulunamazsa 404 döneriz
-			if "singin" not in path and "twofactor" not in path and "singup" not in path:
+			if "signin" not in path and "twofactor" not in path and "singup" not in path and "verify-account" not in path:
 				# Token kontrolü yapıyoruz
 				token = request.headers.get('Authorization')
 				if not token:
@@ -34,7 +37,11 @@ class ProxyMiddleware:
 				response = requests.get(f"http://project-auth-1:8000/validate-token/", headers=request.headers)
 				if response.status_code != 200:
 					return JsonResponse({'error': "Geçersiz Validate Token"}, status=response.status_code)
-			request.path = f"{service_url}/{path}/"
+			if len(path_parts) == 3:
+				request.path = f"{service_url}/{path}"
+			else:
+				request.path = f"{service_url}/{path}/"
+			print(request.path)
 		else:
-			return JsonResponse({'error': "Invalid Arguam"})
+			return JsonResponse({'error': "Invalid Arguam"}, status=500)
 		return None  # Eğer her şey yolundaysa view fonksiyonuna geçeriz
