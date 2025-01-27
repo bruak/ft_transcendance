@@ -21,34 +21,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$8n_5d+c%!f74!+5x0ep1))kzv&sztjic1auwn6gums8@djl%c'
+SECRET_KEY = 'django-insecure-l%m5oj=t+o=j47+l+9c#bi29%#%z-9yittn&ov4x=x5(rc*(7u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ASGI_APPLICATION = 'game_service.asgi.application'
+
 ALLOWED_HOSTS = []
 
+ASGI_APPLICATION = 'game_service.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],  # Redis sunucusu
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
-
 # Application definition
 
+
 INSTALLED_APPS = [
-    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 'game',
 ]
 
@@ -67,7 +69,7 @@ ROOT_URLCONF = 'game_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,8 +133,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_URL = '/static/'
+
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

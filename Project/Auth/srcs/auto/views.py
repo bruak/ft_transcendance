@@ -56,7 +56,7 @@ def singup(request):
 			"avatar": avatar_url,
 		}
 
-		mail_url = f"http://127.0.0.1:8003/verify-account/{token}"
+		mail_url = f"https://localhost:8080/api/auth/verify-account/{token}"
 		mail_data = {
 			"token": mail_url,
 			"username" : username,
@@ -71,22 +71,22 @@ def singup(request):
 			user.delete()
 			return JsonResponse({'message': "User Service Error"}, status=500) # Internal Server Error: User Service Error
 
-		return JsonResponse({'message': "işlem başarılı"})
+		return JsonResponse({'message': "işlem başarılı"}, status=201) 
 	except Exception as e:
 		return JsonResponse({'message': "Sigup Error", 'error': str(e)}, status=500) # General error handling
 
 #Kullanıcı Login
 @csrf_exempt
-def singin(request):
+def signin(request):
 	if request.method == "POST":
 		data = JSONParser().parse(request)
-		singin = data.get("sign")
+		signin = data.get("sign")
 		password = data.get("password")
 		try:
 			user = (
-				Users.objects.get(email=singin)
-				if "@" in singin
-				else Users.objects.get(username=singin)
+				Users.objects.get(email=signin)
+				if "@" in signin
+				else Users.objects.get(username=signin)
 			)
 			if (password != user.password):
 				return JsonResponse({'message': "User Password Error"}, status=401)  # Unauthorized
@@ -129,9 +129,9 @@ def twofactor(request):
 		if TokenService.is_mail_token_expired(twofactor.expiration):
 			twofactor.status = False;
 			twofactor.save()
-			return (JsonResponse({'message': "Invalid code"}))
+			return (JsonResponse({'message': "Invalid code"}, status=400))
 	except Exception as e:
-		return (JsonResponse({'message': "Not  Found"}))
+		return (JsonResponse({'message': "Not  Found"}, status=404))
 
 	access_token, access_exp = TokenService.generate_access_token(user.username)
 	refresh_token, refresh_exp = TokenService.generate_refresh_token(user.username)
@@ -150,31 +150,34 @@ def twofactor(request):
 
 	twofactor.status = False
 	twofactor.save()
-	return JsonResponse({'message': token})
+	return JsonResponse({'message': token}, status=200)
 
 #Kullanıcı Mail Doğrulama
 @csrf_exempt
 def verifyAccount(request, verify_token):
 	if request.method != "POST":
 		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
-	mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
-	#Böyle bir token varmı diye bir kontrol ypa
-	if timezone.now() > mail_token.expiration:
-		mail_token.status = False
-		mail_token.save()
-		new_token = str(uuid.uuid4())
-		MailTokens.objects.create(
-			user=mail_token.user,
-			token=new_token,
-			type="verify",
-			expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
-		)
-		return (JsonResponse({'message': "Mailin Süresi Doldu enayi, yeni mail gönderdik kontrol et"}))
+	try:
+		mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
+		#Böyle bir token varmı diye bir kontrol ypa
+		if timezone.now() > mail_token.expiration:
+			mail_token.status = False
+			mail_token.save()
+			new_token = str(uuid.uuid4())
+			MailTokens.objects.create(
+				user=mail_token.user,
+				token=new_token,
+				type="verify",
+				expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
+			)
+			return (JsonResponse({'message': "Mailin Süresi Doldu enayi, yeni mail gönderdik kontrol et"}, status=400))
 
-	user = mail_token.user
-	user.is_active = True
-	user.save()
-	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+		user = mail_token.user
+		user.is_active = True
+		user.save()
+		return (JsonResponse({'message': "Doğrulama Yapıldı"}, status=200))
+	except Exception as e:
+		return JsonResponse({'error': "Not Token"}, status=403)
 
 # Kullanıcı Çıkış
 @csrf_exempt
@@ -186,14 +189,14 @@ def singout(request):
 		if header.startswith("Bearer "):
 			access_token = header.split(" ", 1)[1]
 		else:
-			return JsonResponse({'error': "Invalid Token Error"})
+			return JsonResponse({'error': "Invalid Token Error"}, status=401)
 		user = Users.objects.get(access_token=access_token)
 		user.refresh_token = None
 		user.access_token = None
 		user.save()
-		return JsonResponse({'message': "Helal lan sana maymun cıktın"})
+		return JsonResponse({'message': "Helal lan sana maymun cıktın"}, status=200)
 	except Exception as e:
-		return (JsonResponse({'message': "Çıkış Hatalı"}))
+		return (JsonResponse({'message': "Çıkış Hatalı"}, status=500))
 
 # Kullanıcı Accsess Token Doğrulama
 @csrf_exempt
@@ -217,7 +220,7 @@ def validate_token(request):
 @csrf_exempt
 def retry_verification_account(request):
 	if request.method == "POST":
-		return JsonResponse({'error': "Not Post"})
+		return JsonResponse({'error': "Not Post"}, status=405)
 	try:
 		data = JSONParser().parse(request)
 		email = data.get('email')
@@ -235,10 +238,10 @@ def retry_verification_account(request):
 				expiration= TokenService.create_expiration_date(60*24),
 			)
 
-			return JsonResponse({'message': "Token süresi doldu. Yeni token e-postanıza gönderildi"})
+			return JsonResponse({'message': "Token süresi doldu. Yeni token e-postanıza gönderildi"}, status=400)
 
 	except Exception as e:
-		return JsonResponse({'error': "Invalıd Token"})
+		return JsonResponse({'error': "Invalıd Token"}, status=404)
 
 # İntra Login
 def intra_login(request):
@@ -286,9 +289,9 @@ def callback(request):
 	refresh_token, refresh_exp = TokenService.generate_refresh_token(username)
 
 	if username_check(username):
-		return JsonResponse({'message': "bu username var"})
+		return JsonResponse({'message': "bu username var"}, status=409)
 	if Users.objects.filter(email=data.get('email')).exists():
-		return JsonResponse({'message': "Mail Zaten Var"})
+		return JsonResponse({'message': "Mail Zaten Var"}, status=409)
 
 	Users.objects.create(
 		username = username,
@@ -309,5 +312,5 @@ def callback(request):
 	}
 
 	user_service_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
-	return(JsonResponse({'message': "başarılı"}))
+	return(JsonResponse({'message': "başarılı"}, status=200))
 

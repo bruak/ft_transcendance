@@ -1,3 +1,19 @@
+export function init2fac() {
+  
+  const inputs = document.querySelectorAll('.split_input_item input');
+  inputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+      if (input.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+        }
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+  });
+
 document.getElementById('onay-form').addEventListener('submit', async function(event) {
     event.preventDefault();
   
@@ -10,24 +26,39 @@ document.getElementById('onay-form').addEventListener('submit', async function(e
     ].join('');
   
     try {
-      const response = await fetch('http://localhost:8003/twofactor/', {
+      const response = await fetch('https://localhost:8080/auth/twofactor/', {
         method: 'POST',
         headers: {
+
           'Content-Type': 'application/json',
         },
-
         body: JSON.stringify({ username, code: verificationCode }),
     });
       
-      alert(response.status);
-      alert(JSON.stringify({ username, code: verificationCode }));
+      console.log(response.statusText, response.status); // this message came from backend
 
       if (!response.ok) {
         throw new Error(await response.text()); // Get specific error message from response
-        
       }
   
       const data = await response.json();
+
+      localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
+
+    /*{
+        "message": {
+            "username": "bsoykan",
+            "access_token": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.IPLvkNCCDQESoV5zGkv6-dsIWkUy3arxh5X2fboc9M8",
+                "expiration_date": "2026-01-27T14:02:32.673Z"
+            },
+            "refresh_token": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.uLn9A4S3443EllNCaXMFRa6z81umNi2ZTLeT466dpTI",
+                "expiration_date": "2026-01-27T14:02:32.673Z"
+            }
+        }
+    } */
+
       // Handle successful response (e.g., redirect to the protected resource)
       console.log('Verification successful:', data);
     } catch (error) {
@@ -49,5 +80,7 @@ document.getElementById('onay-form').addEventListener('submit', async function(e
   
     alert(errorMessage);
   }
-  
+}
+document.addEventListener('DOMContentLoaded', init2fac);
+
   // ... (rest of your code for input handling)
