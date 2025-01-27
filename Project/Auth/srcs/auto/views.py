@@ -56,7 +56,7 @@ def singup(request):
 			"avatar": avatar_url,
 		}
 
-		mail_url = f"http://127.0.0.1:8003/verify-account/{token}"
+		mail_url = f"https://localhost:8080/api/auth/verify-account/{token}"
 		mail_data = {
 			"token": mail_url,
 			"username" : username,
@@ -157,24 +157,27 @@ def twofactor(request):
 def verifyAccount(request, verify_token):
 	if request.method != "POST":
 		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
-	mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
-	#Böyle bir token varmı diye bir kontrol ypa
-	if timezone.now() > mail_token.expiration:
-		mail_token.status = False
-		mail_token.save()
-		new_token = str(uuid.uuid4())
-		MailTokens.objects.create(
-			user=mail_token.user,
-			token=new_token,
-			type="verify",
-			expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
-		)
-		return (JsonResponse({'message': "Mailin Süresi Doldu enayi, yeni mail gönderdik kontrol et"}))
+	try:
+		mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
+		#Böyle bir token varmı diye bir kontrol ypa
+		if timezone.now() > mail_token.expiration:
+			mail_token.status = False
+			mail_token.save()
+			new_token = str(uuid.uuid4())
+			MailTokens.objects.create(
+				user=mail_token.user,
+				token=new_token,
+				type="verify",
+				expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
+			)
+			return (JsonResponse({'message': "Mailin Süresi Doldu enayi, yeni mail gönderdik kontrol et"}))
 
-	user = mail_token.user
-	user.is_active = True
-	user.save()
-	return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+		user = mail_token.user
+		user.is_active = True
+		user.save()
+		return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+	except Exception as e:
+		return JsonResponse({'error': "Not Token"}, status=403)
 
 # Kullanıcı Çıkış
 @csrf_exempt
