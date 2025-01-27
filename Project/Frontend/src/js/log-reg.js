@@ -1,55 +1,97 @@
-// Giriş ve Kayıt Formlarını Başlatma Fonksiyonu
-function initializeLogReg() {
+export function initLogReg() {
     const switchToRegister = document.getElementById('switch-to-register');
     const switchToLogin = document.getElementById('switch-to-login');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
-    const loginWith42 = document.getElementById('42ile');
+    const loginWith42 = document.getElementById('42-login');
 
-    // Kayıt formuna geçiş
-    if (switchToRegister && loginForm && registerForm) {
-        switchToRegister.addEventListener('click', function(event) {
+    // Form Geçişleri
+    if (switchToRegister && switchToLogin && loginForm && registerForm && loginWith42) {
+        switchToRegister.addEventListener('click', (event) => {
             event.preventDefault();
             loginForm.classList.add('slide-out');
             registerForm.classList.remove('hidden');
             registerForm.classList.add('slide-in');
-            setTimeout(function() {
+            setTimeout(() => {
                 loginForm.classList.add('hidden');
                 loginForm.classList.remove('slide-out');
-            }, 500);
+                registerForm.classList.remove('slide-in');
+            }, 200);
         });
-    } else {
-        console.log("switchToRegister, loginForm, registerForm is null");
-    }
 
-    // Giriş formuna geçiş
-    if (switchToLogin && loginForm && registerForm) {
-        switchToLogin.addEventListener('click', function(event) {
+        switchToLogin.addEventListener('click', (event) => {
             event.preventDefault();
             registerForm.classList.add('slide-out');
             loginForm.classList.remove('hidden');
             loginForm.classList.add('slide-in');
-            setTimeout(function() {
+            setTimeout(() => {
                 registerForm.classList.add('hidden');
                 registerForm.classList.remove('slide-out');
-            }, 500);
+                loginForm.classList.remove('slide-in');
+            }, 200);
         });
-    } else {
-        console.log("switchToLogin, loginForm, registerForm is null");
-    }
 
-    // 42 ile giriş yapma
-    if (loginWith42) {
-        loginWith42.addEventListener('click', function(event) {
+        // Giriş Formu İşleme
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            alert('42 ile girilecek');
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (username && password) {
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password }),
+                    });
+                    if (response.ok) {
+                        alert('Giriş başarılı!');
+                        const userData = await response.json();
+                        console.log(userData);
+                    } else {
+                        alert('Giriş başarısız!');
+                    }
+                } catch (err) {
+                    console.error('Giriş hatası:', err);
+                }
+            }
         });
-    } else {
-        console.log("loginWith42 is null");
+
+        // Kayıt Formu İşleme
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            if (username && email && password) {
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, email, password }),
+                    });
+                    if (response.ok) {
+                        alert('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+                        switchToLogin.click();
+                    } else {
+                        alert('Kayıt başarısız!');
+                    }
+                } catch (err) {
+                    console.error('Kayıt hatası:', err);
+                }
+            }
+        });
+
+        // 42 ile Giriş Yapma
+        loginWith42.addEventListener('click', (event) => {
+            event.preventDefault();
+            window.location.href = '#api/42-login';
+        });
     }
 }
 
-// Dinamik script yüklendikten sonra initializeLogReg fonksiyonunu çağır
-initializeLogReg();
+// Dinamik script yüklendikten sonra initLogReg fonksiyonunu çağır
+document.addEventListener('DOMContentLoaded', initLogReg);
 
-export { initializeLogReg as initLogReg };
+
