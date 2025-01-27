@@ -21,9 +21,10 @@ document.getElementById('onay-form').addEventListener('submit', async function(e
       
       alert(response.status);
       alert(JSON.stringify({ username, code: verificationCode }));
-       
+
       if (!response.ok) {
         throw new Error(await response.text()); // Get specific error message from response
+        
       }
   
       const data = await response.json();
@@ -42,8 +43,8 @@ document.getElementById('onay-form').addEventListener('submit', async function(e
       errorMessage = error.message;
     } else if (error.message.includes('Network error')) {
       errorMessage = 'Network error. Please check your internet connection and try again.';
-    } else {
-      // Handle other error scenarios
+    } else  {
+    
     }
   
     alert(errorMessage);
