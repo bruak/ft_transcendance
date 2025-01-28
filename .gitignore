@@ -6,7 +6,7 @@ __pycache_*
 *$py.class
 # C extensions
 *.so
-
+ 
 # Distribution / packaging
 .Python
 env/
