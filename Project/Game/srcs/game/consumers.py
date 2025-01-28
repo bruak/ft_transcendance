@@ -1,19 +1,25 @@
+# game_app/consumers.py
 
 import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+# Server-side oyun durumu yönetimi için basit bir sınıf
+# (Gerçek projede bunu ayrı bir dosyada tutmak mantıklı olabilir)
 class PongGameState:
     def __init__(self):
+        # Basit şekilde başlatıyoruz
         self.ball_x = 50
         self.ball_y = 50
+        self.ball_vx = 1  # topun x hız yönü
+        self.ball_vy = 1  # topun y hız yönü
         self.paddle_left_y = 50
         self.paddle_right_y = 50
         self.score_left = 0
         self.score_right = 0
         self.width = 100
         self.height = 100
-    
+
     def update(self):
         self.ball_x += self.ball_vx
         self.ball_y += self.ball_vy
@@ -31,6 +37,7 @@ class PongGameState:
 
         paddle_half_size = 10
         if self.ball_x <= 5 and (self.paddle_left_y - paddle_half_size <= self.ball_y <= self.paddle_left_y + paddle_half_size):
+            self.ball_vx *= -1  # geri yansıt
 
         if self.ball_x >= self.width - 5 and (self.paddle_right_y - paddle_half_size <= self.ball_y <= self.paddle_right_y + paddle_half_size):
             self.ball_vx *= -1
@@ -102,7 +109,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         })
 
     async def broadcast_state(self, event):
-
         await self.send(text_data=json.dumps({
             "type": "state",
             "state": self.__class__.game_state.serialize()
