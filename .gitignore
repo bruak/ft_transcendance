@@ -4,7 +4,6 @@ __pycache_*
 *pycache*
 *.py[cod]
 *$py.class
-
 # C extensions
 *.so
 
@@ -67,3 +66,5 @@ local_settings.py
 # Environment variables
 .env
 .env.*
+
+migrations

@@ -54,9 +54,7 @@ def main():
     else:
         print("Süper kullanıcı zaten mevcut.")
 
-
     if DEBUG == False:
-        # Son adım: DAPHNE ile server'ı başlatıyoruz
         host = os.environ.get("APP_HOST", "0.0.0.0")
         port = os.environ.get("APP_PORT", "8000")
 
