@@ -32,6 +32,23 @@ ALLOWED_HOSTS = ['gateway', 'localhost', '127.0.0.1']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gateway', '*']
 
 
+LANGUAGES = [
+    ('en', 'English'),
+    ('tr', 'Turkish'),
+    # Diğer diller ekleyebilirsiniz
+]
+
+LANGUAGE_CODE = 'en'
+
+#Language
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, '../locale'),  # Ana dizindeki 'locale' klasörünü referans alıyoruz
+]
+
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
 # Application definition
 
 INSTALLED_APPS = [
