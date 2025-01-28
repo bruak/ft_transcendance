@@ -67,7 +67,6 @@ export function initLogReg() {
  	                  // Kullanıcıya hata mesajını gösterebilirsiniz
 	                  alert(error.message);
 	                }
-           }
         });
 
         // Kayıt Formu İşleme
