@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(aw=2+wiv*g*im_8(wyg%o*jbld=9qemkwh6ppg2x3fgseohdc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gateway', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-'gateway',
+    'gateway',
+	'rest_framework'
+]
+MIDDLEWARE = [
+    # Diğer middleware'ler...
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'gateway.middleware.ProxyMiddleware',  # Proxy middleware ekle
 ]
 
 ROOT_URLCONF = 'gateway_service.urls'

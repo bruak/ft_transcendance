@@ -44,18 +44,31 @@ export function initLogReg() {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ sign, password }),
                     });
-                    if (response.ok) {
-                        alert('Giriş başarılı!');
-                        const userData = await response.json();
-                        console.log(userData);
-                    } else {
-                        alert('Giriş başarısız!');
+
+                    if (!response.ok) {
+                        alert('response not ok');
+                        const errorData = await response.json().catch(() => null);
+                        throw new Error(errorData?.message || "Authentication failed in sing in js");
                     }
-                } catch (err) {
-                    console.error('Giriş hatası:', err);
-                }
+                      
+                    const data = await response.json();
+	  
+                    alert(data.message); // its came from backend
+                    // Burada örnek olarak token'ı yerel depolamaya kaydediyoruz
+                    //localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
+                    
+                    // Kullanıcıyı yönlendirme veya başka bir işlem
+                    if(response.ok) {
+                      window.location.href = "/2fac";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                    }
+                    
+                    } catch (error) {
+	                  console.error("Hata:", error);
+	                  // Kullanıcıya hata mesajını gösterebilirsiniz
+	                  alert(error.message);
+	                }
             }
-        });
+        );
 
         // Kayıt Formu İşleme
         registerForm.addEventListener('submit', async (event) => {
