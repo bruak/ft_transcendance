@@ -40,6 +40,79 @@ function initializeProfile() {
             modal.hide();
         });
     }
+
+    // Kullanıcı bilgilerini doldur
+    fetch('/api/user-profile')
+        .then(response => response.json())
+        .then(user => fillUserProfile(user));
+
+    // Arkadaş ara butonuna tıklama olayını ekle
+    document.getElementById('friendSearchButton').addEventListener('click', searchFriends);
+
+    // Dostlar butonuna tıklama olayını ekle
+    document.getElementById('viewFriendsButton').addEventListener('click', viewFriends);
 }
 
-export { openNav, closeNav, initializeProfile as initProfile };
+// Kullanıcı bilgilerini doldur
+function fillUserProfile(user) {
+    document.getElementById('profileNameDisplay').textContent = user.name;
+    document.getElementById('profileTitleDisplay').textContent = user.title;
+    document.getElementById('profileLocationDisplay').textContent = user.location;
+    document.getElementById('profileImageDisplay').src = user.image;
+}
+
+// Arkadaş Ara fonksiyonu
+function searchFriends() {
+    const searchInput = document.getElementById('friendSearchInput').value;
+    if (searchInput) {
+        fetch(`/api/search-friends?query=${searchInput}`)
+            .then(response => response.json())
+            .then(data => {
+                const suggestionsList = document.getElementById('friendSuggestions');
+                suggestionsList.innerHTML = '';
+                data.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.textContent = user.name;
+                    const addButton = document.createElement('button');
+                    addButton.className = 'btn btn-primary';
+                    addButton.textContent = 'Arkadaş Ekle';
+                    addButton.onclick = () => addFriend(user.id);
+                    listItem.appendChild(addButton);
+                    suggestionsList.appendChild(listItem);
+                });
+            });
+    }
+}
+
+// Arkadaş Ekle fonksiyonu
+function addFriend(friendId) {
+    fetch(`/api/add-friend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ friendId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Arkadaş eklendi!');
+        } else {
+            alert('Arkadaş eklenemedi.');
+        }
+    });
+}
+
+// Dostlar fonksiyonu
+function viewFriends() {
+    fetch('/api/friends')
+        .then(response => response.json())
+        .then(friends => {
+            const friendsList = document.getElementById('friendsList');
+            friendsList.innerHTML = friends.length > 0
+                ? friends.map(friend => `<li class="list-group-item">${friend.name}</li>`).join('')
+                : '<li class="list-group-item">Henüz arkadaşınız yok.</li>';
+        })
+        .catch(error => console.error('Arkadaşlar yüklenirken hata oluştu:', error));
+}
+
+export { openNav, closeNav, initializeProfile as initProfile, viewFriends };

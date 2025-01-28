@@ -244,9 +244,10 @@ def retry_verification_account(request):
 		return JsonResponse({'error': "Invalıd Token"}, status=404)
 
 # İntra Login
+@csrf_exempt
 def intra_login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	redirect_uri = "https://localhost:8080/api/callback/"  # Callback URL
 	auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
 	return redirect(auth_url)
 
@@ -258,7 +259,7 @@ def callback(request):
 
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
 	SECRET = "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"
-	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	redirect_uri = "https://localhost:8080/api/callback/"  # Callback URL
 	token_url = "https://api.intra.42.fr/oauth/token"
 	data = {
 		'grant_type': 'authorization_code',
