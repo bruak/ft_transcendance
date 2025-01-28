@@ -50,24 +50,23 @@ export function initLogReg() {
                         const errorData = await response.json().catch(() => null);
                         throw new Error(errorData?.message || "Authentication failed in sing in js");
                     }
-                      
+
                     const data = await response.json();
-	  
+
                     alert(data.message); // its came from backend
                     // Burada örnek olarak token'ı yerel depolamaya kaydediyoruz
                     //localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
-                    
+
                     // Kullanıcıyı yönlendirme veya başka bir işlem
                     if(response.ok) {
                       window.location.href = "/2fac";  // Giriş yaptıktan sonra yönlendirilen sayfa.
                     }
-                    
+
                     } catch (error) {
 	                  console.error("Hata:", error);
-	                  // Kullanıcıya hata mesajını gösterebilirsiniz
+ 	                  // Kullanıcıya hata mesajını gösterebilirsiniz
 	                  alert(error.message);
 	                }
-            }
         });
 
         // Kayıt Formu İşleme
