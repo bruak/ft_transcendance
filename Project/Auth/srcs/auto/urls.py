@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import singup, verifyAccount, signin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account
+from .views import signup, verifyAccount, signin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account
 
 urlpatterns = [
-	path('singup/', singup, name='register'),
+	path('signup/', signup, name='register'),
 	path('intra/', intra_login, name='intra_login'),
 	path('callback/', callback, name='callback'),
 	path('signin/', signin, name='login'),
