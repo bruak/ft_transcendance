@@ -36,7 +36,6 @@ def handle_get(request):
 	try:
 		headers = request.headers
 		response = requests.get(target_url, headers=headers)
-
 		if response.status_code != 200:
 			return JsonResponse({'error': 'Request failed ', 'status_code': response.status_code}, status=500)
 		# Yanıtın boş olup olmadığını kontrol et
