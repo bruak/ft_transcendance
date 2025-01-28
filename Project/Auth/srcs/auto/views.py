@@ -14,7 +14,7 @@ from .tools import image_to_url, generate_random_code, image_intra_create, acces
 
 # Kullanıcı Register
 @csrf_exempt
-def singup(request):
+def signup(request):
 	if request.method != "POST":
 		return JsonResponse({"error": "Only POST method is allowed."}, status=405) # Method Not Allowed
 	try:

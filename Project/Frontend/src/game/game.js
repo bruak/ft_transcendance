@@ -1,7 +1,9 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const myPath = window.location.host;
+console.log("MyPath", `wss://${myPath}/game/ws/game/`);
 
-let socket = new WebSocket("wss://localhost:8080//game/ws/game/");
+let socket = new WebSocket(`wss://${myPath}/game/ws/game/`);
 
 socket.onopen = () => {
   console.log("Bağlantı açıldı!");
