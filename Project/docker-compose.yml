@@ -93,7 +93,7 @@ services:
       - 5432
     environment:
       - POSTGRES_DB=mail
-
+ 
   auth:
     build:
       context: ./Auth
