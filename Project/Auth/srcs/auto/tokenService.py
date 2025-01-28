@@ -11,8 +11,8 @@ class TokenService:
 	def generate_access_token(username):
 		exp = TokenService.create_expiration_date(60 * 24 * 365)
 		access_token = jwt.encode(
-            {"username": username, "exp": exp}, access_secret_key, algorithm="HS256"
-        )
+			{"username": username, "exp": exp}, access_secret_key, algorithm="HS256"
+		)
 		return access_token, exp
 
 	@staticmethod
@@ -26,7 +26,7 @@ class TokenService:
 		return refresh_token, exp
 
 	@staticmethod
-	def create_expiration_date(minutes):
+	def create_expiration_date(minutes): # dakika
 		return timezone.now() + timedelta(minutes=minutes)
 
 	@staticmethod

@@ -14,7 +14,7 @@ COMPOSE="Project/docker-compose.yml"
 PORT_BASE=8000
 MAX_ATTEMPTS=100
 SERVICE_DIR="./Project/${UPSERVICE}"
-SETTINGS="${SERVICE_DIR}/srcs/${SERVICE}_service/settings.py"
+SETTINGS="${SERVICE_DIR}/srcs/${LOWSERVICE}_service/settings.py"
 NEW_CONTENT="DATABASES = {\n    'default': {\n        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),\n        'NAME': os.environ.get('POSTGRES_DB', 'db.sqlite3'),\n        'USER': os.environ.get('POSTGRES_USER', 'myuser'),\n        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'mypass'),\n        'HOST': os.environ.get('DB_HOST', 'localhost'),\n        'PORT': os.environ.get('DB_PORT', '5432'),\n    }"
 
 
@@ -33,7 +33,7 @@ find_free_port() {
 }
 # Kullanılmayan port seçimi
 FREE_PORT=$(find_free_port)
-
+echo "Kullanılabilir port: $FREE_PORT"
 if [ -f "Project/Django/Dockerfile" ] && [ ! -d "Project/${SERVICE}" ]; then
 
 # docker-compose.yml dosyasına hizmeti ekleme
@@ -83,8 +83,8 @@ fi
     sed -i '/DATABASES = {/,/}/c\'"$NEW_CONTENT" $SETTINGS
     sed -i '14i\import os' $SETTINGS
     sed "41i $(printf '%s' "${APP}")" "$SETTINGS" > temp && mv temp "$SETTINGS"
-    echo -e "Django>=3.2,<4.0\npsycopg2-binary>=2.8" > ${SERVICE_DIR}/requirements.txt
-    echo "Yeni Django projesi $LOWSERVICE oluşturuldu. Port: $FREE_PORT"
+    echo -e "Django>=3.2,<4.0\npsycopg2-binary>=2.8\ndaphne==4.0.0" > ${SERVICE_DIR}/requirements.txt
+    echo "Yeni Django projesi $LOWSERVICE oluşturuldu."
 else
     echo "Hata: Gerekli dosya ve dizinler mevcut değil."
     exit 1
