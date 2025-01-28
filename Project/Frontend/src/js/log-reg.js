@@ -34,12 +34,14 @@ export function initLogReg() {
         // Giriş Formu İşleme
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const sign = document.getElementById('login-username').value;
+            const sign = document.getElementById('login-sign').value;
             const password = document.getElementById('login-password').value;
+
+            if (sign && password) {
                 try {
                     const response = await fetch('https://localhost:8080/auth/signin/', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ sign, password }),
                     });
 
@@ -77,7 +79,7 @@ export function initLogReg() {
 
             if (username && email && password) {
                 try {
-                    const response = await fetch('/api/register', {
+                    const response = await fetch('https://localhost:8080/auth/signup/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, email, password }),
