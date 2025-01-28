@@ -68,7 +68,7 @@ export function initLogReg() {
 	                  alert(error.message);
 	                }
             }
-        );
+        });
 
         // Kayıt Formu İşleme
         registerForm.addEventListener('submit', async (event) => {
