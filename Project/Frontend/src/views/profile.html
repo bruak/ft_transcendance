@@ -1,9 +1,17 @@
 <div class="profile-page">
 
-	<!-- Navbar -->
+		<!-- Navbar -->
 		<div id="myNav" class="overlay">
 			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 			<div class="overlay-content">
+				<!-- Arkadaş Ara -->
+				<section class="me-3">
+					<div class="input-group mb-3 search-user">
+						<input type="text" id="friendSearchInput" class="form-control" placeholder="Kullanıcı adı ara...">
+						<button class="btn btn-outline-secondary" type="button" id="friendSearchButton">Ara</button>
+					</div>
+					<ul id="friendSuggestions" class="list-group"></ul>
+				</section>
 				<a href="#Friends" data-link>Friends</a>
 				<a href="#game" data-link>Game</a>
 				<a href="/about" data-link>About</a>
@@ -12,27 +20,28 @@
 		<span class="menu-icon" onclick="openNav()">&#9776;</span>
 		<!-- Navbar Sonu -->
 
+
 		<main class="container my-5">
 			<!-- Profil Bilgileri -->
 			<section>
 				<article class="card p-4">
 					<div class="row align-items-center">
 						<div class="col-md-4 text-center">
-							<img src="../../img/ibrahim.jpg" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
+								<img id="profileImageDisplay" src="../../img/ibrahim.jpg" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
 						</div>
 						<div class="col-md-4 text-center text-md-start">
-							<h1>İbrahim Ethem Delemen</h1>
-							<p class="title">Öğrenci</p>
-							<p>42 Türkiye</p>
+							<h1 id="profileNameDisplay">İbrahim Ethem Delemen</h1>
+							<p id="profileTitleDisplay" class="title">Öğrenci</p>
+							<p id="profileLocationDisplay">42 Türkiye</p>
 						</div>
 						<div class="col-md-4 text-center">
-							<a href="https://twitter.com/" target="_blank" class="me-3"><i class="fa fa-twitter fa-2x text-primary"></i></a>
-							<a href="https://linkedin.com/" target="_blank" class="me-3"><i class="fa fa-linkedin fa-2x text-primary"></i></a>
-							<button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Profili Düzenle</button>
+							<button class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Profili Düzenle</button>
+							<button class="btn btn-outline-secondary mt-2" id="viewFriendsButton" data-bs-toggle="modal" data-bs-target="#friendsModal">Dostlar</button>
 						</div>
 					</div>
 				</article>
 			</section>
+
 
 			<!-- Hakkımda Bölümü -->
 			<section class="my-5">
@@ -151,6 +160,21 @@
 								</div>
 								<button type="submit" class="btn btn-primary">Kaydet</button>
 							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			 <!-- Dostlar Modal -->
+			<div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="friendsModalLabel">Arkadaşlarınız</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<ul id="friendsList" class="list-group"></ul>
 						</div>
 					</div>
 				</div>
