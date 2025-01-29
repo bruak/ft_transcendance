@@ -30,6 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['gateway', 'localhost', '127.0.0.1']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gateway', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'project-translation_service-1']
+
 
 
 # Application definition

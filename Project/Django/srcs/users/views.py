@@ -11,8 +11,6 @@ import json
 from django.core.exceptions import ValidationError
 import os
 
-
-
 # user list
 @csrf_exempt
 def user_list(request):
