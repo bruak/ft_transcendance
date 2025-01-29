@@ -9,6 +9,13 @@ SERVICES = {
 	"friend": "http://friend:8000",
 }
 
+EXCLUDED_PATHS = [
+	"singin",
+	"twofactor",
+	"singup",
+	"verify-account",
+]
+
 class ProxyMiddleware:
 	def __init__(self, get_response):
 		self.get_response = get_response
@@ -21,14 +28,14 @@ class ProxyMiddleware:
 		path_parts = request.path.strip("/").split("/")
 		if len(path_parts) >= 2:
 			service = path_parts[0]  # İlk kısım servisin adı
-			path = path_parts[1]
-			 # Servisin yol kısmı
-			if len(path_parts) == 3:
-				path = path + "/" + path_parts[2]
+			path = "/".join(path_parts[1:])  # Yolun geri kalanını birleştiriyoruz
+
+
 			service_url = SERVICES.get(service)
+
 			if not service_url:
 				return JsonResponse({'message': "Service not found"}, status=404)  # Servis bulunamazsa 404 döneriz
-			if "singin" not in path and "twofactor" not in path and "singup" not in path and "verify-account" not in path:
+			if not any(path.startswith(excluded) for excluded in EXCLUDED_PATHS):
 				# Token kontrolü yapıyoruz
 				token = request.headers.get('Authorization')
 				if not token:
@@ -37,11 +44,8 @@ class ProxyMiddleware:
 				response = requests.get(f"http://project-auth-1:8000/validate-token/", headers=request.headers)
 				if response.status_code != 200:
 					return JsonResponse({'error': "Geçersiz Validate Token"}, status=response.status_code)
-			if len(path_parts) == 3:
-				request.path = f"{service_url}/{path}"
-			else:
-				request.path = f"{service_url}/{path}/"
-			print(request.path)
+			request.path = f"{service_url}/{path}/"
+			print(f"asfa: {request.path}")
 		else:
 			return JsonResponse({'error': "Invalid Arguam"}, status=500)
 		return None  # Eğer her şey yolundaysa view fonksiyonuna geçeriz
