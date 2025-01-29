@@ -11,6 +11,17 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
 
+def get_translated_message(message_key, user_language):
+    """Translation servisten çeviri alır"""
+    headers = {"Accept-Language": user_language}
+    try:
+        response = requests.get("http://translation-service:8000/api/get_translation/", headers=headers)
+        if response.status_code == 200:
+            translations = response.json()
+            return translations.get(message_key, message_key)  # Çeviri yoksa orijinal mesajı dön
+    except Exception as e:
+        print(f"Translation service error: {e}")  # Log için
+    return message_key  # Hata olursa orijinal mesajı dön
 
 # Kullanıcı Register
 @csrf_exempt

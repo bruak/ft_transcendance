@@ -276,3 +276,32 @@ services:
       - 5432
     environment:
       - POSTGRES_DB=gateway
+
+  translation_service:
+    build:
+      context: ./Translation_service 
+    volumes:
+      - ./Translation_service/srcs:/app
+    networks:
+      - webnet
+    ports:
+      - "8006:8000"
+    env_file:
+      - .env
+    depends_on:
+      - translation_service_db
+    environment:
+      - DB_HOST=translation_service_db
+      - POSTGRES_DB=translation_service
+ 
+  translation_service_db:
+    image: postgres:13
+    container_name: translation_service_db
+    env_file:
+      - .env
+    networks:
+      - webnet
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=translation_service
