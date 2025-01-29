@@ -67,7 +67,7 @@ def singup(request):
 			"avatar": avatar_url,
 		}
 
-		mail_url = f"https://localhost:8080/api/auth/verify-account/{token}"
+		mail_url = f"https://localhost:8080/api/auth/verify-account/{token}/"
 		mail_data = {
 			"token": mail_url,
 			"username" : username,
@@ -77,7 +77,7 @@ def singup(request):
 		if mail_response.status_code != 200:
 			return JsonResponse({'message': "Mail Gönderilmedi"}, status=500) # Internal Server Error: Failed to send email
 
-		user_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
+		user_response = requests.post(f"http://project-users-1:8000/postjson/", json=user_data, headers=headers)
 		if user_response.status_code != 201:
 			user.delete()
 			return JsonResponse({'message': "User Service Error"}, status=500) # Internal Server Error: User Service Error
@@ -169,6 +169,7 @@ def verifyAccount(request, verify_token):
 	if request.method != "POST":
 		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
 	try:
+		print(f"verfy_token : {verify_token}")
 		mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
 		#Böyle bir token varmı diye bir kontrol ypa
 		if timezone.now() > mail_token.expiration:
@@ -322,6 +323,6 @@ def callback(request):
 		"avatar" : image_intra_create(avatar_url)
 	}
 
-	user_service_response = requests.post(f"http://project-users-1:8000/api/postjson/", json=user_data, headers=headers)
+	user_service_response = requests.post(f"http://project-users-1:8000/postjson/", json=user_data, headers=headers)
 	return(JsonResponse({'message': "başarılı"}))
 
