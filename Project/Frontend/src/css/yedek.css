@@ -1,0 +1,535 @@
+/* Genel Stil */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #00041a;
+    color: #ddd;
+}
+
+/* Profile Sayfası Stilleri */
+.profile-page h1, .profile-page h2 {
+    color: #4ca1af;
+    text-shadow: 1px 1px #000;
+}
+
+.profile-page h1 {
+    font-size: 2.5rem;
+}
+
+.profile-page h2, .profile-page h3 {
+    font-size: 2rem;
+    color: #4ca1af;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px #000;
+}
+
+.profile-page h3 {
+    font-size: 1.5rem;
+    color: cadetblue;
+}
+
+.profile-page p {
+    font-size: 1.1rem;
+}
+
+.profile-page .card {
+    background-color: #1c1c1c;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+.profile-page .card:hover {
+    transform: scale(1.05);
+}
+
+.profile-page footer {
+    background-color: #1a1a2e;
+    color: #ddd;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.profile-page img {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+.profile-page img:hover {
+    transform: scale(1.05);
+}
+
+.profile-page .list-group-item {
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.profile-page .carousel-item img {
+    height: 400px;
+    object-fit: cover;
+}
+
+.profile-page .modal-content {
+    background-color: #1c1c1c;
+    color: #ddd;
+    border: 1px solid #1a1a2e;
+}
+
+.profile-page .modal-header, .profile-page .modal-footer {
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.profile-page .modal-header .btn-close {
+    filter: invert(1);
+}
+
+.profile-page .form-control {
+    background-color: #e3e0e0;
+}
+
+/* Arkadaş Ara Stilleri */
+.profile-page .search-user {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.profile-page .search-user .form-control {
+    border-radius: 0;
+    border: 1px solid #4ca1af;
+    background-color: #222;
+    color: #fff;
+}
+
+.profile-page .search-user .btn-outline-primary {
+    border: 1px solid #4ca1af;
+    color: #4ca1af;
+    background-color: #222;
+}
+
+.profile-page .search-user .btn-outline-primary:hover {
+    background-color: #4ca1af;
+    color: #fff;
+}
+
+.profile-page .search-user .btn-outline-secondary {
+    border: 1px solid #4ca1af;
+    color: #4ca1af;
+    background-color: #222;
+}
+
+.profile-page .search-user .btn-outline-secondary:hover {
+    background-color: #4ca1af;
+    color: #fff;
+}
+
+.profile-page #friendSuggestions {
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 0;
+}
+
+.profile-page #friendSuggestions .list-group-item {
+    background-color: #1c1c1c;
+    border: 1px solid #4ca1af;
+    color: #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-page #friendSuggestions .list-group-item .btn {
+    background-color: #4ca1af;
+    border: none;
+    color: #fff;
+}
+
+.profile-page #friendSuggestions .list-group-item .btn:hover {
+    background-color: #2c3e50;
+}
+
+.profile-page .btn-outline-primary {
+    border: 2px solid #4ca1af;
+    color: #4ca1af;
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.profile-page .btn-outline-primary:hover {
+    background-color: #4ca1af;
+    color: #fff;
+}
+
+.profile-page .btn-outline-secondary {
+    border: 2px solid #f39c12;
+    color: #f39c12;
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.profile-page .btn-outline-secondary:hover {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.profile-page .form-control {
+    background-color: #222;
+    color: #fff;
+}
+
+/* Log-Reg Sayfası Stilleri */
+.log-reg-page form {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    margin: auto;
+    max-width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.log-reg-page form h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #ededed;
+}
+
+.log-reg-page form article {
+    margin-bottom: 20px;
+}
+
+.log-reg-page form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+.log-reg-page form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #222;
+    color: #fff;
+}
+
+.log-reg-page form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00041a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.log-reg-page form button:hover {
+    background-color: #032a55;
+}
+
+.log-reg-page .social-btn {
+    background-color: #474d54;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.log-reg-page .social-btn-icon {
+    margin-right: 5px;
+}
+
+.log-reg-page .social-btn:hover {
+    background-color: #5a6470;
+}
+
+.log-reg-page .hidden {
+    display: none;
+}
+
+.log-reg-page .form-container {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.log-reg-page .form-container.slide-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.log-reg-page .form-container.slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.log-reg-page .divider-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 20px 20px 20px 20px;
+    color: #ccc;
+}
+
+.log-reg-page .divider-wrapper::before,
+.log-reg-page .divider-wrapper::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+/* About-Us Sayfası Stilleri */
+.about-us-page header {
+    background-color: #1a1a2e;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.about-us-page header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.about-us-page h1, .about-us-page h2 {
+    margin-bottom: 20px;
+}
+
+.about-us-page h1 {
+    font-size: 3rem;
+    text-shadow: 2px 2px #000;
+}
+
+.about-us-page h2 {
+    font-size: 2.5rem;
+    text-shadow: 1px 1px #000;
+}
+
+.about-us-page p {
+    font-size: 1.2rem;
+    color: #ddd;
+}
+
+.about-us-page .card {
+    border: 1px solid #1a1a2e;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+    background-color: #1c1c1c;
+}
+
+.about-us-page .card:hover {
+    transform: scale(1.05);
+}
+
+.about-us-page .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ca1af;
+}
+
+.about-us-page .card-text {
+    font-size: 1.1rem;
+    color: #bbb;
+}
+
+.about-us-page .btn-primary {
+    background-color: #4ca1af;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.about-us-page .btn-primary:hover {
+    background-color: #2c3e50;
+}
+
+.about-us-page footer {
+    background-color: #1a1a2e;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+}
+
+/* Kaydırmalı geçiş */
+.about-us-page .card-img-top.position-relative {
+    position: relative;
+    width: 100%;
+}
+
+.about-us-page .image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.about-us-page .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #008CBA;
+    overflow: hidden;
+    width: 0;
+    height: 100%;
+    transition: .5s ease;
+}
+
+.about-us-page .card-img-top.position-relative:hover .overlay {
+    width: 100%;
+}
+
+.about-us-page .overlay .text {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+.about-us-page .overlay a {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+/* Navbar Stilleri */
+.navbar {
+    background-color: #1a1a2e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.navbar a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.navbar a:hover {
+    color: #4ca1af;
+}
+
+.navbar .nav-link.active {
+    background-color: #4ca1af;
+    color: #fff;
+}
+
+.navbar .dropdown-menu {
+    background-color: #1a1a2e;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.navbar .dropdown-item {
+    color: #ddd;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: #4ca1af;
+    color: #fff;
+}
+
+.navbar .dropdown-divider {
+    border-top: 1px solid #4ca1af;
+}
+
+/* Game Sayfası Stilleri */
+.game-page {
+    background-color: #00041a;
+    color: #ddd;
+}
+
+.game-page .navbar {
+    background-color: #1a1a2e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.game-page .navbar h3 {
+    color: #4ca1af;
+    text-shadow: 1px 1px #000;
+}
+
+.game-page .game-container {
+    height: 80vh;
+}
+
+.game-page .game-area {
+    width: 800px;
+    height: 600px;
+    background-color: #000;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.game-page .btn {
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.game-page .btn-primary {
+    background-color: #4ca1af;
+    border: none;
+}
+
+.game-page .btn-primary:hover {
+    background-color: #2c3e50;
+}
+
+.game-page .btn-secondary {
+    background-color: #f39c12;
+    border: none;
+}
+
+.game-page .btn-secondary:hover {
+    background-color: #e67e22;
+}
+
+.game-page .btn-success {
+    background-color: #27ae60;
+    border: none;
+}
+
+.game-page .btn-success:hover {
+    background-color: #2ecc71;
+}
+
+.game-page .btn-warning {
+    background-color: bisque;
+    color: #000;
+    border: none;
+}
+
+.game-page .btn-warning:hover {
+    background-color: #e3c9a8;
+}
+
