@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from django.utils.translation import gettext as _
+from django.utils.translation import activate, gettext as _
 from django.http import JsonResponse
 
 def translation(request):
+    user_language = request.headers.get("Accept-Language", "tr")
+    activate(user_language)
     try:
         messages = {
             "User Password Error": _("User Password Error"),
