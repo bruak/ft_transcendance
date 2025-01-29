@@ -1,0 +1,14 @@
+msgid "User Password Error"
+msgstr "Kullanıcı şifresi hatalı"
+
+msgid "Mail Could Not Be Sent"
+msgstr "Mail Gönderilemedi"
+
+msgid "Successful"
+msgstr "Başarılı"
+
+msgid "Not Found User"
+msgstr "Kullanıcı Bulunamadı"
+
+msgid "Only POST requests are allowed."
+msgstr "Sadece POST isteklerine izin verilir."

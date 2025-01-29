@@ -282,6 +282,7 @@ services:
       context: ./Translation_service 
     volumes:
       - ./Translation_service/srcs:/app
+      - ./Translation_service/locale:/app/locale  # Çeviri dosyalarını bağla
     networks:
       - webnet
     ports:
@@ -293,7 +294,7 @@ services:
     environment:
       - DB_HOST=translation_service_db
       - POSTGRES_DB=translation_service
- 
+
   translation_service_db:
     image: postgres:13
     container_name: translation_service_db
