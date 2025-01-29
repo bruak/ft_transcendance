@@ -9,6 +9,7 @@
 - email (Text)
 - password (Text)
 - avatar (File)
+- note: bunları postman üzerinden de kontrol edebilirsin kanka, tufan kurmaya çalışıyor şimdi.
 
 # https://localhost:8080/api/auth/singin/ POST
 - Headers   "Content-Type": "application/json", "Accept": "application/json",   "Accept-Language": "tr",
