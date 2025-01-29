@@ -7,7 +7,7 @@ urlpatterns = [
 	path('callback/', callback, name='callback'),
 	path('singin/', singin, name='login'),
 	path('twofactor/', twofactor, name='twofactor'),
-	path('verify-account/<str:verify_token>', verifyAccount),
+	path('verify-account/<str:verify_token>/', verifyAccount),
 	path('singout/', singout, name='singout'),
 	path('validate-token/', validate_token, name='validate_token'),
 	path('retry-verification-account/', retry_verification_account, name='retry_verification_account'),
