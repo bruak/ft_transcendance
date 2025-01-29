@@ -33,6 +33,7 @@ def main():
     django.setup()  # Django başlatılıyor
 
     try:
+        call_command("compilemessages")
         call_command("makemigrations")
         call_command("migrate")
         call_command("collectstatic", "--noinput")
@@ -70,6 +71,6 @@ def main():
     else:
         sys.argv = ["manage.py", "runserver", "0.0.0.0:8000"]
         execute_from_command_line(sys.argv)
-
+        
 if __name__ == "__main__":
     main()
