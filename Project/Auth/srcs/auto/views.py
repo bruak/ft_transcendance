@@ -16,7 +16,8 @@ def get_translated_message(message_key, user_language):
 	headers = {"Accept-Language": user_language}
  
 	try:
-		response = requests.get("http://project-translation_service-1:8000/get_translation/", headers=headers)
+		response = requests.get("http://project-translation-1:8000/get_translation/", headers=headers)
+		print(response.status_code)
 		if response.status_code == 200:
 			translations = response.json()
 			return translations.get(message_key, message_key)  # Çeviri yoksa orijinal mesajı dön
@@ -24,14 +25,16 @@ def get_translated_message(message_key, user_language):
 		print(f"Translation service error: {e}")  # Log için
 	return message_key + " NOT WORKING (THIS IS FOR TEST)" # Hata olursa orijinal mesajı dön
 
+
+def get_translated_message_test():
+		message_key = "User Password Error"
+		user_language = "tr"  # Test for Turkish language
+		return JsonResponse({'message': get_translated_message(message_key, user_language)}, status=200)
+
 #Kullanıcı Login
 @csrf_exempt
 def singin(request):
 	if request.method == "POST":
-		
-		message_key = "User Password Error"
-		user_language = "tr"  # Test for Turkish language
-		return JsonResponse({'message': get_translated_message(message_key, user_language)}, status=200)
 		data = JSONParser().parse(request)
 		singin = data.get("sign")
 		password = data.get("password")

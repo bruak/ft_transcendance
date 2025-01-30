@@ -2,7 +2,8 @@ FROM python:3.9-slim
 
 RUN apt update && apt install -y postgresql-client \
      && mkdir /app
-RUN apt-get update && apt-get install -y gettext
+RUN apt-get install gettext -y
+
 WORKDIR /app
 
 COPY requirements.txt /app/

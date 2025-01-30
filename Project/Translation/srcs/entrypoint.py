@@ -5,7 +5,7 @@ import django
 import psycopg2
 from django.core.management import execute_from_command_line, call_command
 from django.contrib.auth import get_user_model
-from translation_service_service.settings import DEBUG
+from translation_service.settings import DEBUG
 def main():
     i = 0
     while 1:
@@ -29,12 +29,11 @@ def main():
             i += 1
             time.sleep(2)
 
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "translation_service_service.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "translation_service.settings")
     django.setup()  # Django başlatılıyor
 
     try:
         call_command("compilemessages")
-        call_command("makemigrations")
         call_command("migrate")
         call_command("collectstatic", "--noinput")
     except Exception as e:
@@ -62,7 +61,7 @@ def main():
         port = os.environ.get("APP_PORT", "8000")
 
         # Projenizdeki asgi uygulamasının yolunu yazın:
-        asgi_app_path = "translation_service_service.asgi:application"
+        asgi_app_path = "translation_service.asgi:application"
 
         # daphne'yi çalıştır
         cmd = f"daphne -b {host} -p {port} {asgi_app_path}"
@@ -71,6 +70,6 @@ def main():
     else:
         sys.argv = ["manage.py", "runserver", "0.0.0.0:8000"]
         execute_from_command_line(sys.argv)
-        
+
 if __name__ == "__main__":
     main()

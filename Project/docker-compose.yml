@@ -277,12 +277,12 @@ services:
     environment:
       - POSTGRES_DB=gateway
 
-  translation_service:
+  translation:
     build:
-      context: ./Translation_service 
+      context: ./Translation 
     volumes:
-      - ./Translation_service/srcs:/app
-      - ./Translation_service/locale:/app/locale  # Çeviri dosyalarını bağla
+      - ./Translation/srcs:/app
+      - ./Translation/locale:/app/locale
     networks:
       - webnet
     ports:
@@ -290,14 +290,14 @@ services:
     env_file:
       - .env
     depends_on:
-      - translation_service_db
+      - translation_db
     environment:
-      - DB_HOST=translation_service_db
-      - POSTGRES_DB=translation_service
-
-  translation_service_db:
+      - DB_HOST=translation_db
+      - POSTGRES_DB=translation
+ 
+  translation_db:
     image: postgres:13
-    container_name: translation_service_db
+    container_name: translation_db
     env_file:
       - .env
     networks:
@@ -305,4 +305,4 @@ services:
     expose:
       - 5432
     environment:
-      - POSTGRES_DB=translation_service
+      - POSTGRES_DB=translation
