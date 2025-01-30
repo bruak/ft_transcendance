@@ -226,8 +226,6 @@ services:
       - DB_HOST=game_db
       - POSTGRES_DB=game
 
-
-
   game_db:
     image: postgres:13
     container_name: game_db
