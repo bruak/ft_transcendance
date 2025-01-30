@@ -1,210 +1,230 @@
 <div class="profile-page">
 
+
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-			<div>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-						<li class="nav-item mt-2">
-							<a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
-						</li>
-						<li class="nav-item mt-2">
-							<a class="nav-link" href="/tufan" data-link>Game</a>
-						</li>
-						<li class="nav-item mt-2 mb-2">
-							<a class="nav-link" href="/about" data-link>About</a>
-						</li>
-						<li>
-							<input class="form-control mt-2" type="search" placeholder="Search" aria-label="Search">
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
-				<a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<img id="profileSmallPhoto" src="img/ibrahim.jpg" alt="User" width="30" height="30" class="rounded-circle">
-				</a>
-				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-					<li><a class="dropdown-item" href="#">New project...</a></li>
-					<li><a class="dropdown-item" href="#">Settings</a></li>
-					<li><a class="dropdown-item" href="#">Profile</a></li>
-					<li><hr class="dropdown-divider"></li>
-					<li><a class="dropdown-item" href="#signout">Sign out</a></li>
-				</ul>
-			</div>
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item mt-2">
+                            <a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a class="nav-link" href="/GamePage" data-link>Game</a>
+                        </li>
+                        <li class="nav-item mt-2 mb-2">
+                            <a class="nav-link" href="/about" data-link>About</a>
+                        </li>
+                        <li>
+                            <input autocomplete="off" autofocus class="search-input tt-input form-control" name="query"
+                                placeholder="search..." spellcheck="false" dir="auto"
+                                style="position: relative; vertical-align: initial !important; border: none; height: 100%; width: 90%; background-color: transparent; margin-left: 15px;"
+                                aria-activedescendant="" aria-owns="undefined_listbox" role="combobox"
+                                aria-readonly="true" aria-autocomplete="list" id="friendSearchInput">
+                            <ul id="friendSuggestions" class="list-group position-absolute"></ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img id="profileSmallPhoto" src="" alt="User" width="30" height="30" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">New project...</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#signout">Sign out</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
     <!-- Navbar -->
 
-	<main class="container my-5">
-		<!-- Profil Bilgileri -->
-		<section>
-			<article class="card p-4">
-				<div class="row align-items-center">
-					<div class="col-md-4 text-center">
-						<img id="profileImageDisplay" src="" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
-					</div>
-					<div class="col-md-4 text-center text-md-start">
-						<h1 id="profileNameDisplay"></h1>
-						<p id="profileTitleDisplay" class="title">Öğrenci</p>
-						<p id="profileLocationDisplay">42 Türkiye</p>
-					</div>
-					<div class="col-md-4 text-center">
-						<button class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Profili Düzenle</button>
-						<button class="btn btn-outline-secondary mt-2" id="viewFriendsButton" data-bs-toggle="modal" data-bs-target="#friendsModal">Dostlar</button>
-					</div>
-				</div>
-			</article>
-		</section>
+    <main class="container my-5">
+        <!-- Profil Bilgileri -->
+        <section>
+            <article class="card p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <img id="profileImageDisplay" src="" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
+                    </div>
+                    <div class="col-md-4 text-center text-md-start">
+                        <h1 id="profileNameDisplay"></h1>
+                        <p id="profileTitleDisplay" class="title">Öğrenci</p>
+                        <p id="profileLocationDisplay">42 Türkiye</p>
+                    </div>
+                    <div class="col-md-4 text-center" id="profileActions">
+                        <button class="btn btn-outline-primary mt-2" data-bs-toggle="modal"
+                            data-bs-target="#editProfileModal">Profili Düzenle</button>
+                        <button class="btn btn-outline-secondary mt-2" id="viewFriendsButton" data-bs-toggle="modal"
+                            data-bs-target="#friendsModal">Dostlar</button>
+                    </div>
+                </div>
+            </article>
+        </section>
 
-		<!-- Hakkımda Bölümü -->
-		<section class="my-5">
-			<h2 class="text-center">Hakkımda</h2>
-			<div class="card p-4">
-				<p>
-					Merhaba! Ben İbrahim, teknoloji tutkunu bir öğrenciyim. Kodlama, oyun geliştirme ve yapay zeka
-					alanlarında kendimi geliştirmeyi seviyorum. Yeni şeyler öğrenmek ve projeler üretmek benim için bir yaşam tarzı!
-				</p>
-			</div>
-		</section>
+        <!-- Hakkımda Bölümü -->
+        <section class="my-5">
+            <h2 class="text-center">Hakkımda</h2>
+            <div class="card p-4">
+                <p>
+                    Merhaba! Ben İbrahim, teknoloji tutkunu bir öğrenciyim. Kodlama, oyun geliştirme ve yapay zeka
+                    alanlarında kendimi geliştirmeyi seviyorum. Yeni şeyler öğrenmek ve projeler üretmek benim için bir
+                    yaşam tarzı!
+                </p>
+            </div>
+        </section>
 
-		<!-- Beceriler ve İlgi Alanları -->
-		<section class="my-5">
-			<h2 class="text-center">Beceriler ve İlgi Alanları</h2>
-			<div class="row text-center">
-				<div class="col-md-4">
-					<div class="card p-3">
-						<h3>Kodlama</h3>
-						<p class="card-text">Python, JavaScript, HTML/CSS</p>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card p-3">
-						<h3>Oyun Geliştirme</h3>
-						<p class="card-text">Unity, Unreal Engine</p>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card p-3">
-						<h3>İlgi Alanları</h3>
-						<p class="card-text">Yapay Zeka, Robotik, E-Spor</p>
-					</div>
-				</div>
-			</div>
-		</section>
+        <!-- Beceriler ve İlgi Alanları -->
+        <section class="my-5">
+            <h2 class="text-center">Beceriler ve İlgi Alanları</h2>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h3>Kodlama</h3>
+                        <p class="card-text">Python, JavaScript, HTML/CSS</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h3>Oyun Geliştirme</h3>
+                        <p class="card-text">Unity, Unreal Engine</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h3>İlgi Alanları</h3>
+                        <p class="card-text">Yapay Zeka, Robotik, E-Spor</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-		<!-- Galeri -->
-		<section class="my-5">
-			<h2 class="text-center">Portföy</h2>
-			<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-				<div class="carousel-indicators">
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-				</div>
-				<div class="carousel-inner">
-					<div class="carousel-item active">
-						<img src="../../img/tyler.jpg" class="d-block w-100" alt="Proje 1">
-					</div>
-					<div class="carousel-item">
-						<img src="../../img/pacino.jpg" class="d-block w-100" alt="Proje 2">
-					</div>
-					<div class="carousel-item">
-						<img src="../../img/gosling.jpg" class="d-block w-100" alt="Proje 3">
-					</div>
-				</div>
-				<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
-				</button>
-			</div>
-		</section>
+        <!-- Galeri -->
+        <section class="my-5">
+            <h2 class="text-center">Portföy</h2>
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                        class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="../../img/tyler.jpg" class="d-block w-100" alt="Proje 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../../img/pacino.jpg" class="d-block w-100" alt="Proje 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../../img/gosling.jpg" class="d-block w-100" alt="Proje 3">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </section>
 
-		<!-- Son Etkinlikler -->
-		<section class="my-5">
-			<h2 class="text-center">Son Etkinlikler</h2>
-			<ul class="list-group">
-				<li class="list-group-item bg-dark text-white">Hackathon 2025'e katılım sağlandı.</li>
-				<li class="list-group-item bg-dark text-white">Oyun geliştirme kursu tamamlandı.</li>
-				<li class="list-group-item bg-dark text-white">Yeni bir proje: "E-Ticaret Botu" oluşturuldu.</li>
-			</ul>
-		</section>
+        <!-- Son Etkinlikler -->
+        <section class="my-5">
+            <h2 class="text-center">Son Etkinlikler</h2>
+            <ul class="list-group">
+                <li class="list-group-item bg-dark text-white">Hackathon 2025'e katılım sağlandı.</li>
+                <li class="list-group-item bg-dark text-white">Oyun geliştirme kursu tamamlandı.</li>
+                <li class="list-group-item bg-dark text-white">Yeni bir proje: "E-Ticaret Botu" oluşturuldu.</li>
+            </ul>
+        </section>
 
-		<!-- Profil Düzenleme Modal -->
-		<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="editProfileModalLabel">Profili Düzenle</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<form id="editProfileForm">
-							<div class="mb-3">
-								<label for="profileName" class="form-label">İsim</label>
-								<input type="text" class="form-control" id="profileName" value="İbrahim Ethem Delemen">
-							</div>
-							<div class="mb-3">
-								<label for="profileTitle" class="form-label">Başlık</label>
-								<input type="text" class="form-control" id="profileTitle" value="Öğrenci">
-							</div>
-							<div class="mb-3">
-								<label for="profileLocation" class="form-label">Blog</label>
-								<input type="text" class="form-control" id="profileLocation" value="42 Türkiye">
-							</div>
-							<div class="mb-3">
-								<label for="profileImage" class="form-label">Profil Fotoğrafı</label>
-								<input type="file" class="form-control" id="profileImage">
-							</div>
-							<div class="mb-3">
-								<label for="portfolioImage1" class="form-label">Portföy Fotoğrafı 1</label>
-								<input type="file" class="form-control" id="portfolioImage1">
-							</div>
-							<div class="mb-3">
-								<label for="portfolioImage2" class="form-label">Portföy Fotoğrafı 2</label>
-								<input type="file" class="form-control" id="portfolioImage2">
-							</div>
-							<div class="mb-3">
-								<label for="portfolioImage3" class="form-label">Portföy Fotoğrafı 3</label>
-								<input type="file" class="form-control" id="portfolioImage3">
-							</div>
-							<button type="submit" class="btn btn-primary">Kaydet</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
+        <!-- Profil Düzenleme Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">Profili Düzenle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editProfileForm">
+                            <div class="mb-3">
+                                <label for="profileName" class="form-label">İsim</label>
+                                <input type="text" class="form-control" id="profileName" value="İbrahim Ethem Delemen">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileTitle" class="form-label">Başlık</label>
+                                <input type="text" class="form-control" id="profileTitle" value="Öğrenci">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileLocation" class="form-label">Blog</label>
+                                <input type="text" class="form-control" id="profileLocation" value="42 Türkiye">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
+                                <input type="file" class="form-control" id="profileImage">
+                            </div>
+                            <div class="mb-3">
+                                <label for="portfolioImage1" class="form-label">Portföy Fotoğrafı 1</label>
+                                <input type="file" class="form-control" id="portfolioImage1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="portfolioImage2" class="form-label">Portföy Fotoğrafı 2</label>
+                                <input type="file" class="form-control" id="portfolioImage2">
+                            </div>
+                            <div class="mb-3">
+                                <label for="portfolioImage3" class="form-label">Portföy Fotoğrafı 3</label>
+                                <input type="file" class="form-control" id="portfolioImage3">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<!-- Dostlar Modal -->
-		<div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="friendsModalLabel">Arkadaşlarınız</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<ul id="friendsList" class="list-group"></ul>
-					</div>
-				</div>
-			</div>
-		</div>
+        <!-- Dostlar Modal -->
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="friendsModalLabel">Arkadaşlarınız</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="friendsList" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<!-- Footer -->
-		<footer class="bg-dark text-white text-center py-3">
-			<p>&copy; 2025 Tüm hakları saklı değildir.</p>
-		</footer>
-	</main>
+        <!-- Footer -->
+        <footer class="bg-dark text-white text-center py-3">
+            <p>&copy; 2025 Tüm hakları saklı değildir.</p>
+        </footer>
+    </main>
 
-	<!-- JavaScript dosyası bağlantısı -->
-	<!-- <script src="../js/profile.js"></script> -->
+    <!-- JavaScript dosyası bağlantısı -->
+    <!-- <script src="../js/profile.js"></script> -->
 
 </div>

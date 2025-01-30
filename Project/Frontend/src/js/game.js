@@ -120,13 +120,13 @@ export function initGame() {
   // Raket kontrolü için sunucuya mesaj gönderiyoruz.
   document.addEventListener("keydown", (e) => {
     if (e.key === 'w') {
-      socket.send(JSON.stringify({ action: "move_left", dy: 2 }));
+      socket.send(JSON.stringify({ action: "left_move", dy: 2 }));
     } else if (e.key === 's') {
-      socket.send(JSON.stringify({ action: "move_left", dy: -2 }));
+      socket.send(JSON.stringify({ action: "left_move", dy: -2 }));
     } else if (e.key === 'ArrowUp') {
-      socket.send(JSON.stringify({ action: "move_right", dy: 2 }));
+      socket.send(JSON.stringify({ action: "right_move", dy: 2 }));
     } else if (e.key === 'ArrowDown') {
-      socket.send(JSON.stringify({ action: "move_right", dy: -2 }));
+      socket.send(JSON.stringify({ action: "right_move", dy: -2 }));
     }
   });
 
