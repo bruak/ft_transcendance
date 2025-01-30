@@ -20,20 +20,20 @@ msgstr ""
 
 #: translation/views.py:10
 msgid "User Password Error"
-msgstr ""
+msgstr "User Password Error"
 
 #: translation/views.py:11
 msgid "Mail Could Not Be Sent"
-msgstr ""
+msgstr "Mail Could Not Be Sent"
 
 #: translation/views.py:12
 msgid "Successful"
-msgstr ""
+msgstr "Successful"
 
 #: translation/views.py:13
 msgid "Not Found User"
-msgstr ""
+msgstr "Not Found User"
 
 #: translation/views.py:14
 msgid "Only POST requests are allowed."
-msgstr ""
+msgstr "Only POST requests are allowed."
