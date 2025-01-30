@@ -11,15 +11,15 @@ import requests
 def add_friend(request):
     if request.method != "POST":
         return JsonResponse({"error": "Only POST method is allowed."}, status=405)
-    
+
     try:
         data = JSONParser().parse(request)
         username = data.get('username')
         friendname = data.get('friend')
 
 
-        user_response = requests.get(f"http://project-users-1:8000/api/getuser/{username}")
-        friend_response = requests.get(f"http://project-users-1:8000/api/getuser/{friendname}")
+        user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
+        friend_response = requests.get(f"http://project-users-1:8000/getuser/{friendname}/")
 
         if user_response.status_code != 200 or friend_response.status_code != 200:
             return JsonResponse({"message": "Böyle bir kullanıcı yok."})
@@ -41,12 +41,12 @@ def add_friend(request):
 
         if friend_model and friend_model2:
             return JsonResponse({'message': "Arkadaş ekleme başarılı."})
-        
+
         if friend_model:
             friend_model.delete()
         if friend_model2:
             friend_model2.delete()
-        
+
         return JsonResponse({'message': "Kullanıcı ekleme başarısız."})
 
     except Exception as e:
