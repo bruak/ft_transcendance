@@ -25,6 +25,9 @@ msgstr "Kullanıcı Parolası Hatası"
 msgid "Mail Could Not Be Sent"
 msgstr "E-posta Gönderilemedi"
 
+msgid "Mail already exists"
+msgstr "E-posta zaten mevcut"
+
 msgid "Successful"
 msgstr "Başarılı"
 
@@ -34,4 +37,26 @@ msgstr "Kullanıcı Bulunamadı"
 msgid "Only POST requests are allowed."
 msgstr "Sadece POST isteklerine izin verilir."
 
-msgid ""
+msgid "There is a problem in user service"
+msgstr "'user' servisinde bir sorun var"
+
+msgid "User signup Error"
+msgstr "kullanıcı Kayıt Hatası"
+
+msgid "User authentication not done"
+msgstr "Hesap Doğrulanma Yapılmadı"
+
+msgid "Invalid code"
+msgstr "Geçersiz kod"
+
+msgid "Two factor authentication code not found"
+msgstr "İki faktörlü kimlik doğrulama kodu bulunamadı"
+
+msgid "Mail token has expired check your mail for new authentication token link"
+msgstr "E-posta jetonu süresi dolmuş"
+
+msgid "authontication successful"
+msgstr "kimlik doğrulama başarılı"
+
+msgid "Token not found"
+msgstr "Jeton bulunamadı"
