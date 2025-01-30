@@ -26,10 +26,9 @@ const routes = {
     '/': { html: './views/log-reg.html', init: initLogReg },
     '/profile': { html: './views/profile.html', init: initProfile },
     '/about': { html: './views/about-us.html', init: initAbout },
-    // Dinamik rota örneği
     '/profile/:id': { html: './views/profile.html', init: initProfile },
     '/2fac': { html: './views/2factor.html', init: init2fac },
-    '/tufan': { html: './views/game.html', init: initGame },
+    '/GamePage': { html: './views/game.html', init: initGame },
 };
 
 // Router fonksiyonu

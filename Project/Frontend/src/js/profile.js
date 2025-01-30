@@ -1,91 +1,154 @@
 export function initProfile() {
-    // const host = window.location.hostname;
     try {
         const host = window.location.host;
+        const path = window.location.pathname;
+        const isOwnProfile = path === '/profile';
+        console.log('Profil sayfası:', path); // Profil sayfasını kontrol et
+
+        // Profil Düzenleme Formu İşleme
         const editProfileForm = document.getElementById('editProfileForm');
-        if (editProfileForm) {
+        if (editProfileForm && isOwnProfile) {
             editProfileForm.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                // Form verilerini al
                 const name = document.getElementById('profileName').value;
                 const title = document.getElementById('profileTitle').value;
                 const location = document.getElementById('profileLocation').value;
                 const image = document.getElementById('profileImage').files[0];
 
-                // Profil kartını güncelle
                 document.getElementById('profileNameDisplay').textContent = name;
                 document.getElementById('profileTitleDisplay').textContent = title;
                 document.getElementById('profileLocationDisplay').textContent = location;
 
-                // Profil resmini güncelle
                 if (image) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        document.getElementById('profileImageDisplay').src = e.target.result;
-                        // Profil resmini localStorage'a kaydet
-                        localStorage.setItem('profileImage', e.target.result);
+                        const profileImageDisplay = document.getElementById('profileImageDisplay');
+                        if (profileImageDisplay) {
+                            profileImageDisplay.src = e.target.result;
+                            localStorage.setItem('profileImage', e.target.result);
+                        }
                     }
                     reader.readAsDataURL(image);
                 }
 
-                // Modalı kapat
                 const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
-                modal.hide();
+                if (modal) {
+                    modal.hide();
+                }
             });
         }
 
-        // Sayfa yüklendiğinde profil resmini localStorage'dan al
+        // Kaydedilmiş Profil Resmini Yükleme
         const savedProfileImage = localStorage.getItem('profileImage');
         if (savedProfileImage) {
-            document.getElementById('profileImageDisplay').src = savedProfileImage;
-            document.getElementById('profileSmallPhoto').src = savedProfileImage;
+            const profileImageDisplay = document.getElementById('profileImageDisplay');
+            const profileSmallPhoto = document.getElementById('profileSmallPhoto');
+        if (profileImageDisplay) {
+            profileImageDisplay.src = savedProfileImage;
         }
+        if (profileSmallPhoto) {
+            profileSmallPhoto.src = savedProfileImage;
+        }
+    }
 
-        console.log(localStorage.getItem("accessToken"));
-        // Kullanıcı bilgilerini doldur
-        fetch(`https://${host}/users/api/getuser/${localStorage.getItem("username")}`, {
+        // Kullanıcı Bilgilerini API'den Çekme
+        const username = isOwnProfile ? localStorage.getItem("username") : path.split('/').pop();
+        console.log('Kullanıcı adı:', username); // Kullanıcı adını kontrol et
+        fetch(`https://${host}/users/api/getuser/${username}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}`, 'Accept-Language': 'tr' }
         })
-        .then(response => response.json())
-            .then(user => {
-                    console.log("response.JSON", user);
-                    document.getElementById('profileNameDisplay').textContent = user.first_name + ' ' + user.last_name;
-                    document.getElementById('profileUsernameDisplay').textContent = user.username ? user.username : 'Ayarlanmamış';
-                    document.getElementById('profileTitleDisplay').textContent = user.title ? user.title : 'Ayarlanmamış';
-                    document.getElementById('profileLocationDisplay').textContent = user.location ? user.location : 'Ayarlanmamış';
-                    document.getElementById('profileImageDisplay').src = user.avatar ? user.avatar : 'img/tufan.jpg';
-                    console.log("user.avatar", user.avatar);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(user => {
+            if (user.error) {
+                throw new Error(user.error);
+            }
+            console.log('Kullanıcı bilgileri:', user); // Kullanıcı bilgilerini kontrol et
+            const profileNameDisplay = document.getElementById('profileNameDisplay');
+            const profileUsernameDisplay = document.getElementById('profileUsernameDisplay');
+            const profileTitleDisplay = document.getElementById('profileTitleDisplay');
+            const profileLocationDisplay = document.getElementById('profileLocationDisplay');
+            const profileImageDisplay = document.getElementById('profileImageDisplay');
+            const profileSmallPhoto = document.getElementById('profileSmallPhoto');
 
-                    document.getElementById('profileSmallPhoto').src = user.avatar ? user.avatar : 'img/ibrahim.jpg';
-                })
-            .catch(error => console.error('Kullanıcı bilgileri yüklenirken hata oluştu:', error));
+            if (profileNameDisplay) {
+                profileNameDisplay.textContent = user.first_name + ' ' + user.last_name;
+            }
+            if (profileUsernameDisplay) {
+                profileUsernameDisplay.textContent = user.username ? user.username : 'Ayarlanmamış';
+            }
+            if (profileTitleDisplay) {
+                profileTitleDisplay.textContent = user.title ? user.title : 'Ayarlanmamış';
+            }
+            if (profileLocationDisplay) {
+                profileLocationDisplay.textContent = user.location ? user.location : 'Ayarlanmamış';
+            }
+            if (profileImageDisplay) {
+                profileImageDisplay.src = user.avatar ? user.avatar : 'img/tufan.jpg';
+            }
+            if (profileSmallPhoto) {
+                profileSmallPhoto.src = user.avatar ? user.avatar : 'img/ibrahim.jpg';
+            }
 
-        // Arkadaş ara butonuna tıklama olayını ekle
-        document.getElementById('friendSearchButton').addEventListener('click', function () {
-            const searchInput = document.getElementById('friendSearchInput').value;
-            if (searchInput) {
-                fetch(`/api/search-friends?query=${searchInput}`)
+            if (!isOwnProfile) {
+                const profileActions = document.getElementById('profileActions');
+                if (profileActions) {
+                    profileActions.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Kullanıcı bilgileri yüklenirken hata oluştu:', error);
+            // alert('Kullanıcı bilgileri yüklenirken bir hata oluştu: ' + error.message);
+        });
+
+        // Arkadaş Arama İşlemi
+        const friendSearchInput = document.getElementById('friendSearchInput');
+        if (friendSearchInput) {
+            friendSearchInput.addEventListener('input', function () {
+                const searchInput = friendSearchInput.value;
+                const suggestionsList = document.getElementById('friendSuggestions');
+                if (searchInput) {
+                    fetch(`https://${host}/users/api/get/?query=${searchInput}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Accept-Language': 'tr',
+                            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                        }
+                    })
                     .then(response => response.json())
                     .then(data => {
-                        const suggestionsList = document.getElementById('friendSuggestions');
-                        suggestionsList.innerHTML = '';
-                        data.forEach(user => {
-                            const listItem = document.createElement('li');
-                            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                            listItem.textContent = user.name;
-                            const addButton = document.createElement('button');
-                            addButton.className = 'btn btn-primary';
-                            addButton.textContent = 'Arkadaş Ekle';
-                            addButton.onclick = () => {
-                                fetch(`/api/add-friend`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ friendId: user.id }),
-                                })
+                        console.log('Arama sonuçları:', data); // Arama sonuçlarını kontrol et
+                        if (suggestionsList) {
+                            suggestionsList.innerHTML = '';
+                            data.forEach(user => {
+                                console.log('User:', user); // User nesnesini kontrol et
+                                const listItem = document.createElement('li');
+                                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                                listItem.textContent = user.first_name + ' ' + user.last_name; // Kullanıcı adını ve soyadını göster
+                                const addButton = document.createElement('button');
+                                addButton.className = 'btn btn-primary';
+                                addButton.textContent = 'Arkadaş Ekle';
+                                addButton.onclick = () => {
+                                    console.log('Arkadaş ekleniyor:', user.id); // Arkadaş ekleme işlemini kontrol et
+                                    fetch(`https://${host}/users/api/add-friend`, { // URL'yi kontrol edin
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                                        },
+                                        body: JSON.stringify({ friendId: user.id }),
+                                    })
                                     .then(response => response.json())
                                     .then(data => {
+                                        console.log('Arkadaş ekleme sonucu:', data); // Arkadaş ekleme sonucunu kontrol et
                                         if (data.success) {
                                             alert('Arkadaş eklendi!');
                                         } else {
@@ -93,57 +156,80 @@ export function initProfile() {
                                         }
                                     })
                                     .catch(error => console.error('Arkadaş eklenirken hata oluştu:', error));
-                            };
-                            listItem.appendChild(addButton);
-                            suggestionsList.appendChild(listItem);
-                        });
+                                };
+                                listItem.appendChild(addButton);
+                                suggestionsList.appendChild(listItem);
+                            });
+                            suggestionsList.style.display = 'block';
+                        }
                     })
                     .catch(error => console.error('Arkadaşlar aranırken hata oluştu:', error));
-            }
-        });
+                } else {
+                    if (suggestionsList) {
+                        suggestionsList.innerHTML = '';
+                        suggestionsList.style.display = 'none';
+                    }
+                }
+            });
+        }
 
-        // Dostlar butonuna tıklama olayını ekle
-        document.getElementById('viewFriendsButton').addEventListener('click', function () {
-            fetch('/api/friends')
+        // Arkadaşları Görüntüleme İşlemi
+        const viewFriendsButton = document.getElementById('viewFriendsButton');
+        if (viewFriendsButton) {
+            viewFriendsButton.addEventListener('click', function () {
+                fetch('https://localhost:8080/users/api/get/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Accept-Language': 'tr',
+                        'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                    }
+                })
                 .then(response => response.json())
                 .then(friends => {
+                    console.log('Arkadaş listesi:', friends); // Arkadaş listesini kontrol et
                     const friendsList = document.getElementById('friendsList');
-                    friendsList.innerHTML = friends.length > 0
-                        ? friends.map(friend => `<li class="list-group-item">${friend.name}</li>`).join('')
-                        : '<li class="list-group-item">Henüz arkadaşınız yok.</li>';
+                    if (friendsList) {
+                        friendsList.innerHTML = friends.length > 0
+                            ? friends.map(friend => `<li class="list-group-item">${friend.name}</li>`).join('')
+                            : '<li class="list-group-item">Henüz arkadaşınız yok.</li>';
+                    }
                 })
                 .catch(error => console.error('Arkadaşlar yüklenirken hata oluştu:', error));
-        });
+            });
+        }
 
-        // Sign out işlemi
-        document.querySelector('.dropdown-menu a[href="#signout"]').addEventListener('click', function () {
-            fetch('https://localhost:8080/api/auth/singout/', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Accept-Language': 'tr',
-                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    localStorage.removeItem("accessToken");
-                    localStorage.removeItem("username");
-                    window.location.href = '/';
-                } else {
-                    console.error('Çıkış yaparken hata oluştu:', response.statusText);
-                }
-            })
-            .catch(error => console.error('Çıkış yaparken hata oluştu:', error));
-        });
+        // Çıkış Yapma İşlemi
+        const signOutLink = document.querySelector('.dropdown-menu a[href="#signout"]');
+        if (signOutLink) {
+            signOutLink.addEventListener('click', function () {
+                fetch(`https://${host}/api/auth/singout/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Accept-Language': 'tr',
+                        'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Çıkış yapıldı'); // Çıkış işlemini kontrol et
+                        localStorage.removeItem("accessToken");
+                        localStorage.removeItem("username");
+                        window.location.href = '/';
+                    } else {
+                        console.error('Çıkış yaparken hata oluştu:', response.statusText);
+                    }
+                })
+                .catch(error => console.error('Çıkış yaparken hata oluştu:', error));
+            });
+        }
 
     } catch (error) {
         console.error('initializeProfile fonksiyonunda hata oluştu:', error);
     }
 }
 
-// Dinamik script yüklendikten sonra initProfile fonksiyonunu ça��ır
+// Sayfa Yüklendiğinde initProfile Fonksiyonunu Çağır
 document.addEventListener('DOMContentLoaded', initProfile);
-
-

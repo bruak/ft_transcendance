@@ -1,6 +1,8 @@
+// Initialize 2-Factor Authentication
 export function init2fac() {
   const host = window.location.host;
 
+  // Handle input focus for verification code
   const inputs = document.querySelectorAll('.split_input_item input');
   inputs.forEach((input, index) => {
     input.addEventListener('input', () => {
@@ -15,51 +17,54 @@ export function init2fac() {
     });
   });
 
-  document.getElementById('onay-form').addEventListener('submit', async function (event) {
-    event.preventDefault();
+  // Handle form submission for verification
+  const onayForm = document.getElementById('onay-form');
+  if (onayForm) {
+    onayForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
 
-    const username = localStorage.getItem("username");
-    console.log("KULLANICI ADI", username);
-    const verificationCode = [
-      document.getElementById('digit-1').value,
-      document.getElementById('digit-2').value,
-      document.getElementById('digit-3').value,
-      document.getElementById('digit-4').value,
-    ].join('');
-    console.log("KOD", verificationCode);
-    try {
-      const response = await fetch(`https://${host}/api/auth/twofactor/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, code: verificationCode }),
-      });
+      const username = localStorage.getItem("username");
+      console.log("KULLANICI ADI", username);
+      const verificationCode = [
+        document.getElementById('digit-1').value,
+        document.getElementById('digit-2').value,
+        document.getElementById('digit-3').value,
+        document.getElementById('digit-4').value,
+      ].join('');
+      console.log("KOD", verificationCode);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Hata: ${errorText}`);
-      }
+      try {
+        const response = await fetch(`https://${host}/api/auth/twofactor/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, code: verificationCode }),
+        });
 
-      const data = await response.json();
-      console.log("Gelen Yanıt:", data);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Hata: ${errorText}`);
+        }
 
-      if (!data.data || !data.data.message || !data.data.message.access_token || !data.data.message.refresh_token) {
-        throw new Error("Sunucudan beklenen veri alınamadı!");
-      }
+        const data = await response.json();
+        console.log("Gelen Yanıt:", data);
 
-      // ✅ Token ve Kullanıcı Bilgilerini Çekiyoruz
-      localStorage.setItem('accessToken', data.data.message.access_token.token);
-      localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
-      const accessToken = data.data.message.access_token.token;
-      const refreshToken = data.data.message.refresh_token.token;
-      console.log("Access Token:", accessToken);
-      alert("Başarılı bir şekilde giriş yaptınız!");
-      console.log(response.statusText, response.status); // this message came from backend
-      if (!response.ok) {
-        throw new Error(await response.text()); // Get specific error message from response
-      }
+        if (!data.data || !data.data.message || !data.data.message.access_token || !data.data.message.refresh_token) {
+          throw new Error("Sunucudan beklenen veri alınamadı!");
+        }
 
+        // Store tokens and redirect to profile
+        localStorage.setItem('accessToken', data.data.message.access_token.token);
+        localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
+        const accessToken = data.data.message.access_token.token;
+        const refreshToken = data.data.message.refresh_token.token;
+        console.log("Access Token:", accessToken);
+        alert("Başarılı bir şekilde giriş yaptınız!");
+        console.log(response.statusText, response.status); // this message came from backend
+        if (!response.ok) {
+          throw new Error(await response.text()); // Get specific error message from response
+        }
 
       /*{
         "message": {
@@ -75,14 +80,16 @@ export function init2fac() {
         }
       } */
 
-      // Handle successful response (e.g., redirect to the protected resource)
-      console.log('Verification successful:', data);
-      window.location.href = "/profile";
-    } catch (error) {
-      handleError(error); // Call a separate function to handle errors
-    }
-  });
+        // Handle successful response (e.g., redirect to the protected resource)
+        console.log('Verification successful:', data);
+        window.location.href = "/profile";
+      } catch (error) {
+        handleError(error); // Call a separate function to handle errors
+      }
+    });
+  }
 
+  // Error handling function
   function handleError(error) {
     console.error('Error:', error);
     let errorMessage = 'An error occurred.';
@@ -92,12 +99,14 @@ export function init2fac() {
     } else if (error.message.includes('Network error')) {
       errorMessage = 'Network error. Please check your internet connection and try again.';
     } else {
-
+      // Additional error handling can be added here
     }
 
     alert(errorMessage);
   }
 }
+
+// Initialize the function when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init2fac);
 
 // ... (rest of your code for input handling)
