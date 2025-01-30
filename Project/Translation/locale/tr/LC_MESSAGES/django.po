@@ -1,3 +1,4 @@
+# DO NOT DELETE THESE LINES, THESE LINE IS CONFIG
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -18,22 +19,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: translation/views.py:10
 msgid "User Password Error"
-msgstr "31"
+msgstr "Kullanıcı Parolası Hatası"
 
-#: translation/views.py:11
 msgid "Mail Could Not Be Sent"
-msgstr "32"
+msgstr "E-posta Gönderilemedi"
 
-#: translation/views.py:12
 msgid "Successful"
-msgstr ""
+msgstr "Başarılı"
 
-#: translation/views.py:13
 msgid "Not Found User"
-msgstr "34"
+msgstr "Kullanıcı Bulunamadı"
 
-#: translation/views.py:14
 msgid "Only POST requests are allowed."
-msgstr ""
+msgstr "Sadece POST isteklerine izin verilir."
+
+msgid ""
