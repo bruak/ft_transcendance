@@ -11,16 +11,15 @@ import json
 from django.core.exceptions import ValidationError
 import os
 
-
-
 # user list
+@csrf_exempt
 def user_list(request):
 	if request.method != "GET":
 		return JsonResponse({"error": "Only GET method is allowed."}, status=405)
 	try:
 		obj = User.objects.all()
-		serializer = UserSerializer(obj, many=True, context={"request": request})
-		return JsonResponse(serializer.data, safe=False)
+		serializer = UserSerializer(obj, many=True)
+		return JsonResponse(serializer.data, safe=False, status=200)
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
 

@@ -19,7 +19,7 @@ def send_reset_email(request):
 				return JsonResponse({'error': 'Kullanıcı adı gereklidir.'}, status=400)
 
 			# Kullanıcı bilgilerini başka bir API'den al
-			user_response = requests.get(f"http://project-users-1:8000/api/getuser/{username}")
+			user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
 
 			if user_response.status_code != 200:
 				return JsonResponse({'error': 'Kullanıcı bulunamadı.'}, status=404)
@@ -33,7 +33,7 @@ def send_reset_email(request):
 				reset_token=token
 			)
 			# Şifre sıfırlama bağlantısı oluştur
-			reset_link = f"http://127.0.0.1:8002/api/reset-password/{token}"
+			reset_link = f"http://127.0.0.1:8002/api/reset-password/{token}/"
 			# Mail gönder
 			send_mail(
 				subject="Şifre Sıfırlama Talebi",
@@ -55,7 +55,7 @@ def reset_password(request, token):
 		try:
 			profile = Profile.objects.get(reset_token=token)
 			username = profile.username
-			user_response = requests.get(f"http://project-users-1:8000/api/getuser/{username}")
+			user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
 			user_data = user_response.json()
 			payload = {
 				"password" : new_password
@@ -64,7 +64,7 @@ def reset_password(request, token):
 			headers = {
 				"Content-Type": "application/x-www-form-urlencoded"
 			}
-			update_response = requests.post(f"http://project-users-1:8000/api/put/{username}", data=payload,  headers=headers)
+			update_response = requests.post(f"http://project-users-1:8000/put/{username}/", data=payload,  headers=headers)
 			if update_response.status_code == 200:
 				profile.reset_token = None
 				profile.save()
