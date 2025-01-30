@@ -12,9 +12,11 @@ from rest_framework.parsers import JSONParser
 from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
 
 def get_translated_message(message_key, user_language):
-	"""Translation servisten çeviri alır"""
+
+	if user_language is None or user_language == "" or user_language not in ["tr", "en", "fr"]:
+		user_language = "tr"  # Default language is Turkish
+	
 	headers = {"Accept-Language": user_language}
- 
 	try:
 		response = requests.get("http://project-translation-1:8000/get_translation/", headers=headers)
 		print(response.status_code)
@@ -22,25 +24,26 @@ def get_translated_message(message_key, user_language):
 			translations = response.json()
 			return translations.get(message_key, message_key)  # Çeviri yoksa orijinal mesajı dön
 	except Exception as e:
-		print(f"Translation service error: {e}")  # Log için
+		print(f"Translation service error [LOG]: {e}")  # Log için
 	return message_key + " NOT WORKING (THIS IS FOR TEST)" # Hata olursa orijinal mesajı dön
 
 
-def get_translated_message_test():
+def get_translated_message_test(): # THIS IS FOR TEST, REMOVE THIS FUNCTION NO NEED
 		message_key = "User Password Error"
 		user_language = "tr"  # Test for Turkish language
 		return JsonResponse({'message': get_translated_message(message_key, user_language)}, status=200)
 
-#Kullanıcı Login
 @csrf_exempt
 def singin(request):
 	if request.method == "POST":
+		# return get_translated_message_test() # its for test, u can remove this line
+
 		data = JSONParser().parse(request)
 		singin = data.get("sign")
 		password = data.get("password")
   
 		user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
-  
+
 		try:
 			user = (
 				Users.objects.get(email=singin)
@@ -48,8 +51,7 @@ def singin(request):
 				else Users.objects.get(username=singin)
 			)
 			if (password != user.password):
-				message = get_translated_message("User Password Error", user_language)
-				return JsonResponse({'message': message}, status=401)  # Unauthorized
+				return JsonResponse({'message': get_translated_message("User Password Error", user_language)}, status=401)  # Unauthorized
 			code = generate_random_code()
 			try:
 				twouser = TwofactorCodes.objects.get(user=user, status=True)
@@ -66,22 +68,21 @@ def singin(request):
 				headers = {"Accept-Language": "application/json"}
 				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 				if (mail_response.status_code != 200):
-					message = get_translated_message("Mail Could Not Be Sent", user_language)
-					return JsonResponse({"message": message}, status=402)
-			message = get_translated_message("Successful", user_language)
-			return (JsonResponse({"message": message}, status=200))
+					return JsonResponse({'message': get_translated_message("Mail Could Not Be Sent", user_language)}, status=500)
+				
+			return JsonResponse({'message': get_translated_message("Successful", user_language)}, status=200)
+		
 		except Exception as e:
-			message = get_translated_message("Not Found User", user_language)
-			return (JsonResponse({'message': message}, status=404))
+			return JsonResponse({'message': get_translated_message("Not Found User", user_language)}, status=404)
 	else:
-		message = get_translated_message("Only POST requests are allowed.", user_language)
-		return JsonResponse({'error': message}, status=405)
+		return JsonResponse({'message': get_translated_message("Only POST requests are allowed.", user_language)}, status=405)
 
-# Kullanıcı Register
 @csrf_exempt
 def singup(request):
+	user_language = request.headers.get("Accept-Language", "tr")
+
 	if request.method != "POST":
-		return JsonResponse({"error": "Only POST method is allowed."}, status=405) # Method Not Allowed
+		return JsonResponse({'message': get_translated_message("Only POST requests are allowed.", user_language)}, status=405)
 	try:
 		first_name = request.POST.get('first_name')
 		last_name = request.POST.get('last_name')
@@ -89,9 +90,9 @@ def singup(request):
 		email = request.POST.get('email')
 		password = request.POST.get('password')
 		avatar_file = request.FILES.get('avatar', None)
-		# Kullanıcı adı ve email kontrolü için 409 Conflict kodu
+
 		if username_check(username):
-			return JsonResponse({'message': "bu username var"}, status=409) # Conflict: Username already exists
+			return JsonResponse({'message': get_translated_message("username already exist", user_language)}, status=409)
 		if Users.objects.filter(email=email).exists():
 			return JsonResponse({'message': "Mail Zaten Var"}, status=409) # Conflict: Email already exists
 

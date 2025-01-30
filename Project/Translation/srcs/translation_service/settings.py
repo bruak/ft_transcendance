@@ -28,7 +28,7 @@ ALLOWED_HOSTS = ['*']
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-LANGUAGE_CODE = 'en-us'  # Default dil
+LANGUAGE_CODE = 'tr'  # Default dil
 
 LANGUAGES = [
     ('en', 'English'),

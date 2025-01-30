@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.utils.translation import activate, gettext as _
 from django.http import JsonResponse
 
-def translation(request):
-    user_language = request.headers.get("Accept-Language", "tr")
+def translation_auth(request):
+    user_language = request.headers.get("Accept-Language", "tr") # Default language is Turkish, bu amcik calismadi buraya gelmeden once handle ettim
     activate(user_language)
     try:
         messages = {
