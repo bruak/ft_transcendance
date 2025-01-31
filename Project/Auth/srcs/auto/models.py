@@ -11,7 +11,8 @@ class Users(models.Model):
 	status = models.BooleanField(default=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	def __str__(self):
+		return self.username
 
 class MailTokens(models.Model):
 	TOKEN_TYPE_CHOICES = [

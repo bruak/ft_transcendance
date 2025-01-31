@@ -1,11 +1,14 @@
+/* ======================[*] 2-Factor Authentication Başlatma Fonksiyonu [*]====================== */
 export function init2fac() {
-  
+  const host = window.location.host;
+
+  /* ======================[*] Doğrulama Kodu İçin Input Odaklanma [*]====================== */
   const inputs = document.querySelectorAll('.split_input_item input');
   inputs.forEach((input, index) => {
     input.addEventListener('input', () => {
       if (input.value.length === 1 && index < inputs.length - 1) {
         inputs[index + 1].focus();
-        }
+      }
     });
     input.addEventListener('keydown', (event) => {
       if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
@@ -14,73 +17,97 @@ export function init2fac() {
     });
   });
 
-document.getElementById('onay-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
-  
-    const username = localStorage.getItem("username");
-    const verificationCode = [
-      document.getElementById('digit-1').value,
-      document.getElementById('digit-2').value,
-      document.getElementById('digit-3').value,
-      document.getElementById('digit-4').value,
-    ].join('');
-  
-    try {
-      const response = await fetch('https://localhost:8080/auth/twofactor/', {
-        method: 'POST',
-        headers: {
+  /* ======================[*] Doğrulama Formu İşleme [*]====================== */
+  const onayForm = document.getElementById('onay-form');
+  if (onayForm) {
+    onayForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, code: verificationCode }),
-    });
-      
-      console.log(response.statusText, response.status); // this message came from backend
+      const username = localStorage.getItem("username");
+      console.log("KULLANICI ADI", username);
+      const verificationCode = [
+        document.getElementById('digit-1').value,
+        document.getElementById('digit-2').value,
+        document.getElementById('digit-3').value,
+        document.getElementById('digit-4').value,
+      ].join('');
+      console.log("KOD", verificationCode);
 
-      if (!response.ok) {
-        throw new Error(await response.text()); // Get specific error message from response
-      }
-  
-      const data = await response.json();
+      try {
+        const response = await fetch(`https://${host}/api/auth/twofactor/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, code: verificationCode }),
+        });
 
-      localStorage.setItem("authToken", data.token);  // Bu, örnek bir işlemdir; yanıt formatına göre özelleştirilebilir.
-
-    /*{
-        "message": {
-            "username": "bsoykan",
-            "access_token": {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.IPLvkNCCDQESoV5zGkv6-dsIWkUy3arxh5X2fboc9M8",
-                "expiration_date": "2026-01-27T14:02:32.673Z"
-            },
-            "refresh_token": {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.uLn9A4S3443EllNCaXMFRa6z81umNi2ZTLeT466dpTI",
-                "expiration_date": "2026-01-27T14:02:32.673Z"
-            }
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Hata: ${errorText}`);
         }
-    } */
 
-      // Handle successful response (e.g., redirect to the protected resource)
-      console.log('Verification successful:', data);
-    } catch (error) {
-      handleError(error); // Call a separate function to handle errors
-    } 
-  });
-  
+        const data = await response.json();
+        console.log("Gelen Yanıt:", data);
+
+        if (!data.data || !data.data.message || !data.data.message.access_token || !data.data.message.refresh_token) {
+          throw new Error("Sunucudan beklenen veri alınamadı!");
+        }
+
+        // Store tokens and redirect to profile
+        localStorage.setItem('accessToken', data.data.message.access_token.token);
+        localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
+        const accessToken = data.data.message.access_token.token;
+        const refreshToken = data.data.message.refresh_token.token;
+        console.log("Access Token:", accessToken);
+        alert("Başarılı bir şekilde giriş yaptınız!");
+        console.log(response.statusText, response.status); // this message came from backend
+        if (!response.ok) {
+          throw new Error(await response.text()); // Get specific error message from response
+        }
+
+      /*{
+        "message": {
+          "username": "bsoykan",
+          "access_token": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.IPLvkNCCDQESoV5zGkv6-dsIWkUy3arxh5X2fboc9M8",
+            "expiration_date": "2026-01-27T14:02:32.673Z"
+          },
+          "refresh_token": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.uLn9A4S3443EllNCaXMFRa6z81umNi2ZTLeT466dpTI",
+            "expiration_date": "2026-01-27T14:02:32.673Z"
+          }
+        }
+      } */
+
+        // Handle successful response (e.g., redirect to the protected resource)
+        console.log('Verification successful:', data);
+        window.location.href = "/profile";
+      } catch (error) {
+        handleError(error); // Call a separate function to handle errors
+      }
+    });
+  }
+
+  /* ======================[*] Hata İşleme Fonksiyonu [*]====================== */
   function handleError(error) {
     console.error('Error:', error);
     let errorMessage = 'An error occurred.';
-  
+
     if (error.message === 'Invalid code. Please try again.') {
       errorMessage = error.message;
     } else if (error.message.includes('Network error')) {
       errorMessage = 'Network error. Please check your internet connection and try again.';
-    } else  {
-    
+    } else {
+      // Additional error handling can be added here
     }
-  
+
     alert(errorMessage);
   }
 }
+
+/* ======================[*] Sayfa Yüklendiğinde init2fac Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('DOMContentLoaded', init2fac);
 
-  // ... (rest of your code for input handling)
+// ... (rest of your code for input handling)
+
