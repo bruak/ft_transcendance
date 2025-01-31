@@ -5,154 +5,122 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function initGame() {
-
-
-
-
-
-  // Navbar içeriğini yükleme
+/* ============================[*]=NAVBAR=[*]========================== */
   fetch('/views/navbar.html')
       .then(response => response.text())
       .then(data => {
           document.getElementById('navbar-container').innerHTML = data;
-          console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
       })
       .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
-  const myCanvas = document.getElementById('gameCanvas');
-  const container = document.querySelector('.game-area');
+    
+      const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
 
-  if (!container) {
-    console.error('Container element not found');
-    return;
-  }
+    // 2) Kamera
+    const camera = new THREE.PerspectiveCamera(
+      75,           // FOV
+      window.innerWidth / window.innerHeight, // en-boy oranı
+      0.1,          // near
+      1000          // far
+    );
+    camera.position.z = 30;
 
-  const renderer = new THREE.WebGLRenderer({
-    canvas: myCanvas,
-    antialias: true
-  });
+    // 3) Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-  // Container boyutlarını "piksel" cinsinden alıp renderera atayacağız
-  function setRendererSize() {
-    const width = container.clientWidth;   // 600
-    const height = container.clientHeight; // 400
-    renderer.setSize(width, height);
-  }
-  setRendererSize();
+    // Işık ekleyelim
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(0, 10, 10);
+    scene.add(directionalLight);
 
-  // === 3) SAHNE ve KAMERA ===
-  const scene = new THREE.Scene();
+    // Raket geometrisi
+    const paddleGeometry = new THREE.BoxGeometry(1, 3, 0.5);
+    const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    const paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+    const paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
 
-  // Kamera (FOV, en/boy oranı, yakın, uzak)
-  let camera = new THREE.PerspectiveCamera(
-    60,
-    container.clientWidth / container.clientHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 80; // Kamerayı sahneden uzaklaştırdık
+    // Raketlerin sahneye eklenmesi
+    paddle1.position.x = -10;
+    paddle2.position.x = 10;
+    scene.add(paddle1);
+    scene.add(paddle2);
 
-  // Pencere yeniden boyutlanırsa (veya container boyutu değişirse) kamera ayarını tazele
-  window.addEventListener('resize', () => {
-    setRendererSize();
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-  });
+    // Top geometrisi
+    const ballGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+    scene.add(ball);
 
-  // === 4) IŞIKLAR ===
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-  scene.add(ambientLight);
+    // Skorları gösterecek alan
+    const scoreboard = document.getElementById('scoreboard');
 
-  const pointLight = new THREE.PointLight(0xffffff, 1);
-  pointLight.position.set(0, 0, 100);
-  scene.add(pointLight);
+    // 4) WebSocket Bağlantısı
+    // Projeniz hangi domain/port üzerinde çalışıyorsa ona göre ws:// veya wss:// şeklinde URL'yi düzenleyin.
+    const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/a/');
 
-  // (İsterseniz büyük bir Plane ekleyerek arka planı da değiştirebilirsiniz)
-  // Burada basitçe siyah arka plan bırakıyoruz.
+    let playerId = 'player1'; // Basit örnek, her istemciye manuel atıyoruz.
+                              // Sunucuyla kimlik doğrulama vs. geliştirilebilir.
 
-  // === 5) TOP ve RAKETLER ===
-  const ballRadius = 2;
-  const ballGeometry = new THREE.SphereGeometry(ballRadius, 32, 32);
-  const ballMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
-  const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-  scene.add(ball);
+    socket.onopen = function() {
+      console.log('WebSocket bağlantısı kuruldu.');
+    };
 
-  const paddleWidth = 2;
-  const paddleHeight = 8;
-  const paddleDepth = 1;
+    socket.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      if (data.type === 'init' || data.type === 'game_state') {
+        const state = data.state;
 
-  // Sol raket
-  const leftPaddleGeometry = new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth);
-  const leftPaddleMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-  const leftPaddle = new THREE.Mesh(leftPaddleGeometry, leftPaddleMaterial);
-  leftPaddle.position.set(-40, 0, 0);
-  scene.add(leftPaddle);
+        // Raket konumlarını güncelle
+        paddle1.position.y = state.players.player1.position;
+        paddle2.position.y = state.players.player2.position;
 
-  // Sağ raket
-  const rightPaddleGeometry = new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth);
-  const rightPaddleMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-  const rightPaddle = new THREE.Mesh(rightPaddleGeometry, rightPaddleMaterial);
-  rightPaddle.position.set(40, 0, 0);
-  scene.add(rightPaddle);
+        // Top konumunu güncelle
+        ball.position.x = state.ball.x;
+        ball.position.y = state.ball.y;
+        ball.position.z = state.ball.z;
 
-  // === 6) WEBSOCKET BAĞLANTISI ===
-  // Sunucunuzun gerçek adresine göre wss yolunu düzenleyin
-  const myPath = window.location.host;
-  const socket = new WebSocket(`wss://${myPath}/game/ws/game/myRoom/`);
+        // Skorları güncelle
+        scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+      }
+    };
 
-  socket.onopen = () => {
-    console.log("WebSocket bağlantısı açıldı!");
-  };
+    socket.onclose = function() {
+      console.log('WebSocket bağlantısı kapandı.');
+    };
 
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'init' || data.type === 'state') {
-      // Sunucudan oyun durumunu alıyoruz
-      updateGameState(data.state);
+    // 5) Klavye ile hareket
+    // Basit bir örnek olarak: W yukarı, S aşağı
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'w' || e.key === 'W') {
+        // player1'ı biraz yukarı kaydır
+        socket.send(JSON.stringify({
+          type: 'move',
+          player_id: playerId,
+          position_change: 0.5
+        }));
+      }
+      if (e.key === 's' || e.key === 'S') {
+        // player1'ı biraz aşağı kaydır
+        socket.send(JSON.stringify({
+          type: 'move',
+          player_id: playerId,
+          position_change: -0.5
+        }));
+      }
+    });
+
+    // 6) Animasyon Döngüsü (render)
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
     }
-  };
-
-  socket.onclose = () => {
-    console.log("WebSocket bağlantısı kapandı!");
-  };
-
-  // === 7) SUNUCUDAN GELEN KOORDİNATLARI SAHNEDE GÜNCELLE ===
-  // Örnek olarak sunucunun 0..100 arasında değer gönderdiğini ve 50'nin merkezi temsil ettiğini varsayıyoruz.
-  function mapCoord(serverValue) {
-    // 0..100 -> -50..+50
-    return serverValue;
-  }
-
-  function updateGameState(state) {
-    // Beklediğimiz state yapısı:
-    // { ball_x, ball_y, paddle_left_y, paddle_right_y, score_left, score_right }
-
-    // Top
-    ball.position.x = mapCoord(state.ball_x);
-    ball.position.y = mapCoord(state.ball_y);
-
-    // Raketler
-    leftPaddle.position.y = mapCoord(state.paddle_left_y);
-    rightPaddle.position.y = mapCoord(state.paddle_right_y);
-
-    // Skoru DOM'a yaz
-    const sb = document.getElementById("scoreboard");
-    sb.textContent = `${state.score_left} : ${state.score_right}`;
-  }
-
-  // === 8) KLAVYE GİRİŞİ ===
-  // Raket kontrolü için sunucuya mesaj gönderiyoruz.
-  document.addEventListener("keydown", (e) => {
-    if (e.key === 'w') {
-      socket.send(JSON.stringify({ action: "left_move", dy: 2 }));
-    } else if (e.key === 's') {
-      socket.send(JSON.stringify({ action: "left_move", dy: -2 }));
-    } else if (e.key === 'ArrowUp') {
-      socket.send(JSON.stringify({ action: "right_move", dy: 2 }));
-    } else if (e.key === 'ArrowDown') {
-      socket.send(JSON.stringify({ action: "right_move", dy: -2 }));
+    animate();
     }
-  });
 
-  // === 9) ANİMASYON DÖNGÜSÜ ===
-  // (Pozisyonlar sunucudan geldiğinden, burada sadece sahneyi çiziyoruz)
-}
+
+
+document.addEventListener('DOMContentLoaded', initGame);
