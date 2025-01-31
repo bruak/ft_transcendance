@@ -2,6 +2,8 @@ import { initLogReg } from './log-reg.js';
 import { initProfile } from './profile.js';
 import { initAbout } from './about-us.js';
 import { init2fac } from './2fac.js';
+import { initGame } from './game.js';
+
 // Önbellek yapısı
 const cache = new Map();
 
@@ -24,9 +26,9 @@ const routes = {
     '/': { html: './views/log-reg.html', init: initLogReg },
     '/profile': { html: './views/profile.html', init: initProfile },
     '/about': { html: './views/about-us.html', init: initAbout },
-    // Dinamik rota örneği
     '/profile/:id': { html: './views/profile.html', init: initProfile },
     '/2fac': { html: './views/2factor.html', init: init2fac },
+    '/GamePage': { html: './views/game.html', init: initGame },
 };
 
 // Router fonksiyonu
