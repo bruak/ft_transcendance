@@ -1,16 +1,5 @@
-/* ======================[*] Hakkımızda Sayfasını Başlatma Fonksiyonu [*]====================== */
-export function initAbout() {
-
-    /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
-    fetch('/views/navbar.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('navbar-container').innerHTML = data;
-        console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
-    })
-    .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
-
-    /* ======================[*] Form İşleme [*]====================== */
+// Hakkımızda Sayfasını Başlatma Fonksiyonu
+function initializeAboutUs() {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(event) {
@@ -19,13 +8,13 @@ export function initAbout() {
         });
     }
 
-    /* ======================[*] Kartları Fade-in Animasyonu ile Göster [*]====================== */
+    // Kartları fade-in animasyonu ile göster
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
         card.classList.add('fade-in');
     });
 
-    /* ======================[*] Kart Linklerine Tıklamayı Yakala ve Yeni Sekmede Aç [*]====================== */
+    // Kart linklerine tıklamayı yakala ve yeni sekmede aç
     const links = document.querySelectorAll('.card a');
     links.forEach(function(link) {
         link.addEventListener('click', function(event) {
@@ -35,6 +24,7 @@ export function initAbout() {
     });
 }
 
-/* ======================[*] Sayfa Yüklendiğinde initAbout Fonksiyonunu Çağır [*]====================== */
-document.addEventListener('DOMContentLoaded', initAbout);
+// Dinamik script yüklendikten sonra initializeAboutUs fonksiyonunu çağır
+initializeAboutUs();
 
+export { initializeAboutUs as initAbout };
