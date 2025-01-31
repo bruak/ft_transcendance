@@ -1,46 +1,9 @@
 <div class="game-page">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+    <!-- Navbar -->
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-			<div>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-						<li class="nav-item mt-2">
-							<a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
-						</li>
-						<li class="nav-item mt-2">
-							<a class="nav-link" href="/GamePage" data-link>Game</a>
-						</li>
-						<li class="nav-item mt-2 mb-2">
-							<a class="nav-link" href="/about" data-link>About</a>
-						</li>
-						<li>
-							<input class="form-control mt-2" type="search" placeholder="Search" aria-label="Search">
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
-				<a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<img id="profileSmallPhoto" src="img/ibrahim.jpg" alt="User" width="30" height="30" class="rounded-circle">
-				</a>
-				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-					<li><a class="dropdown-item" href="#">New project...</a></li>
-					<li><a class="dropdown-item" href="#">Settings</a></li>
-					<li><a class="dropdown-item" href="#">Profile</a></li>
-					<li><hr class="dropdown-divider"></li>
-					<li><a class="dropdown-item" href="#">Sign out</a></li>
-				</ul>
-			</div>
-        </div>
-    </nav>
-    <!-- Navbar -->
     <style>
-
         #scoreboard {
             position: absolute;
             top: 10px;
@@ -50,7 +13,7 @@
             font-size: 24px;
             font-family: sans-serif;
             z-index: 999;
-          }
+        }
     </style>
     <main>
         <!-- Oyun Alanı -->
@@ -67,8 +30,6 @@
                 <button class="btn btn-success m-2" onclick="playMultiplayer()">Çoklu Oyna</button>
                 <a class="btn btn-warning m-2" href="/profile" data-link>Geri Dön</a>
             </div>
-
-
         </section>
         <!-- Oyun Alanı Sonu -->
     </main>
@@ -76,4 +37,6 @@
     <footer class="bg-light text-center py-3 mt-4">
         <p>Tüm hakları saklıdır &copy; 2025</p>
     </footer>
+
+
 </div>
