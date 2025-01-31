@@ -15,7 +15,7 @@ def get_translated_message(message_key, user_language):
 
 	if user_language is None or user_language == "" or user_language not in ["tr", "en", "fr"]:
 		user_language = "tr"  # Default language is Turkish
-	
+
 	headers = {"Accept-Language": user_language}
 	try:
 		response = requests.get("http://project-translation-1:8000/get_translation/", headers=headers)
@@ -41,7 +41,7 @@ def singin(request):
 		data = JSONParser().parse(request)
 		singin = data.get("sign")
 		password = data.get("password")
-  
+
 		user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
 
 		try:
@@ -69,9 +69,9 @@ def singin(request):
 				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 				if (mail_response.status_code != 200):
 					return JsonResponse({'message': get_translated_message("Mail Could Not Be Sent", user_language)}, status=500)
-				
+
 			return JsonResponse({'message': get_translated_message("Successful", user_language)}, status=200)
-		
+
 		except Exception as e:
 			return JsonResponse({'message': get_translated_message("Not Found User", user_language)}, status=404)
 	else:
@@ -94,23 +94,23 @@ def singup(request):
 		if username_check(username):
 			return JsonResponse({'message': get_translated_message("username already exist", user_language)}, status=409)
 		if Users.objects.filter(email=email).exists():
-			return JsonResponse({'message': "Mail Zaten Var"}, status=409) # Conflict: Email already exists
+			return JsonResponse({'message': get_translated_message("Mail already exists", user_language)}, status=409)
 
 		avatar_url = image_to_url(avatar_file, username)
-		# Yeni kullanıcı oluşturma
+		# creating new user here
 		user = Users.objects.create(
 			username=username,
 			email=email,
 			password=password,
 			is_active = False,
 		)
-		token = str(uuid.uuid4())
 
+		token = str(uuid.uuid4())
 		MailTokens.objects.create(
 				user=user,
 				token=token,
 				type="verify",
-				expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
+				expiration=  timezone.now() + timedelta(minutes=(60 * 24))
 		)
 
 		headers = {"Accept-Language": "application/json"}
@@ -130,36 +130,38 @@ def singup(request):
 		}
 		mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
 		if mail_response.status_code != 200:
-			return JsonResponse({'message': "Mail Gönderilmedi"}, status=500) # Internal Server Error: Failed to send email
+			return JsonResponse({'message': get_translated_message("Mail Could Not Be Sent", user_language)}, status=500)
 
 		user_response = requests.post(f"http://project-users-1:8000/postjson/", json=user_data, headers=headers)
+
 		if user_response.status_code != 201:
 			user.delete()
-			return JsonResponse({'message': "User Service Error"}, status=500) # Internal Server Error: User Service Error
+			return JsonResponse({'message': get_translated_message("There is a problem in user service", user_language)}, status=500)
 
-		return JsonResponse({'message': "işlem başarılı"})
+		return JsonResponse({'message': get_translated_message("Successful", user_language)}, status=201)
 	except Exception as e:
-		return JsonResponse({'message': "Sigup Error", 'error': str(e)}, status=500) # General error handling
+		return JsonResponse({'message': get_translated_message("User signup Error", user_language)}, status=500)
 
 # Kullanıcı Two Factor Doğrulama
 @csrf_exempt
 def twofactor(request):
+	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "POST":
-		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
+		return JsonResponse({'message': get_translated_message("Only POST requests are allowed.", user_language)}, status=405)
 	try:
 		data = JSONParser().parse(request)
 		username = data.get('username')
 		code = data.get('code')
 		user = Users.objects.get(username=username)
 		if not user.is_active:
-			return (JsonResponse({"message": "Hesap Doğrulanma Yapılmadı"}, status=400))
+			return (JsonResponse({"message": get_translated_message("User authentication not done", user_language)}, status=400))
 		twofactor = TwofactorCodes.objects.get(user=user, code=code, status=True)
 		if TokenService.is_mail_token_expired(twofactor.expiration):
 			twofactor.status = False;
 			twofactor.save()
-			return (JsonResponse({'message': "Invalid code"}))
+			return (JsonResponse({'message': get_translated_message("Invalid Code", user_language)}, status=400))
 	except Exception as e:
-		return (JsonResponse({'message': "Not  Found"}))
+		return (JsonResponse({'message': get_translated_message("Two factor authentication code not found", user_language)}, status=404))
 
 	access_token, access_exp = TokenService.generate_access_token(user.username)
 	refresh_token, refresh_exp = TokenService.generate_refresh_token(user.username)
@@ -183,12 +185,13 @@ def twofactor(request):
 #Kullanıcı Mail Doğrulama
 @csrf_exempt
 def verifyAccount(request, verify_token):
-	if request.method != "POST":
-		return JsonResponse({'error': "Sadece POST isteklerine izin verilir."}, status=405)
+	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "GET":
+		return JsonResponse({'error': get_translated_message("Only GET requests are allowed.", user_language)}, status=405)
 	try:
-		print(f"verfy_token : {verify_token}")
+		print(f"verfy_token : {verify_token}") # what s for @ali????
 		mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
-		#Böyle bir token varmı diye bir kontrol ypa
+		#Token check
 		if timezone.now() > mail_token.expiration:
 			mail_token.status = False
 			mail_token.save()
@@ -199,16 +202,15 @@ def verifyAccount(request, verify_token):
 				type="verify",
 				expiration=  timezone.now() + timedelta(minutes=(60 * 24)) # 1 gün
 			)
-			return (JsonResponse({'message': "Mailin Süresi Doldu enayi, yeni mail gönderdik kontrol et"}))
+			return (JsonResponse({'message': get_translated_message("Mail token has expired check your mail for new authentication token link", user_language)}, status=400))
 
 		user = mail_token.user
 		user.is_active = True
 		user.save()
-		return (JsonResponse({'message': "Doğrulama Yapıldı"}))
+		return (JsonResponse({'message': get_translated_message("authontication successful", user_language)}, status=200))
 	except Exception as e:
-		return JsonResponse({'error': "Not Token"}, status=403)
+		return JsonResponse({'error': get_translated_message("Token not found", user_language)}, status=403)
 
-# Kullanıcı Çıkış
 @csrf_exempt
 def singout(request):
 	if request.method != "GET":
