@@ -22,10 +22,8 @@ def handle_post(request):
 
 		if response.status_code == 200 or response.status_code == 201:
 			return JsonResponse({'message': 'Request was successful', 'data': response_json})
-		if response.status_code == 400:
-			print("Error Details:", response_json)
 		else:
-			return JsonResponse({'message': 'Request failed', 'status_code': response.status_code}, status=500)
+			return JsonResponse({'error': 'Request failed ', 'status_code': response.status_code, 'data': response_json}, status=response.status_code)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
@@ -38,7 +36,7 @@ def handle_get(request):
 		response = requests.get(target_url, headers=headers)
 		print(f"url {target_url}")
 		if response.status_code != 200:
-			return JsonResponse({'error': 'Request failed ', 'status_code': response.status_code}, status=500)
+			return JsonResponse({'error': 'Request failed ', 'status_code': response.status_code, 'data': response.json()}, status=response.status_code)
 		# Yanıtın boş olup olmadığını kontrol et
 		if response.text.strip() == '':
 			return JsonResponse({'error': 'Empty response from target URL'}, status=500)

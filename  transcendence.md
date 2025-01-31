@@ -46,6 +46,11 @@
 - Kullanıcıya Gönderilen Arkadaşlık İstekleri
 - Headers   "Content-Type": "application/json", "Accept": "application/json", "Accept-Language": "tr"   "Authorization": "Bearer <token>",
 
+# https://localhost:8080/api/friend/friends/<username>/ GET
+- Kullanının Arkadaşları
+- Headers   "Content-Type": "application/json", "Accept": "application/json", "Accept-Language": "tr"   "Authorization": "Bearer <token>",
+
+
 # https://localhost:8080/api/friend/accept_friend_request/ POST
 - Gelen Arkadaşlık İsteğini Kabul Etme
 - Headers   "Content-Type": "application/json", "Accept": "application/json", "Accept-Language": "tr"   "Authorization": "Bearer <token>",
