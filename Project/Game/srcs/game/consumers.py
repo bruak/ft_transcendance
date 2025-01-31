@@ -104,9 +104,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         while True:
-            if not self.channel_layer.groups.get(self.room_group_name):
-                await self.close()
-                break
             self.__class__.game_state.update()
             await self.channel_layer.group_send(self.room_group_name, {
                 "type": "brodcast"

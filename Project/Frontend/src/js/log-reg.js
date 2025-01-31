@@ -1,3 +1,4 @@
+/* ======================[*] Giriş ve Kayıt Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initLogReg() {
     const host = window.location.host;
     console.log(host);
@@ -18,7 +19,7 @@ export function initLogReg() {
         }, 200);
     }
 
-    // Form Geçişleri
+    /* ======================[*] Form Geçişleri [*]====================== */
     if (switchToRegister && switchToLogin && loginForm && registerForm && loginWith42) {
         switchToRegister.addEventListener('click', (event) => {
             event.preventDefault();
@@ -30,7 +31,7 @@ export function initLogReg() {
             switchForm(registerForm, loginForm);
         });
 
-        // Giriş Formu İşleme
+        /* ======================[*] Giriş Formu İşleme [*]====================== */
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const sign = document.getElementById('login-sign').value;
@@ -68,7 +69,7 @@ export function initLogReg() {
             }
         });
 
-        // Kayıt Formu İşleme
+        /* ======================[*] Kayıt Formu İşleme [*]====================== */
         registerForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const firstName = document.getElementById('register-first_name').value;
@@ -106,7 +107,7 @@ export function initLogReg() {
             }
         });
 
-        // 42 ile Giriş Yapma
+        /* ======================[*] 42 ile Giriş Yapma [*]====================== */
         loginWith42.addEventListener('click', (event) => {
             event.preventDefault();
             window.location.href = '#api/42-login';
@@ -114,7 +115,7 @@ export function initLogReg() {
     }
 }
 
-// Dinamik script yüklendikten sonra initLogReg fonksiyonunu çağır
+/* ======================[*] Dinamik Script Yüklendikten Sonra initLogReg Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('DOMContentLoaded', initLogReg);
 
 
