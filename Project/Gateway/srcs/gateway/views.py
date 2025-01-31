@@ -20,7 +20,7 @@ def handle_post(request):
 		# Yanıtı JSON olarak çözümle
 		response_json = response.json()
 
-		if response.status_code == 200:
+		if response.status_code == 200 or response.status_code == 201:
 			return JsonResponse({'message': 'Request was successful', 'data': response_json})
 		if response.status_code == 400:
 			print("Error Details:", response_json)
@@ -61,7 +61,7 @@ def handle_formdata(request):
 		if response.text.strip() == '':
 			return JsonResponse({'error': 'Empty response from target URL'}, status=500)
 		response_json = response.json()
-		if response.status_code == 200:
+		if response.status_code == 200 or response.status_code == 201:
 			return JsonResponse({'message': 'Request was successful', 'data': response_json})
 		else:
 			return JsonResponse({'message': 'Request failed', 'status_code': response.status_code}, status=500)

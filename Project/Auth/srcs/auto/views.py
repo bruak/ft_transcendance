@@ -15,7 +15,7 @@ def get_translated_message(message_key, user_language):
 
 	if user_language is None or user_language == "" or user_language not in ["tr", "en", "fr"]:
 		user_language = "tr"  # Default language is Turkish
-	
+
 	headers = {"Accept-Language": user_language}
 	try:
 		response = requests.get("http://project-translation-1:8000/get_translation/", headers=headers)
@@ -41,7 +41,7 @@ def singin(request):
 		data = JSONParser().parse(request)
 		singin = data.get("sign")
 		password = data.get("password")
-  
+
 		user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
 
 		try:
@@ -69,9 +69,9 @@ def singin(request):
 				mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
 				if (mail_response.status_code != 200):
 					return JsonResponse({'message': get_translated_message("Mail Could Not Be Sent", user_language)}, status=500)
-				
+
 			return JsonResponse({'message': get_translated_message("Successful", user_language)}, status=200)
-		
+
 		except Exception as e:
 			return JsonResponse({'message': get_translated_message("Not Found User", user_language)}, status=404)
 	else:
@@ -94,7 +94,7 @@ def singup(request):
 		if username_check(username):
 			return JsonResponse({'message': get_translated_message("username already exist", user_language)}, status=409)
 		if Users.objects.filter(email=email).exists():
-			return JsonResponse({'message': get_translated_message("Mail already exists", user_language)}, status=409) 
+			return JsonResponse({'message': get_translated_message("Mail already exists", user_language)}, status=409)
 
 		avatar_url = image_to_url(avatar_file, username)
 		# creating new user here
@@ -104,7 +104,7 @@ def singup(request):
 			password=password,
 			is_active = False,
 		)
-  
+
 		token = str(uuid.uuid4())
 		MailTokens.objects.create(
 				user=user,
@@ -133,7 +133,7 @@ def singup(request):
 			return JsonResponse({'message': get_translated_message("Mail Could Not Be Sent", user_language)}, status=500)
 
 		user_response = requests.post(f"http://project-users-1:8000/postjson/", json=user_data, headers=headers)
-		
+
 		if user_response.status_code != 201:
 			user.delete()
 			return JsonResponse({'message': get_translated_message("There is a problem in user service", user_language)}, status=500)
@@ -186,8 +186,8 @@ def twofactor(request):
 @csrf_exempt
 def verifyAccount(request, verify_token):
 	user_language = request.headers.get("Accept-Language", "tr")
-	if request.method != "POST":
-		return JsonResponse({'error': get_translated_message("Only POST requests are allowed.", user_language)}, status=405)
+	if request.method != "GET":
+		return JsonResponse({'error': get_translated_message("Only GET requests are allowed.", user_language)}, status=405)
 	try:
 		print(f"verfy_token : {verify_token}") # what s for @ali????
 		mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)

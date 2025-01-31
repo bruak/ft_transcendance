@@ -60,3 +60,6 @@ msgstr "kimlik doğrulama başarılı"
 
 msgid "Token not found"
 msgstr "Jeton bulunamadı"
+
+msgid "You cannot send a request to your own account."
+msgstr "Kendi hesabınıza istek gönderemezsiniz."
