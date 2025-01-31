@@ -1,9 +1,20 @@
 export function initProfile() {
+
+    
     try {
         const host = window.location.host;
         const path = window.location.pathname;
         const isOwnProfile = path === '/profile';
         console.log('Profil sayfası:', path); // Profil sayfasını kontrol et
+
+        // Navbar içeriğini yükleme
+        fetch('/views/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
+            })
+            .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
 
         // Profil Düzenleme Formu İşleme
         const editProfileForm = document.getElementById('editProfileForm');
@@ -105,7 +116,7 @@ export function initProfile() {
         })
         .catch(error => {
             console.error('Kullanıcı bilgileri yüklenirken hata oluştu:', error);
-            // alert('Kullanıcı bilgileri yüklenirken bir hata oluştu: ' + error.message);
+            showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
         });
 
         // Arkadaş Arama İşlemi
@@ -155,7 +166,10 @@ export function initProfile() {
                                             alert('Arkadaş eklenemedi.');
                                         }
                                     })
-                                    .catch(error => console.error('Arkadaş eklenirken hata oluştu:', error));
+                                    .catch(error => {
+                                        console.error('Arkadaş eklenirken hata oluştu:', error);
+                                        showErrorMessage("Arkadaş eklenirken bir hata oluştu.");
+                                    });
                                 };
                                 listItem.appendChild(addButton);
                                 suggestionsList.appendChild(listItem);
@@ -163,7 +177,10 @@ export function initProfile() {
                             suggestionsList.style.display = 'block';
                         }
                     })
-                    .catch(error => console.error('Arkadaşlar aranırken hata oluştu:', error));
+                    .catch(error => {
+                        console.error('Arkadaşlar aranırken hata oluştu:', error);
+                        showErrorMessage("Arkadaşlar aranırken bir hata oluştu.");
+                    });
                 } else {
                     if (suggestionsList) {
                         suggestionsList.innerHTML = '';
@@ -195,7 +212,10 @@ export function initProfile() {
                             : '<li class="list-group-item">Henüz arkadaşınız yok.</li>';
                     }
                 })
-                .catch(error => console.error('Arkadaşlar yüklenirken hata oluştu:', error));
+                .catch(error => {
+                    console.error('Arkadaşlar yüklenirken hata oluştu:', error);
+                    showErrorMessage("Arkadaşlar yüklenirken bir hata oluştu.");
+                });
             });
         }
 
@@ -220,15 +240,53 @@ export function initProfile() {
                         window.location.href = '/';
                     } else {
                         console.error('Çıkış yaparken hata oluştu:', response.statusText);
+                        showErrorMessage("Çıkış yaparken bir hata oluştu.");
                     }
                 })
-                .catch(error => console.error('Çıkış yaparken hata oluştu:', error));
+                .catch(error => {
+                    console.error('Çıkış yaparken hata oluştu:', error);
+                    showErrorMessage("Çıkış yaparken bir hata oluştu.");
+                });
             });
         }
 
     } catch (error) {
         console.error('initializeProfile fonksiyonunda hata oluştu:', error);
+        showErrorMessage("Profil yüklenirken bir hata oluştu.");
     }
+}
+
+export function updateProfileUI(user) {
+    const profileNameDisplay = document.getElementById('profileNameDisplay');
+    const profileTitleDisplay = document.getElementById('profileTitleDisplay');
+    const profileLocationDisplay = document.getElementById('profileLocationDisplay');
+    const profileImageDisplay = document.getElementById('profileImageDisplay');
+    const profileSmallPhoto = document.getElementById('profileSmallPhoto');
+
+    if (profileNameDisplay) {
+        profileNameDisplay.textContent = user.first_name + ' ' + user.last_name;
+    }
+    if (profileTitleDisplay) {
+        profileTitleDisplay.textContent = user.title ? user.title : 'Ayarlanmamış';
+    }
+    if (profileLocationDisplay) {
+        profileLocationDisplay.textContent = user.location ? user.location : 'Ayarlanmamış';
+    }
+    if (profileImageDisplay) {
+        profileImageDisplay.src = user.avatar ? user.avatar : 'img/default-avatar.png';
+    }
+    if (profileSmallPhoto) {
+        profileSmallPhoto.src = user.avatar ? user.avatar : 'img/default-avatar.png';
+    }
+}
+
+// Hata mesajı gösterme fonksiyonu
+function showErrorMessage(message) {
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-message";
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 3000);
 }
 
 // Sayfa Yüklendiğinde initProfile Fonksiyonunu Çağır

@@ -27,8 +27,6 @@ export function initGame() {
     1000
   );
   camera.position.z = 80; // Kamerayı sahneden uzaklaştırdık
-
-  // Pencere yeniden boyutlanırsa (veya container boyutu değişirse) kamera ayarını tazele
   window.addEventListener('resize', () => {
     setRendererSize();
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -74,7 +72,9 @@ export function initGame() {
   // === 6) WEBSOCKET BAĞLANTISI ===
   // Sunucunuzun gerçek adresine göre wss yolunu düzenleyin
   const myPath = window.location.host;
-  const socket = new WebSocket(`wss://${myPath}/game/ws/game/myRoom/`);
+  let roomName = 'zortRoom';
+
+  const socket = new WebSocket(`wss://${myPath}/game/ws/game/${roomName}/`);
 
   socket.onopen = () => {
     console.log("WebSocket bağlantısı açıldı!");

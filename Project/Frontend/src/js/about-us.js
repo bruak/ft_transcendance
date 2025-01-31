@@ -1,5 +1,14 @@
 // Hakkımızda Sayfasını Başlatma Fonksiyonu
-function initializeAboutUs() {
+export function initAbout() {
+
+    // Navbar içeriğini yükleme
+    fetch('/views/navbar.html')
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
+    })
+    .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(event) {
@@ -24,7 +33,5 @@ function initializeAboutUs() {
     });
 }
 
-// Dinamik script yüklendikten sonra initializeAboutUs fonksiyonunu çağır
-initializeAboutUs();
+document.addEventListener('DOMContentLoaded', initAbout);
 
-export { initializeAboutUs as initAbout };
