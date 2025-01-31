@@ -1,8 +1,8 @@
-// Initialize 2-Factor Authentication
+/* ======================[*] 2-Factor Authentication Başlatma Fonksiyonu [*]====================== */
 export function init2fac() {
   const host = window.location.host;
 
-  // Handle input focus for verification code
+  /* ======================[*] Doğrulama Kodu İçin Input Odaklanma [*]====================== */
   const inputs = document.querySelectorAll('.split_input_item input');
   inputs.forEach((input, index) => {
     input.addEventListener('input', () => {
@@ -17,7 +17,7 @@ export function init2fac() {
     });
   });
 
-  // Handle form submission for verification
+  /* ======================[*] Doğrulama Formu İşleme [*]====================== */
   const onayForm = document.getElementById('onay-form');
   if (onayForm) {
     onayForm.addEventListener('submit', async function (event) {
@@ -89,7 +89,7 @@ export function init2fac() {
     });
   }
 
-  // Error handling function
+  /* ======================[*] Hata İşleme Fonksiyonu [*]====================== */
   function handleError(error) {
     console.error('Error:', error);
     let errorMessage = 'An error occurred.';
@@ -106,7 +106,7 @@ export function init2fac() {
   }
 }
 
-// Initialize the function when the DOM is fully loaded
+/* ======================[*] Sayfa Yüklendiğinde init2fac Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('DOMContentLoaded', init2fac);
 
 // ... (rest of your code for input handling)
