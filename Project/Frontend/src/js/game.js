@@ -1,7 +1,30 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initGame();
+});
 
 export function initGame() {
+
+
+
+
+
+  // Navbar içeriğini yükleme
+  fetch('/views/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+          document.getElementById('navbar-container').innerHTML = data;
+          console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
+      })
+      .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
   const myCanvas = document.getElementById('gameCanvas');
   const container = document.querySelector('.game-area');
+
+  if (!container) {
+    console.error('Container element not found');
+    return;
+  }
 
   const renderer = new THREE.WebGLRenderer({
     canvas: myCanvas,
@@ -96,7 +119,7 @@ export function initGame() {
   // Örnek olarak sunucunun 0..100 arasında değer gönderdiğini ve 50'nin merkezi temsil ettiğini varsayıyoruz.
   function mapCoord(serverValue) {
     // 0..100 -> -50..+50
-    return serverValue - 50;
+    return serverValue;
   }
 
   function updateGameState(state) {
@@ -132,11 +155,4 @@ export function initGame() {
 
   // === 9) ANİMASYON DÖNGÜSÜ ===
   // (Pozisyonlar sunucudan geldiğinden, burada sadece sahneyi çiziyoruz)
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-  animate();
 }
-
-document.addEventListener('DOMContentLoaded', initGame);
