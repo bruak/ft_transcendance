@@ -1,53 +1,95 @@
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from rest_framework.parsers import JSONParser
 from .models import Friends
+from rest_framework import status
 import requests
-
+from .serializers import FriendsSerializer
+from rest_framework.decorators import api_view
+from .message import get_translated_message
 
 @csrf_exempt
-def add_friend(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "Only POST method is allowed."}, status=405)
+@api_view(["POST"])
+def send_friend_request(request):
+	user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
+	if request.method != "POST":
+		return JsonResponse({"error": get_translated_message("Only POST requests are allowed.", user_language)}, status=405)
+	try:
+		data = JSONParser().parse(request)
+		username = data.get('username')
+		friendname = data.get('friend')
 
-    try:
-        data = JSONParser().parse(request)
-        username = data.get('username')
-        friendname = data.get('friend')
+		user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
+		friend_response = requests.get(f"http://project-users-1:8000/getuser/{friendname}/")
 
+		if user_response.status_code != 200 or friend_response.status_code != 200:
+			return JsonResponse({"message": get_translated_message("Not Found User", user_language)}, status.HTTP_404_NOT_FOUND)
 
-        user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
-        friend_response = requests.get(f"http://project-users-1:8000/getuser/{friendname}/")
+		if username == friendname:
+			return JsonResponse({"message": get_translated_message("You cannot send a request to your own account.", user_language)}, status = 400)
 
-        if user_response.status_code != 200 or friend_response.status_code != 200:
-            return JsonResponse({"message": "Böyle bir kullanıcı yok."})
+		if Friends.objects.filter(
+		models.Q(username=username, friendname=friendname) |
+		models.Q(username=friendname, friendname=username)).exists():
+			return JsonResponse({"message": get_translated_message("Friend request already exists or you are already friends.", user_language)}, status=status.HTTP_400_BAD_REQUEST)
+		serializer = FriendsSerializer(data={"username": username, "friendname": friendname, "status": "pending"})
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse({"message": get_translated_message("Friend request sent successfully.", user_language)}, status=status.HTTP_201_CREATED)
+		return JsonResponse({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
 
-        user_data = user_response.json()
-        friend_data = friend_response.json()
+@api_view(["GET"])
+def list_friend_requests(request, username):
+	user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
+	requests = Friends.objects.filter(friendname=username, status="pending")
+	if not requests.exists():
+		return JsonResponse({"message": get_translated_message("No pending friend requests found.", user_language)}, status=status.HTTP_404_NOT_FOUND)
+	serializer = FriendsSerializer(requests, many=True)
+	return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
 
-        user_id = user_data.get("id")
-        friend_id = friend_data.get("id")
+@api_view(["POST"])
+@csrf_exempt
+def accept_friend_request(request):
+	user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
+	try:
+		data = JSONParser().parse(request)
+		username = data.get("username")
+		friendname = data.get("friendname")
 
-        if user_id == friend_id:
-            return JsonResponse({"message": "Kendine istek gönderemezsin."})
+		friend_request = Friends.objects.get(username=friendname, friendname=username, status="pending")
+		friend_request.status = "accepted"
+		friend_request.save()
+		return JsonResponse({"message": get_translated_message("Friend request accepted.", user_language)}, status=status.HTTP_200_OK)
+	except Friends.DoesNotExist:
+		return JsonResponse({"message": get_translated_message("Friend request not found.", user_language)}, status=status.HTTP_404_NOT_FOUND)
 
-        if Friends.objects.filter(user_id=user_id, friend_id=friend_id).exists():
-            return JsonResponse({"message": "Zaten arkadaşsınız."})
+# Dil Ekle Ve Test Et
+@api_view(["GET"])
+def friends(request, username):
+	try:
+		language = request.headers.get("Accept-Language", "tr")
+		response = Friends.objects.filter(
+			models.Q (friendname=username, status="accepted") | models.Q(username=username, status="accepted"))
+		if not response.exists():
+				return JsonResponse({"message": get_translated_message("No friends found.", language)}, status=status.HTTP_404_NOT_FOUND)
+		serializer = FriendsSerializer(response, many=True)
+		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        friend_model = Friends.objects.create(user_id=user_id, friend_id=friend_id)
-        friend_model2 = Friends.objects.create(user_id=friend_id, friend_id=user_id)
+@api_view(["POST"])
+def block_friend(request):
+	data = request.data
+	username = data.get("username")
+	friendname = data.get("friendname")
 
-        if friend_model and friend_model2:
-            return JsonResponse({'message': "Arkadaş ekleme başarılı."})
-
-        if friend_model:
-            friend_model.delete()
-        if friend_model2:
-            friend_model2.delete()
-
-        return JsonResponse({'message': "Kullanıcı ekleme başarısız."})
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+	try:
+		friend_request = Friends.objects.get(username=username, friendname=friendname)
+		friend_request.status = "blocked"
+		friend_request.save()
+		return JsonResponse({"message": "Friend blocked."}, status=status.HTTP_200_OK)
+	except Friends.DoesNotExist:
+		return JsonResponse({"message": "Friend relationship not found."}, status=status.HTTP_404_NOT_FOUND)

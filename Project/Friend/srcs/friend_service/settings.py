@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://users:8000']
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'users', '*']
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
