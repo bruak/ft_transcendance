@@ -10,23 +10,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
-
-def get_translated_message(message_key, user_language):
-
-	if user_language is None or user_language == "" or user_language not in ["tr", "en", "fr"]:
-		user_language = "tr"  # Default language is Turkish
-
-	headers = {"Accept-Language": user_language}
-	try:
-		response = requests.get("http://project-translation-1:8000/get_translation/", headers=headers)
-		print(response.status_code)
-		if response.status_code == 200:
-			translations = response.json()
-			return translations.get(message_key, message_key)  # Çeviri yoksa orijinal mesajı dön
-	except Exception as e:
-		print(f"Translation service error [LOG]: {e}")  # Log için
-	return message_key + " NOT WORKING (THIS IS FOR TEST)" # Hata olursa orijinal mesajı dön
-
+from .translate_way import get_translated_message
 
 def get_translated_message_test(): # THIS IS FOR TEST, REMOVE THIS FUNCTION NO NEED
 		message_key = "User Password Error"

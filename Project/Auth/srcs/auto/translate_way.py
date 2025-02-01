@@ -1,6 +1,5 @@
 import requests
 
-
 def get_translated_message(message_key, user_language):
 
 	if user_language is None or user_language == "" or user_language not in ["tr", "en", "fr"]:
@@ -15,4 +14,5 @@ def get_translated_message(message_key, user_language):
 			return translations.get(message_key, message_key)  # Çeviri yoksa orijinal mesajı dön
 	except Exception as e:
 		print(f"Translation service error [LOG]: {e}")  # Log için
-	return message_key + " NOT WORKING (THIS IS FOR TEST)" # Hata olursa orijinal mesajı dön
+	return message_key + "(translate service dosent work, returned default message)" # Hata olursa orijinal mesajı dön
+
