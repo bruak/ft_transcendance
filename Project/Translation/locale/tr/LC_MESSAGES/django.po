@@ -60,3 +60,24 @@ msgstr "kimlik doğrulama başarılı"
 
 msgid "Token not found"
 msgstr "Jeton bulunamadı"
+
+msgid "You cannot send a request to your own account."
+msgstr "Kendi hesabınıza istek gönderemezsiniz."
+
+msgid "Friend request already exists or you are already friends."
+msgstr "Arkadaşlık isteği zaten var veya siz zaten arkadaşsınız."
+
+msgid "Friend request sent successfully."
+msgstr "Arkadaşlık isteği başarıyla gönderildi."
+
+msgid "No pending friend requests found."
+msgstr "Bekleyen arkadaşlık isteği bulunamadı."
+
+msgid "Friend request not found."
+msgstr "Arkadaşlık isteği bulunamadı."
+
+msgid "Friend request accepted."
+msgstr "Arkadaşlık isteği kabul edildi."
+
+msgid "No friends found."
+msgstr "Arkadaş bulunamadı."
