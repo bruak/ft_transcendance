@@ -3,6 +3,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from .models import GameSatats
+from .serializer import GameSatatsSerializer
 
 class PongConsumer(AsyncWebsocketConsumer):
     game_state = {
@@ -25,15 +27,34 @@ class PongConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+
+        # Determine if the player is host or guest
+        if not hasattr(self.channel_layer, 'host'):
+            self.channel_layer.host = self.channel_name
+            self.player_id = 'player1'
+        elif not hasattr(self.channel_layer, 'guest'):
+            self.channel_layer.guest = self.channel_name
+            self.player_id = 'player2'
+        else:
+            self.player_id = 'spectator'
+
         await self.send(json.dumps({
             'type': 'init',
-            'state': self.game_state
+            'state': self.game_state,
+            'player_id': self.player_id
         }))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.channel_name == getattr(self.channel_layer, 'host', None):
+            del self.channel_layer.host
+        elif self.channel_name == getattr(self.channel_layer, 'guest', None):
+            del self.channel_layer.guest
 
     async def receive(self, text_data=None, bytes_data=None):
+        if self.player_id == 'spectator':
+            return  # Read-only permission for spectators
+
         data = json.loads(text_data)
         message_type = data.get('type')
 
@@ -48,7 +69,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.broadcast_game_state()
 
         elif message_type == 'update_ball':
-            # Sunucu tarafında topun fizik hesaplamasını güncelle
             self.update_ball_position()
             await self.broadcast_game_state()
 
