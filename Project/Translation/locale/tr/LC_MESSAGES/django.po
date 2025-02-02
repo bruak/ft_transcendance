@@ -124,3 +124,77 @@ msgstr "bu kullanıcı adı zaten mevcut"
 msgid "this email already exist"
 msgstr "bu e-posta zaten mevcut"
 
+msgid "an error occurred while creating a user"
+msgstr "bir kullanıcı oluşturulurken bir hata oluştu"
+
+msgid "an error occurred while getting a user"
+msgstr "bir kullanıcı alınırken bir hata oluştu"
+
+msgid "an error occurred while updating a user"
+msgstr "kullanıcı güncellenirken bir hata oluştu"
+
+msgid "Avatar download error"
+msgstr "Avatar indirme hatası"
+
+msgid "Friend blocked."
+msgstr "Arkadaş engellendi."
+
+msgid "Friend relationship not found."
+msgstr "Arkadaş ilişkisi bulunamadı."
+
+msgid "Service not found."
+msgstr "Servis bulunamadı."
+
+msgid "Missing token"
+msgstr "Eksik jeton"
+
+msgid "Invalid validate token"
+msgstr "Geçersiz doğrulama jetonu"
+
+msgid "Invalid path argument"
+msgstr "Geçersiz yol argümanı"
+
+msgid "Empty response from target URL"
+msgstr "Hedef URL'den boş yanıt"
+
+msgid "Request was successful"
+msgstr "İstek başarılı oldu"
+
+msgid "Request failed"
+msgstr "İstek başarısız oldu"
+
+msgid "Invalid JSON response"
+msgstr "Geçersiz JSON yanıtı"
+
+msgid "Username required"
+msgstr "Kullanıcı adı gerekli"
+
+msgid "Password Reset Request"
+msgstr "Şifre Sıfırlama İsteği"
+
+msgid "Click on this link to reset your password: "
+msgstr "Şifrenizi sıfırlamak için bu bağlantıya tıklayın: "
+
+msgid "Password reset link sent."
+msgstr "Şifre sıfırlama bağlantısı gönderildi."
+
+msgid "An error has occurred."
+msgstr "Bir hata oluştu."
+
+msgid "details"
+msgstr "detaylar"
+
+msgid "Your password has been successfully changed. You can log in now."
+msgstr "Şifreniz başarıyla değiştirildi. Şimdi giriş yapabilirsiniz."
+
+msgid "An error occurred while updating the password."
+msgstr "Şifre güncellenirken bir hata oluştu."
+
+msgid "An invalid or expired connection. Please try again."
+msgstr "Geçersiz veya süresi dolmuş bir bağlantı. Lütfen tekrar deneyin."
+
+msgid "Verify Code"
+msgstr "Doğrulama kodu"
+
+msgid "Email sent successfully."
+msgstr "E-posta başarıyla gönderildi."

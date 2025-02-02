@@ -82,6 +82,7 @@ def friends(request, username):
 
 @api_view(["POST"])
 def block_friend(request):
+	user_language = request.headers.get("Accept-Language", "tr")
 	data = request.data
 	username = data.get("username")
 	friendname = data.get("friendname")
@@ -90,6 +91,6 @@ def block_friend(request):
 		friend_request = Friends.objects.get(username=username, friendname=friendname)
 		friend_request.status = "blocked"
 		friend_request.save()
-		return JsonResponse({"message": "Friend blocked."}, status=status.HTTP_200_OK)
+		return JsonResponse({"message": get_translated_message("Friend blocked.", user_language)}, status=status.HTTP_200_OK)
 	except Friends.DoesNotExist:
-		return JsonResponse({"message": "Friend relationship not found."}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({"message": get_translated_message("Friend relationship not found.", user_language)}, status=status.HTTP_404_NOT_FOUND)
