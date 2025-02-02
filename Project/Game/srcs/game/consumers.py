@@ -4,6 +4,10 @@ import asyncio
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+from .models import GameSatats
+from .serializer import GameSatatsSerializer
+
+
 class PongConsumer(AsyncWebsocketConsumer):
     game_state = {
         'players': {
@@ -25,15 +29,40 @@ class PongConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+
+
+        # Determine if the player is host or guest
+        if not hasattr(self.channel_layer, 'host'):
+            self.channel_layer.host = self.channel_name
+            self.player_id = 'player1'
+        elif not hasattr(self.channel_layer, 'guest'):
+            self.channel_layer.guest = self.channel_name
+            self.player_id = 'player2'
+        else:
+            self.player_id = 'spectator'
+
+        await self.send(json.dumps({
+            'type': 'init',
+            'state': self.game_state,
+            'player_id': self.player_id
+
         await self.send(json.dumps({
             'type': 'init',
             'state': self.game_state
+
         }))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.channel_name == getattr(self.channel_layer, 'host', None):
+            del self.channel_layer.host
+        elif self.channel_name == getattr(self.channel_layer, 'guest', None):
+            del self.channel_layer.guest
 
     async def receive(self, text_data=None, bytes_data=None):
+        if self.player_id == 'spectator':
+            return  # Read-only permission for spectators
+
         data = json.loads(text_data)
         message_type = data.get('type')
 
@@ -48,7 +77,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.broadcast_game_state()
 
         elif message_type == 'update_ball':
+
             # Sunucu tarafında topun fizik hesaplamasını güncelle
+
             self.update_ball_position()
             await self.broadcast_game_state()
 
@@ -70,6 +101,30 @@ class PongConsumer(AsyncWebsocketConsumer):
             'state': event['state']
         }))
 
+
+    async def update_ball_position(self):
+        # Fizik hesaplaması (basit sekme mantığı vb.) örneği:
+        ball = self.game_state['ball']
+        ball['x'] += ball['vx']
+        ball['y'] += ball['vy']
+
+        # Duvarlara çarpma kontrolü (basit 2D örnek)
+        if abs(ball['y']) > 5:  # yukarı/aşağı sınırı aştı varsayalım
+            ball['vy'] *= -1
+        if abs(ball['x']) > 10:  # sol/sağ sınırı aştı varsayalım
+            ball['vx'] *= -1
+        # Rakete çarpışma vs. ek lojik eklenebilir.
+
+        # Skor güncellemesi (topun x, -x sınırlarını geçmesi gibi durumlarda)
+        if ball['x'] < -10:
+            self.game_state['players']['player2']['score'] += 1
+            # topu ortada yeniden başlat
+            ball['x'], ball['y'] = 0.0, 0.0
+        elif ball['x'] > 10:
+            self.game_state['players']['player1']['score'] += 1
+            # topu ortada yeniden başlat
+            ball['x'], ball['y'] = 0.0, 0.0
+
     async def game_loop(self):
         while True:
             if not self.channel_layer.groups.get(self.room_group_name):
@@ -84,3 +139,4 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     # async def close_game(self, event):
     #     await self.close()
+
