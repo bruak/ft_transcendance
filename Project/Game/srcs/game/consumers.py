@@ -3,8 +3,10 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
 from .models import GameSatats
 from .serializer import GameSatatsSerializer
+
 
 class PongConsumer(AsyncWebsocketConsumer):
     game_state = {
@@ -28,6 +30,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
+
         # Determine if the player is host or guest
         if not hasattr(self.channel_layer, 'host'):
             self.channel_layer.host = self.channel_name
@@ -42,6 +45,11 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'init',
             'state': self.game_state,
             'player_id': self.player_id
+
+        await self.send(json.dumps({
+            'type': 'init',
+            'state': self.game_state
+
         }))
 
     async def disconnect(self, close_code):
@@ -69,6 +77,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.broadcast_game_state()
 
         elif message_type == 'update_ball':
+
+            # Sunucu tarafında topun fizik hesaplamasını güncelle
+
             self.update_ball_position()
             await self.broadcast_game_state()
 
@@ -116,6 +127,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         while True:
+            if not self.channel_layer.groups.get(self.room_group_name):
+                await self.close()
+                break
             self.__class__.game_state.update()
             await self.channel_layer.group_send(self.room_group_name, {
                 "type": "brodcast"
