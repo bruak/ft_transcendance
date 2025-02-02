@@ -107,7 +107,7 @@ def translation_mail(request):
             "Username required.": _("Username required."),
             "User not found.": _("User not found."),
             "Password Reset Request": _("Password Reset Request"),
-            "Click on this link to reset your password:": _("Click on this link to reset your password:"),
+            "Click on this link to reset your password: ": _("Click on this link to reset your password: "),
             "Password reset link sent.": _("Password reset link sent."),
             "details": _("details"),
             "An error has occurred.": _("An error has occurred."),

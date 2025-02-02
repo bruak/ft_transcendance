@@ -97,7 +97,7 @@ msgstr "Geçersiz Jeton Hatası - Çıkış yaparken"
 msgid "Invalid Token Error when trying to validate token"
 msgstr "Geçersiz Jeton Hatası - Jetonu doğrularken"
 
-msgid "User not found"
+msgid "User not found."
 msgstr "Kullanıcı bulunamadı"
 
 msgid "Token has expired. New token has been sent to your email."
@@ -166,7 +166,7 @@ msgstr "İstek başarısız oldu"
 msgid "Invalid JSON response"
 msgstr "Geçersiz JSON yanıtı"
 
-msgid "Username required"
+msgid "Username required."
 msgstr "Kullanıcı adı gerekli"
 
 msgid "Password Reset Request"
