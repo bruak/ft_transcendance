@@ -1,5 +1,4 @@
-
-// Önbellek yapısı
+/* ======================[*] Önbellek Yapısı [*]====================== */
 const cache = new Map();
 
 async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
@@ -21,7 +20,7 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
     }
 }
 
-// Global state yönetimi
+/* ======================[*] Global State Yönetimi [*]====================== */
 const globalState = new Proxy(
     {
         user: {
@@ -47,7 +46,7 @@ function getState(key) {
     return globalState[key];
 }
 
-// Hata mesajı gösterme fonksiyonu
+/* ======================[*] Hata Mesajı Gösterme Fonksiyonu [*]====================== */
 function showErrorMessage(message) {
     const errorDiv = document.createElement("div");
     errorDiv.className = "error-message";
@@ -56,8 +55,7 @@ function showErrorMessage(message) {
     setTimeout(() => errorDiv.remove(), 3000);
 }
 
-
-// Rota tanımlamaları
+/* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
     '/': { html: './views/log-reg.html', init: () => import("./log-reg.js").then(({ initLogReg }) => initLogReg()) },
     '/profile': { html: './views/profile.html', init: () => import("./profile.js").then(({ initProfile }) => initProfile()) },
@@ -67,7 +65,7 @@ const routes = {
     '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
 };
 
-// Router fonksiyonu
+/* ======================[*] Router Fonksiyonu [*]====================== */
 async function router() {
     const path = window.location.pathname;
     let route = routes[path] || routes['/'];
@@ -96,7 +94,7 @@ async function router() {
     }
 }
 
-// Link tıklamalarını yakala ve router fonksiyonunu çağır
+/* ======================[*] Link Tıklamalarını Yakala ve Router Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('click', (event) => {
     const target = event.target.closest('a[data-link]');
     if (target) {
@@ -107,17 +105,17 @@ document.addEventListener('click', (event) => {
     }
 });
 
-// Sayfa yüklendiğinde ve geri/ileri butonlarına basıldığında router fonksiyonunu çağır
+/* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
 window.addEventListener('popstate', router);
 
-// Örnek: Kullanıcı bilgisi güncellendiğinde profil bileşenini güncelle
+/* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     console.log("Kullanıcı bilgisi güncellendi:", event.detail);
     import("./profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
 });
 
-// Kullanıcı yetkilendirmesi kontrolü
+/* ======================[*] Kullanıcı Yetkilendirmesi Kontrolü [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     if (!event.detail.token) {
         console.log("Kullanıcı oturum açmamış!");
@@ -126,7 +124,7 @@ document.addEventListener("stateChange:user", (event) => {
     }
 });
 
-// Yetkilendirme ve güvenlik önlemleri eklemek için aşağıdaki kodu kullanabilirsiniz:
+/* ======================[*] Yetkilendirme ve Güvenlik Önlemleri [*]====================== */
 // if (!globalState.user) {
 //     history.pushState(null, null, "/");
 //     router();

@@ -90,6 +90,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             'state': event['state']
         }))
 
+
     async def update_ball_position(self):
         # Fizik hesaplaması (basit sekme mantığı vb.) örneği:
         ball = self.game_state['ball']
@@ -112,3 +113,16 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.game_state['players']['player1']['score'] += 1
             # topu ortada yeniden başlat
             ball['x'], ball['y'] = 0.0, 0.0
+
+    async def game_loop(self):
+        while True:
+            self.__class__.game_state.update()
+            await self.channel_layer.group_send(self.room_group_name, {
+                "type": "brodcast"
+            })
+            await asyncio.sleep(0.1)
+
+
+    # async def close_game(self, event):
+    #     await self.close()
+
