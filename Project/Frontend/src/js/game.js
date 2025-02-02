@@ -13,7 +13,11 @@ export function initGame() {
       })
       .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
     
+
     const scene = new THREE.Scene();
+
+      const scene = new THREE.Scene();
+
     scene.background = new THREE.Color(0x000000);
 
     // 2) Kamera
@@ -71,10 +75,12 @@ export function initGame() {
       if (data.type === 'init' || data.type === 'game_state') {
         const state = data.state;
 
+
         if (data.player_id) {
           playerId = data.player_id;
         }
         console.log("Kanaldaki Kişi", playerId)
+
         paddle1.position.y = state.players.player1.position;
         paddle2.position.y = state.players.player2.position;
 
@@ -106,6 +112,7 @@ export function initGame() {
         }));
       }
     });
+
     function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
