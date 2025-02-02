@@ -13,7 +13,6 @@ export function initProfile() {
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar-container').innerHTML = data;
-                console.log('Navbar yüklendi'); // Navbar'ın yüklendiğini kontrol et
             })
             .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
 
