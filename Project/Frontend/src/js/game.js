@@ -13,7 +13,11 @@ export function initGame() {
       })
       .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
     
+
     const scene = new THREE.Scene();
+
+      const scene = new THREE.Scene();
+
     scene.background = new THREE.Color(0x000000);
 
     // 2) Kamera
@@ -74,10 +78,12 @@ export function initGame() {
       if (data.type === 'init' || data.type === 'game_state') {
         const state = data.state;
 
+
         // Set player ID if provided by the server
         if (data.player_id) {
           playerId = data.player_id;
         }
+
 
         // Raket konumlarını güncelle
         paddle1.position.y = state.players.player1.position;
@@ -117,7 +123,9 @@ export function initGame() {
         }));
       }
     });
+
     // socket.send(JSON.stringify({ type: 'update_ball' }));
+
     // 6) Animasyon Döngüsü (render)
     function animate() {
       requestAnimationFrame(animate);
