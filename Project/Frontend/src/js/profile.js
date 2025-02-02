@@ -1,3 +1,4 @@
+/* ======================[*] Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initProfile() {
 
     
@@ -7,7 +8,7 @@ export function initProfile() {
         const isOwnProfile = path === '/profile';
         console.log('Profil sayfası:', path); // Profil sayfasını kontrol et
 
-        // Navbar içeriğini yükleme
+        /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
         fetch('/views/navbar.html')
             .then(response => response.text())
             .then(data => {
@@ -15,7 +16,7 @@ export function initProfile() {
             })
             .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
 
-        // Profil Düzenleme Formu İşleme
+        /* ======================[*] Profil Düzenleme Formu İşleme [*]====================== */
         const editProfileForm = document.getElementById('editProfileForm');
         if (editProfileForm && isOwnProfile) {
             editProfileForm.addEventListener('submit', function (event) {
@@ -49,7 +50,7 @@ export function initProfile() {
             });
         }
 
-        // Kaydedilmiş Profil Resmini Yükleme
+        /* ======================[*] Kaydedilmiş Profil Resmini Yükleme [*]====================== */
         const savedProfileImage = localStorage.getItem('profileImage');
         if (savedProfileImage) {
             const profileImageDisplay = document.getElementById('profileImageDisplay');
@@ -62,12 +63,17 @@ export function initProfile() {
         }
     }
 
-        // Kullanıcı Bilgilerini API'den Çekme
+        /* ======================[*] Kullanıcı Bilgilerini API'den Çekme [*]====================== */
         const username = isOwnProfile ? localStorage.getItem("username") : path.split('/').pop();
         console.log('Kullanıcı adı:', username); // Kullanıcı adını kontrol et
-        fetch(`https://${host}/users/api/getuser/${username}`, {
+        fetch(`https://${host}/api/user/getuser/${username}`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}`, 'Accept-Language': 'tr' }
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Accept-Language': 'tr',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            }
         })
         .then(response => {
             if (!response.ok) {
@@ -80,6 +86,7 @@ export function initProfile() {
                 throw new Error(user.error);
             }
             console.log('Kullanıcı bilgileri:', user); // Kullanıcı bilgilerini kontrol et
+            const userData = user.data; // user.data nesnesine erişim
             const profileNameDisplay = document.getElementById('profileNameDisplay');
             const profileUsernameDisplay = document.getElementById('profileUsernameDisplay');
             const profileTitleDisplay = document.getElementById('profileTitleDisplay');
@@ -88,22 +95,22 @@ export function initProfile() {
             const profileSmallPhoto = document.getElementById('profileSmallPhoto');
 
             if (profileNameDisplay) {
-                profileNameDisplay.textContent = user.first_name + ' ' + user.last_name;
+                profileNameDisplay.textContent = userData.first_name + ' ' + userData.last_name;
             }
             if (profileUsernameDisplay) {
-                profileUsernameDisplay.textContent = user.username ? user.username : 'Ayarlanmamış';
+                profileUsernameDisplay.textContent = userData.username ? userData.username : 'Ayarlanmamı��';
             }
             if (profileTitleDisplay) {
-                profileTitleDisplay.textContent = user.title ? user.title : 'Ayarlanmamış';
+                profileTitleDisplay.textContent = userData.title ? userData.title : 'Ayarlanmamış';
             }
             if (profileLocationDisplay) {
-                profileLocationDisplay.textContent = user.location ? user.location : 'Ayarlanmamış';
+                profileLocationDisplay.textContent = userData.location ? userData.location : 'Ayarlanmamış';
             }
             if (profileImageDisplay) {
-                profileImageDisplay.src = user.avatar ? user.avatar : 'img/tufan.jpg';
+                profileImageDisplay.src = userData.avatar ? userData.avatar : 'img/tufan.jpg';
             }
             if (profileSmallPhoto) {
-                profileSmallPhoto.src = user.avatar ? user.avatar : 'img/ibrahim.jpg';
+                profileSmallPhoto.src = userData.avatar ? userData.avatar : 'img/ibrahim.jpg';
             }
 
             if (!isOwnProfile) {
@@ -118,14 +125,15 @@ export function initProfile() {
             showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
         });
 
-        // Arkadaş Arama İşlemi
+        /* ======================[*] Arkadaş Arama İşlemi [*]====================== */
         const friendSearchInput = document.getElementById('friendSearchInput');
         if (friendSearchInput) {
             friendSearchInput.addEventListener('input', function () {
                 const searchInput = friendSearchInput.value;
+                console.log('Arama:', searchInput); // Arama değerini kontrol et
                 const suggestionsList = document.getElementById('friendSuggestions');
                 if (searchInput) {
-                    fetch(`https://${host}/users/api/get/?query=${searchInput}`, {
+                    fetch(`https://${host}/api/user/get/?query=${searchInput}`, {
                         method: 'GET',
                         headers: {
                             'Accept': 'application/json',
@@ -133,7 +141,12 @@ export function initProfile() {
                             'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         console.log('Arama sonuçları:', data); // Arama sonuçlarını kontrol et
                         if (suggestionsList) {
@@ -148,13 +161,13 @@ export function initProfile() {
                                 addButton.textContent = 'Arkadaş Ekle';
                                 addButton.onclick = () => {
                                     console.log('Arkadaş ekleniyor:', user.id); // Arkadaş ekleme işlemini kontrol et
-                                    fetch(`https://${host}/users/api/add-friend`, { // URL'yi kontrol edin
+                                    fetch(`https://${host}/api/friend/send_friend_request/`, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
                                         },
-                                        body: JSON.stringify({ friendId: user.id }),
+                                        body: JSON.stringify({ username: localStorage.getItem("username"), friend: user.username }),
                                     })
                                     .then(response => response.json())
                                     .then(data => {
@@ -189,11 +202,11 @@ export function initProfile() {
             });
         }
 
-        // Arkadaşları Görüntüleme İşlemi
+        /* ======================[*] Arkadaşları Görüntüleme İşlemi [*]====================== */
         const viewFriendsButton = document.getElementById('viewFriendsButton');
         if (viewFriendsButton) {
             viewFriendsButton.addEventListener('click', function () {
-                fetch('https://localhost:8080/users/api/get/', {
+                fetch(`https://${host}/api/friend/friends/${localStorage.getItem("username")}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -218,7 +231,7 @@ export function initProfile() {
             });
         }
 
-        // Çıkış Yapma İşlemi
+        /* ======================[*] Çıkış Yapma İşlemi [*]====================== */
         const signOutLink = document.querySelector('.dropdown-menu a[href="#signout"]');
         if (signOutLink) {
             signOutLink.addEventListener('click', function () {
@@ -255,7 +268,9 @@ export function initProfile() {
     }
 }
 
+/* ======================[*] Profil Bileşenini Güncelleme Fonksiyonu [*]====================== */
 export function updateProfileUI(user) {
+    const userData = user.data; // user.data nesnesine erişim
     const profileNameDisplay = document.getElementById('profileNameDisplay');
     const profileTitleDisplay = document.getElementById('profileTitleDisplay');
     const profileLocationDisplay = document.getElementById('profileLocationDisplay');
@@ -263,22 +278,23 @@ export function updateProfileUI(user) {
     const profileSmallPhoto = document.getElementById('profileSmallPhoto');
 
     if (profileNameDisplay) {
-        profileNameDisplay.textContent = user.first_name + ' ' + user.last_name;
+        profileNameDisplay.textContent = userData.first_name + ' ' + userData.last_name;
     }
     if (profileTitleDisplay) {
-        profileTitleDisplay.textContent = user.title ? user.title : 'Ayarlanmamış';
+        profileTitleDisplay.textContent = userData.title ? userData.title : 'Ayarlanmamış';
     }
     if (profileLocationDisplay) {
-        profileLocationDisplay.textContent = user.location ? user.location : 'Ayarlanmamış';
+        profileLocationDisplay.textContent = userData.location ? userData.location : 'Ayarlanmamış';
     }
     if (profileImageDisplay) {
-        profileImageDisplay.src = user.avatar ? user.avatar : 'img/default-avatar.png';
+        profileImageDisplay.src = userData.avatar ? userData.avatar : 'img/default-avatar.png';
     }
     if (profileSmallPhoto) {
-        profileSmallPhoto.src = user.avatar ? user.avatar : 'img/default-avatar.png';
+        profileSmallPhoto.src = userData.avatar ? userData.avatar : 'img/default-avatar.png';
     }
 }
 
+/* ======================[*] Hata Mesajı Gösterme Fonksiyonu [*]====================== */
 // Hata mesajı gösterme fonksiyonu
 function showErrorMessage(message) {
     const errorDiv = document.createElement("div");
@@ -288,5 +304,6 @@ function showErrorMessage(message) {
     setTimeout(() => errorDiv.remove(), 3000);
 }
 
+/* ======================[*] Sayfa Yüklendiğinde initProfile Fonksiyonunu Çağır [*]====================== */
 // Sayfa Yüklendiğinde initProfile Fonksiyonunu Çağır
 document.addEventListener('DOMContentLoaded', initProfile);

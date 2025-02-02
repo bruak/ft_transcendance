@@ -25,6 +25,9 @@ msgstr "Kullanıcı Parolası Hatası"
 msgid "Mail Could Not Be Sent"
 msgstr "E-posta Gönderilemedi"
 
+msgid "Mail already exists"
+msgstr "E-posta zaten mevcut"
+
 msgid "Successful"
 msgstr "Başarılı"
 
@@ -34,4 +37,90 @@ msgstr "Kullanıcı Bulunamadı"
 msgid "Only POST requests are allowed."
 msgstr "Sadece POST isteklerine izin verilir."
 
-msgid ""
+msgid "There is a problem in user service"
+msgstr "'user' servisinde bir sorun var"
+
+msgid "User signup Error"
+msgstr "kullanıcı Kayıt Hatası"
+
+msgid "User authentication not done"
+msgstr "Hesap Doğrulanma Yapılmadı"
+
+msgid "Invalid code"
+msgstr "Geçersiz kod"
+
+msgid "Two factor authentication code not found"
+msgstr "İki faktörlü kimlik doğrulama kodu bulunamadı"
+
+msgid "Mail token has expired check your mail for new authentication token link"
+msgstr "E-posta jetonu süresi dolmuş"
+
+msgid "authontication successful"
+msgstr "kimlik doğrulama başarılı"
+
+msgid "Token not found"
+msgstr "Jeton bulunamadı"
+
+msgid "You cannot send a request to your own account."
+msgstr "Kendi hesabınıza istek gönderemezsiniz."
+
+msgid "Friend request already exists or you are already friends."
+msgstr "Arkadaşlık isteği zaten var veya siz zaten arkadaşsınız."
+
+msgid "Friend request sent successfully."
+msgstr "Arkadaşlık isteği başarıyla gönderildi."
+
+msgid "No pending friend requests found."
+msgstr "Bekleyen arkadaşlık isteği bulunamadı."
+
+msgid "Friend request not found."
+msgstr "Arkadaşlık isteği bulunamadı."
+
+msgid "Friend request accepted."
+msgstr "Arkadaşlık isteği kabul edildi."
+
+msgid "No friends found."
+msgstr "Arkadaş bulunamadı."
+
+msgid "User successfully signout."
+msgstr "Kullanıcı başarıyla çıkış yaptı."
+
+msgid "There was a problem logging the user sigoout."
+msgstr "Kullanıcı çıkış yaparken bir sorun oluştu."
+
+msgid "invalid validate token"
+msgstr "geçersiz doğrulama jetonu"
+
+msgid "Invalid Token Error when trying to signout"
+msgstr "Geçersiz Jeton Hatası - Çıkış yaparken"
+
+msgid "Invalid Token Error when trying to validate token"
+msgstr "Geçersiz Jeton Hatası - Jetonu doğrularken"
+
+msgid "User not found"
+msgstr "Kullanıcı bulunamadı"
+
+msgid "Token has expired. New token has been sent to your email."
+msgstr "Token süresi doldu. Yeni token e-postanıza gönderildi"
+
+msgid "invalid verification token"
+msgstr "geçersiz doğrulama jetonu"
+
+msgid "Authorization code not found in intra callback"
+msgstr "intra callback'te yetkilendirme kodu bulunamadı"
+
+msgid "Unable to fetch access token"
+msgstr "Erişim jetonu alınamıyor"
+
+msgid "Intra access token not faund"
+msgstr "Intra erişim jetonu bulunamadı"
+
+msgid "Unable to fetch user data"
+msgstr "Kullanıcı verileri alınamıyor"
+
+msgid "this username already exist"
+msgstr "bu kullanıcı adı zaten mevcut"
+
+msgid "this email already exist"
+msgstr "bu e-posta zaten mevcut"
+
