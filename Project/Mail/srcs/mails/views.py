@@ -48,7 +48,6 @@ def send_reset_email(request):
 			return JsonResponse({'error': get_translated_mail("An error has occurred.", user_language), get_translated_mail("details", user_language): str(e)}, status=500)
 	return JsonResponse({'error': get_translated_mail("Only POST requests are allowed.", user_language)}, status=405)
 
-
 @csrf_exempt
 def reset_password(request, token):
 	user_language = request.headers.get("Accept-Language", "tr")
