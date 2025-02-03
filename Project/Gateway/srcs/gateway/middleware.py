@@ -36,18 +36,18 @@ class ProxyMiddleware:
 			service_url = SERVICES.get(service)
 
 			if not service_url:
-				return JsonResponse({'message': get_translated_message("Service not found.", user_language)}, status=404)  # Servis bulunamazsa 404 döneriz
+				return JsonResponse({'message': get_translated_message("SERVICE_NOT_FOUND", user_language)}, status=404)  # Servis bulunamazsa 404 döneriz
 			if not any(path.startswith(excluded) for excluded in EXCLUDED_PATHS):
 				# Token kontrolü yapıyoruz
 				token = request.headers.get('Authorization')
 				if not token:
-					return JsonResponse({'error': get_translated_message("Missing token", user_language)}, status=401)  # Token eksikse 401 döneriz
+					return JsonResponse({'error': get_translated_message("MISSING_TOKEN", user_language)}, status=401)  # Token eksikse 401 döneriz
 				# Token doğrulama isteği gönderiyoruz
 				response = requests.get(f"http://project-auth-1:8000/validate-token/", headers=request.headers)
 				if response.status_code != 200:
-					return JsonResponse({'error': get_translated_message("Invalid validate token", user_language)}, status=response.status_code)
+					return JsonResponse({'error': get_translated_message("INVALID_VALIDATE_TOKEN", user_language)}, status=response.status_code)
 			request.path = f"{service_url}/{path}/"
 			print(f"asfa: {request.path}")
 		else:
-			return JsonResponse({'error': get_translated_message("Invalid path argument", user_language)}, status=500)
+			return JsonResponse({'error': get_translated_message("INVALID_PATH_ARGUMENT", user_language)}, status=500)
 		return None  # Eğer her şey yolundaysa view fonksiyonuna geçeriz

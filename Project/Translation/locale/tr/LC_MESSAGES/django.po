@@ -37,6 +37,9 @@ msgstr "Kullanıcı Bulunamadı"
 msgid "Only POST requests are allowed."
 msgstr "Sadece POST isteklerine izin verilir."
 
+msgid "Only GET request are allowed"
+msgstr "Sadece GET isteklerine izin verilir"
+
 msgid "There is a problem in user service"
 msgstr "'user' servisinde bir sorun var"
 

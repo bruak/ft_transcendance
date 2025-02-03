@@ -57,5 +57,6 @@ MESSAGES = {
 	"PASSWORD_UPDATE_ERROR": "An error occurred while updating the password.",
 	"INVALID_OR_EXPIRED_CONNECTION": "An invalid or expired connection. Please try again.",
 	"VERIFY_CODE": "Verify Code",
-	"EMAIL_SENT_SUCCESSFULLY": "Email sent successfully."
+	"EMAIL_SENT_SUCCESSFULLY": "Email sent successfully.",
+    "ONLY_GET_REQUESTS_ALLOWED": "Only GET requests are allowed.",
 }
