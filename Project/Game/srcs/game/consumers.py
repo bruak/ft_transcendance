@@ -3,8 +3,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from .models import GameSatats
-from .serializer import GameSatatsSerializer
 
 class PongConsumer(AsyncWebsocketConsumer):
     game_state = {
