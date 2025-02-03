@@ -26,86 +26,126 @@
             </article>
         </section>
 
-        <!-- Hakkımda Bölümü -->
+        <!-- Oyun Seçenekleri Bölümü -->
         <section class="my-5">
-            <h2 class="text-center">Hakkımda</h2>
-            <div class="card p-4">
-                <p>
-                    Merhaba! Ben İbrahim, teknoloji tutkunu bir öğrenciyim. Kodlama, oyun geliştirme ve yapay zeka
-                    alanlarında kendimi geliştirmeyi seviyorum. Yeni şeyler öğrenmek ve projeler üretmek benim için bir
-                    yaşam tarzı!
-                </p>
-            </div>
-        </section>
-
-        <!-- Beceriler ve İlgi Alanları -->
-        <section class="my-5">
-            <h2 class="text-center">Beceriler ve İlgi Alanları</h2>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h3>Kodlama</h3>
-                        <p class="card-text">Python, JavaScript, HTML/CSS</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h3>Oyun Geliştirme</h3>
-                        <p class="card-text">Unity, Unreal Engine</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h3>İlgi Alanları</h3>
-                        <p class="card-text">Yapay Zeka, Robotik, E-Spor</p>
-                    </div>
+            <h2 class="text-center">Oyun Seçenekleri</h2>
+            <div class="card p-4" id="gameOptions">
+                <div class="row">
+                    <section class="col-md-3 p-3 game-option-card" data-option="aiOptions">
+                        <h3>Yapay Zeka</h3>
+                        <p>Bota Karşı Oyna</p>
+                        <button class="btn btn-primary game-option-button">Oyna</button>
+                    </section>
+                    <section class="col-md-3 p-3 game-option-card" data-option="tournamentOptions">
+                        <h3>Turnuva</h3>
+                        <p>Turnuva oluştur.</p>
+                        <button class="btn btn-primary game-option-button">Oyna</button>
+                    </section>
+                    <section class="col-md-3 p-3 game-option-card" data-option="onlineOptions">
+                        <h3>Online</h3>
+                        <p>Online Oyna</p>
+                        <button class="btn btn-primary game-option-button">Oyna</button>
+                    </section>
+                    <section class="col-md-3 p-3 game-option-card" data-option="quickMatchOptions">
+                        <h3>Hızlı Kapışma</h3>
+                        <p>Lokalde Oyna</p>
+                        <button class="btn btn-primary game-option-button">Oyna</button>
+                    </section>
                 </div>
             </div>
         </section>
 
-        <!-- Galeri -->
-        <section class="my-5">
-            <h2 class="text-center">Portföy</h2>
-            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
-                        class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                        aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                        aria-label="Slide 3"></button>
+        <!-- Oyun Seçenekleri İçeriği (Gizli) -->
+        <div id="hiddenOptions" class="d-none">
+            <!-- Yapay Zeka Seçenekleri -->
+            <div id="aiOptions" class="game-options">
+                <h4>Yapay Zeka Seçenekleri</h4>
+                <p>Bot zorluk seviyesini seçin:</p>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-secondary">Kolay</button>
+                    <button class="btn btn-secondary">Orta</button>
+                    <button class="btn btn-secondary">Zor</button>
                 </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="../../img/tyler.jpg" class="d-block w-100" alt="Proje 1">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="../../img/pacino.jpg" class="d-block w-100" alt="Proje 2">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="../../img/gosling.jpg" class="d-block w-100" alt="Proje 3">
-                    </div>
+                
+                <hr>
+                <p>Bot davranışını seçin:</p>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-info">Agresif</button>
+                    <button class="btn btn-outline-info">Savunmacı</button>
+                    <button class="btn btn-outline-info">Dengeli</button>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+            
+                <hr>
+                <p>Oyun süresi:</p>
+                <select class="form-control mb-3">
+                    <option>5 Dakika</option>
+                    <option>10 Dakika</option>
+                    <option>Sınırsız</option>
+                </select>
+            
+                <button class="btn btn-success mt-3">Başlat</button>
             </div>
-        </section>
+            
+            <!-- Turnuva Seçenekleri -->
+            <div id="tournamentOptions" class="game-options">
+                <p>Katılımcı sayısını seçin:</p>
+                <select class="form-control mb-3">
+                    <option>4 Oyuncu</option>
+                    <option>8 Oyuncu</option>
+                    <option>16 Oyuncu</option>
+                    <option>32 Oyuncu</option>
+                </select>
+                <hr>
+                <p>Turnuva Kur / Katıl:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" style="margin-right: 30px;" placeholder="Oda Kodu">
+                    <button class="btn btn-outline-success">Katıl</button>
+                    <button class="btn btn-success">Oda Kur</button>
+                </div>
+            </div>
+            
+            <!-- Online Oyun Seçenekleri -->
+            <div id="onlineOptions" class="game-options">
+                <h4>Online Oyun Seçenekleri</h4>
+                <p>Oyun Türü:</p>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-info">Rastgele Maç</button>
+                    <button class="btn btn-outline-info">Arkadaşlarla Oyna</button>
+                </div>
+            
+                <hr>
+                <p>Oda Kur / Katıl:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" style="margin-right: 30px;" placeholder="Oda Kodu">
+                    <button class="btn btn-outline-success">Katıl</button>
+                    <button class="btn btn-success">Oda Kur</button>
+                </div>
+            
+                <button class="btn btn-primary mt-3">Oyuna Başla</button>
+            </div>
+            
+            <!-- Hızlı Kapışma Seçenekleri -->
+            <div id="quickMatchOptions" class="game-options">
+                <h4>Hızlı Kapışma Seçenekleri</h4>
+                <p>Oyun Süresi:</p>
+                <select class="form-control mb-3">
+                    <option>5 Dakika</option>
+                    <option>10 Dakika</option>
+                    <option>15 Dakika</option>
+                </select>
+            
+                <hr>
+                <button class="btn btn-success mt-3">Oyunu Başlat</button>
+            </div>
+            
+        </div>
+
 
         <!-- Son Etkinlikler -->
         <section class="my-5">
             <h2 class="text-center">Son Etkinlikler</h2>
-            <ul class="list-group">
-                <li class="list-group-item bg-dark text-white">Hackathon 2025'e katılım sağlandı.</li>
-                <li class="list-group-item bg-dark text-white">Oyun geliştirme kursu tamamlandı.</li>
-                <li class="list-group-item bg-dark text-white">Yeni bir proje: "E-Ticaret Botu" oluşturuldu.</li>
+            <ul id="recentActivitiesList" class="list-group">
+                <!-- Dinamik içerik buraya eklenecek -->
             </ul>
         </section>
 
@@ -136,18 +176,6 @@
                                 <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
                                 <input type="file" class="form-control" id="profileImage">
                             </div>
-                            <div class="mb-3">
-                                <label for="portfolioImage1" class="form-label">Portföy Fotoğrafı 1</label>
-                                <input type="file" class="form-control" id="portfolioImage1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="portfolioImage2" class="form-label">Portföy Fotoğrafı 2</label>
-                                <input type="file" class="form-control" id="portfolioImage2">
-                            </div>
-                            <div class="mb-3">
-                                <label for="portfolioImage3" class="form-label">Portföy Fotoğrafı 3</label>
-                                <input type="file" class="form-control" id="portfolioImage3">
-                            </div>
                             <button type="submit" class="btn btn-primary">Kaydet</button>
                         </form>
                     </div>
@@ -170,10 +198,27 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="gameOptionsModal" tabindex="-1" aria-labelledby="gameOptionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="gameOptionsModalLabel">Oyun Seçenekleri</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    </div>
+                    <div class="modal-body" id="modalContent">
+                        <!-- Dinamik içerik buraya eklenecek -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="bg-dark text-white text-center py-3">
             <p>&copy; 2025 Tüm hakları saklı değildir.</p>
         </footer>
     </main>
-
 </div>
