@@ -6,10 +6,11 @@ body {
     background-color: #00041a;
     color: #ddd;
 }
-
+.hidden { display: none !important; }
+.selected { border: 2px solid #007bff; }
 /* Profile Sayfası Stilleri */
 .profile-page h1, .profile-page h2 {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #4ca1af;
     text-shadow: 1px 1px #000;
 }
@@ -317,6 +318,82 @@ body {
 }
 
 /* ...existing code... */
+
+/* Oyun Seçenekleri Bölümü Stilleri */
+.profile-page .game-option-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    background-color: #222539; /* Daha açık bir ton */
+    border: 1px solid #4ca1af80; /* Kenar çizgisi daha ince ve transparan */
+    border-radius: 200px; /* Daha yumuşak köşeler */
+    padding: 25px 20px;
+    text-align: center;
+    color: #e0e0e0; /* Daha açık yazı rengi */
+    margin-bottom: 20px; /* Kartların arasına boşluk ekleyin */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Hafif gölgelendirme */
+}
+
+.profile-page .game-option-card h3 {
+    font-size: 1.8rem;
+    color: #5fb9d8; /* Daha canlı mavi tonu */
+    margin-bottom: 10px;
+    letter-spacing: 1px; /* Harf aralığı */
+}
+
+.profile-page .game-option-card p {
+    font-size: 1rem;
+    color: #c2c2c2;
+    margin-bottom: 20px;
+    line-height: 1.6; /* Satır arası boşluk */
+}
+
+.profile-page .game-option-card .btn {
+    background-color: #5fb9d8;
+    border: none;
+    color: #1a1a2e;
+    padding: 10px 20px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.profile-page .game-option-card .btn:hover {
+    background-color: #4ca1af;
+    transform: translateY(-3px); /* Hover efekti için hafif yukarı kaldırma */
+    color: #fff;
+}
+
+.profile-page .game-option-card:hover {
+    transform: scale(1.05); /* Daha hafif bir büyüme efekti */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5); /* Gölgeyi yumuşatma */
+}
+
+.profile-page .game-option-card.selected {
+    border: 2px solid #ffb347; /* Daha sıcak bir turuncu tonu */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Modal Stilleri */
+.modal-content {
+    background-color: #222539;
+    color: #e0e0e0;
+    border: 1px solid #5fb9d8;
+    border-radius: 15px;
+}
+
+.modal-header, .modal-footer {
+    border-color: rgba(92, 182, 229, 0.3);
+}
+
+.modal-title {
+    color: #5fb9d8;
+}
+
+.modal-body .btn {
+    margin: 5px;
+}
 
 
 /* Log-Reg Sayfası Stilleri */
@@ -724,4 +801,5 @@ body {
 .game-page .btn-warning:hover {
     background-color: #e3c9a8;
 }
+
 

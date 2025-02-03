@@ -263,10 +263,72 @@ export function initProfile() {
             });
         }
 
+        /* ======================[*] Oyun Seçenekleri Bölümü İşleme [*]====================== */
+        const gameOptionButtons = document.querySelectorAll('.game-option-button');
+        const hiddenOptionsContainer = document.getElementById('hiddenOptions');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('gameOptionsModalLabel');
+
+        gameOptionButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Seçilen kartın başlığını al
+                const selectedCard = this.closest('.game-option-card');
+                const optionId = selectedCard.getAttribute('data-option');
+                const optionTitle = selectedCard.querySelector('h3').textContent;
+
+                // Modal başlığını ayarla
+                modalTitle.textContent = `${optionTitle} Seçenekleri`;
+
+                // İçeriği modal'a ekle
+                const optionContent = hiddenOptionsContainer.querySelector(`#${optionId}`).cloneNode(true);
+                modalContent.innerHTML = ''; // Önceki içerikleri temizle
+                modalContent.appendChild(optionContent);
+
+                // Modal'ı göster
+                const modal = new bootstrap.Modal(document.getElementById('gameOptionsModal'));
+                modal.show();
+            });
+        });
+
+        /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
+        const recentActivitiesList = document.getElementById('recentActivitiesList');
+        fetch(`https://${host}/api/user/recent-activities/${username}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Accept-Language': 'tr',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        })
+        .then(response => response.json())
+        .then(activities => {
+            console.log('Son etkinlikler:', activities); // Son etkinlikleri kontrol et
+            if (recentActivitiesList) {
+                recentActivitiesList.innerHTML = activities.length > 0
+                    ? activities.map(activity => {
+                        const isPlaying = activity.status === 'playing';
+                        return `<li class="list-group-item bg-dark text-white">
+                                    ${activity.description}
+                                    ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
+                                </li>`;
+                    }).join('')
+                    : '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Son etkinlikler yüklenirken hata oluştu:', error);
+            showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
+        });
+
     } catch (error) {
         console.error('initializeProfile fonksiyonunda hata oluştu:', error);
         showErrorMessage("Profil yüklenirken bir hata oluştu.");
     }
+}
+
+/* ======================[*] Oyuna Katılma Fonksiyonu [*]====================== */
+function joinGame(gameId) {
+    window.location.href = `/game/${gameId}`;
 }
 
 /* ======================[*] Profil Bileşenini Güncelleme Fonksiyonu [*]====================== */
