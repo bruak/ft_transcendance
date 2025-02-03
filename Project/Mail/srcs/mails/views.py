@@ -76,7 +76,7 @@ def reset_password(request, token):
 				return HttpResponse(get_translated_mail("An error occurred while updating the password.", user_language), status=400)
 		except Profile.DoesNotExist:
 			return HttpResponse(get_translated_mail("An invalid or expired connection. Please try again.", user_language), status=400)
-	return render(request, 'reset_password.html', {'token': token})
+	return render(request, 'reset_password.html', {'token': token}, status=200)
 
 
 @csrf_exempt

@@ -23,7 +23,7 @@ def handle_post(request):
 		response_json = response.json()
 
 		if response.status_code == 200 or response.status_code == 201:
-			return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json})
+			return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json}, status=response.status_code)
 		else:
 			return JsonResponse({'error': get_translated_message("Request failed", user_language), 'status_code': response.status_code, 'data': response_json}, status=response.status_code)
 	except Exception as e:
@@ -49,7 +49,7 @@ def handle_get(request):
 		except ValueError:
 			return JsonResponse({'error': get_translated_message("Invalid JSON response", user_language), 'details': response.text}, status=500)
 
-		return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json})
+		return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json}, status=response.status_code)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
@@ -64,7 +64,7 @@ def handle_formdata(request):
 			return JsonResponse({'error': get_translated_message("Empty response from target URL", user_language)}, status=500)
 		response_json = response.json()
 		if response.status_code == 200 or response.status_code == 201:
-			return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json})
+			return JsonResponse({'message': get_translated_message("Request was successful", user_language), 'data': response_json}, status=response.status_code)
 		else:
 			return JsonResponse({'message': get_translated_message("Request failed", user_language), 'status_code': response.status_code}, status=500)
 	except Exception as e:
