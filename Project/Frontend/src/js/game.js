@@ -15,9 +15,6 @@ export function initGame() {
     
 
     const scene = new THREE.Scene();
-
-      const scene = new THREE.Scene();
-
     scene.background = new THREE.Color(0x000000);
 
     // 2) Kamera
