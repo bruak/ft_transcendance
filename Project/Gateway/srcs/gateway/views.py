@@ -50,8 +50,7 @@ def handle_get(request):
 				return HttpResponseRedirect(response_json.get('url'))
 		except ValueError:
 			return JsonResponse({'error': get_translated_message("INVALID_JSON_RESPONSE", user_language), 'DETAILS': response.text}, status=500)
-
-		return JsonResponse({'message': get_translated_message("REQUEST_SUCCESSFUL", user_language), 'data': response_json}, status=response.status_code)
+		return JsonResponse({'message': get_translated_message("REQUEST_SUCCESSFUL", user_language), 'data': response_json.get('message')}, status=response.status_code)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
