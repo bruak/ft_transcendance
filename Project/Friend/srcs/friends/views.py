@@ -48,7 +48,7 @@ def list_friend_requests(request, username):
 	if not requests.exists():
 		return JsonResponse({"error": get_translated_message("NO_PENDING_FRIEND_REQUESTS", user_language)}, status=status.HTTP_404_NOT_FOUND)
 	serializer = FriendsSerializer(requests, many=True)
-	return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+	return JsonResponse({'message': serializer.data}, safe=False, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @csrf_exempt
@@ -67,16 +67,34 @@ def accept_friend_request(request):
 		return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_NOT_FOUND", user_language)}, status=status.HTTP_404_NOT_FOUND)
 
 # Dil Ekle Ve Test Et
+
 @api_view(["GET"])
 def friends(request, username):
 	try:
 		language = request.headers.get("Accept-Language", "tr")
+		# accepted arkadaşları sorguluyoruz
 		response = Friends.objects.filter(
-			models.Q (friendname=username, status="accepted") | models.Q(username=username, status="accepted"))
+			models.Q(friendname=username, status="accepted") | models.Q(username=username, status="accepted")
+		)
+
 		if not response.exists():
-				return JsonResponse({"message": get_translated_message("NO_FRIENDS_FOUND", language)}, status=status.HTTP_404_NOT_FOUND)
-		serializer = FriendsSerializer(response, many=True)
-		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+			return JsonResponse({"message": get_translated_message("NO_FRIENDS_FOUND", language)}, status=status.HTTP_404_NOT_FOUND)
+
+		modified_data = []
+
+		for friend in response:
+			if friend.friendname == username:
+				modified_data.append({
+					"username": friend.friendname,
+					"friendname": friend.username,
+				})
+			else:
+				modified_data.append({
+					"username": friend.username,
+					"friendname": friend.friendname,
+				})
+
+		return JsonResponse({'message': modified_data}, safe=False, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
