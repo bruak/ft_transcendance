@@ -58,7 +58,9 @@ def handle_formdata(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	target_url = request.path  # Path middleware'den gelir
 	try:
-		files = request.FILES
+		files = None
+		if request.FILES:
+			files = request.FILES
 		payload = request.POST
 		response = requests.post(target_url, data=payload, files=files)
 		if response.text.strip() == '':
@@ -74,7 +76,7 @@ def handle_formdata(request):
 
 @csrf_exempt  # CSRF kontrolü atlanacak
 def api_gateway(request, *args, **kwargs):
-	if request.method == 'POST' and request.FILES:
+	if request.method == 'POST' and request.content_type == 'multipart/form-data':
 		return handle_formdata(request)
 	elif request.method == 'POST':
 		return handle_post(request)
