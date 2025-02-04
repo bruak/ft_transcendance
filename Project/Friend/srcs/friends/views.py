@@ -50,10 +50,27 @@ def list_friend_requests(request, username):
 	serializer = FriendsSerializer(requests, many=True)
 	return JsonResponse({'message': serializer.data}, safe=False, status=status.HTTP_200_OK)
 
+@csrf_exempt
+def rejected_friend_request(request):
+	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "POST":
+		return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+	try:
+		data = JsonResponse().parse(request)
+		username = data.get('username')
+		friendname = data.get('friendname')
+		friend_request = Friends.objects.get(username=friendname, friendname=username, status="pending")
+		friend_request.status = "rejected"
+		friend_request.save()
+	except Friends.DoesNotExist:
+		return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_NOT_FOUND", user_language)}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(["POST"])
 @csrf_exempt
 def accept_friend_request(request):
 	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "POST":
+		return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
 	try:
 		data = JSONParser().parse(request)
 		username = data.get("username")
@@ -67,7 +84,6 @@ def accept_friend_request(request):
 		return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_NOT_FOUND", user_language)}, status=status.HTTP_404_NOT_FOUND)
 
 # Dil Ekle Ve Test Et
-
 @api_view(["GET"])
 def friends(request, username):
 	try:
