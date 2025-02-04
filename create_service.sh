@@ -77,8 +77,8 @@ fi
     django-admin startproject ${LOWSERVICE}_service "${SERVICE_DIR}/srcs"
     django-admin startapp $LOWSERVICE
     mv $LOWSERVICE "${SERVICE_DIR}/srcs/"
-    cp "Project/Django/Dockerfile" "${SERVICE_DIR}/"
-    cp "Project/Django/srcs/entrypoint.py" "${SERVICE_DIR}/srcs"
+    cp "Project/User/Dockerfile" "${SERVICE_DIR}/"
+    cp "Project/User/srcs/entrypoint.py" "${SERVICE_DIR}/srcs"
     sed -i "s|user_service|${LOWSERVICE}_service|g" "${SERVICE_DIR}/srcs/entrypoint.py"
     sed -i '/DATABASES = {/,/}/c\'"$NEW_CONTENT" $SETTINGS
     sed -i '14i\import os' $SETTINGS
