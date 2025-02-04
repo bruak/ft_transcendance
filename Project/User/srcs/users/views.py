@@ -21,7 +21,7 @@ def user_list(request):
 	try:
 		obj = User.objects.all()
 		serializer = UserSerializer(obj, many=True)
-		return JsonResponse(serializer.data, safe=False, status=200)
+		return JsonResponse({'message': serializer.data}, safe=False, status=200)
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 
@@ -86,7 +86,7 @@ def user_get(request, username):
 	try:
 		user = User.objects.get(username=username)  # Tek bir kullanıcı döner
 		serializer = UserSerializer(user)  # Tekil kullanıcı için many=False (varsayılan)
-		return JsonResponse(serializer.data, status=200)
+		return JsonResponse({'message': serializer.data}, status=200)
 	except User.DoesNotExist:
 		return JsonResponse({"message": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 	except Exception as e:
