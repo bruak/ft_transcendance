@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-l%m5oj=t+o=j47+l+9c#bi29%#%z-9yittn&ov4x=x5(rc*(7u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 ASGI_APPLICATION = 'game_service.asgi.application'
 

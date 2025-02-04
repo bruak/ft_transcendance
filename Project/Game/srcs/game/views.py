@@ -1,25 +1,35 @@
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 
 from .models import Match
 
-@api_view(['POST'])
+@csrf_exempt
 def random_match_view(request):
 	if request.method != 'POST':
 		return JsonResponse({"error": "Only POST requests are allowed."}, status=405)
 	try:
 		data = JSONParser().parse(request)
 		username = data.get('username')
-		match = Match.objects.filter(match_type='M',status='waiting',player2__isnull=True).first()
-		if match:
-			match.player2 = username 
-			match.status = 'playing'
-			match.created_at = timezone.now()
+		match = Match.objects.filter(match_type='M',player2__isnull=True)
+		if match.filter(player1=username, status='canceled').exists():
+			match = match.filter(player1=username, status='canceled').first()
+			match.status = 'waiting'
+			match.updated_at = timezone.now()
 			match.save()
-			return JsonResponse({"match_id": match.id, "detail_url": f"/match/{match.id}/"}, status=200)
+			return JsonResponse({"match_id": match.id, "detail_url": f"room_{match.id}/"}, status=200)
+		elif match.filter(player1=username, status='waiting').exists():
+			return JsonResponse({"error": "You are already in the queue."}, status=400)
+		elif match.filter(status='waiting').exists():
+			match = match.filter(status='waiting').first()
+			match.player2 = username
+			match.status = 'playing'
+			match.updated_at = timezone.now()
+			match.save()
+			return JsonResponse({"match_id": match.id, "detail_url": f"room_{match.id}/"}, status=200)
 		else:
 			new_match = Match.objects.create(match_type='M',
 				player1 = username , 
