@@ -20,7 +20,6 @@ def translation_auth(request):
             "Mail token has expired check your mail for new authentication token link": _("Mail token has expired check your mail for new authentication token link"),
             "authontication successful": _("authontication successful"),
             "Token not found": _("Token not found"),
-            "You cannot send a request to your own account.": _("You cannot send a request to your own account."),
             "User successfully signout.": _("User successfully signout."),
             "There was a problem logging the user sigoout.": _("There was a problem logging the user sigoout."),
             "invalid validate token": _("invalid validate token"),
@@ -45,12 +44,79 @@ def translation_friend(request):
     activate(user_language)
     try:
         messages = {
+            "Only POST requests are allowed.": _("Only POST requests are allowed."),
+            "Not Found User": _("Not Found User"),
+            "You cannot send a request to your own account.": _("You cannot send a request to your own account."),
             "Friend request already exists or you are already friends.": _("Friend request already exists or you are already friends."),
             "Friend request sent successfully.": _("Friend request sent successfully."),
             "No pending friend requests found.": _("No pending friend requests found."),
             "Friend request not found.": _("Friend request not found."),
             "Friend request accepted.": _("Friend request accepted."),
             "No friends found.": _("No friends found."),
+            "Friend blocked.": _("Friend blocked."),
+            "Friend relationship not found.": _("Friend relationship not found."),
+        }
+        return JsonResponse(messages, status=200)
+    except Exception as e:
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+    
+def translation_user(request):
+    user_language = request.headers.get("Accept-Language", "tr") 
+    activate(user_language)
+    try:
+        messages = {
+            "Only POST requests are allowed.": _("Only POST requests are allowed."),
+            "User not found": _("User not found"),
+            "this username already exist": _("this username already exist"),
+            "an error occurred while creating a user": _("an error occurred while creating a user"),
+            "an error occurred while getting a user": _("an error occurred while getting a user"),
+            "an error occurred while updating a user": _("an error occurred while updating a user"),
+            "Authorization code not found in intra callback": _("Authorization code not found in intra callback"),
+            "Unable to fetch access token": _("Unable to fetch access token"),
+            "Intra access token not faund": _("Intra access token not faund"),
+            "Unable to fetch user data": _("Unable to fetch user data"),
+            "Avatar download error": _("Avatar download error"),
+        }
+        return JsonResponse(messages, status=200)
+    except Exception as e:
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+    
+def translation_geteway(request):
+    user_language = request.headers.get("Accept-Language", "tr") 
+    activate(user_language)
+    try:
+        messages = {
+            "Missing token": _("Missing token"),
+            "Service not found.": _("Service not found."),
+            "Invalid validate token": _("Invalid validate token"),
+            "Invalid path argument": _("Invalid path argument"),\
+            "Empty response from target URL": _("Empty response from target URL"),
+            "Request was successful": _("Request was successful"),
+            "Request failed": _("Request failed"),
+            "Invalid JSON response": _("Invalid JSON response"),
+        }
+        return JsonResponse(messages, status=200)
+    except Exception as e:
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+    
+def translation_mail(request):
+    user_language = request.headers.get("Accept-Language", "tr") 
+    activate(user_language)
+    try:
+        messages = {
+            "Username required.": _("Username required."),
+            "User not found.": _("User not found."),
+            "Password Reset Request": _("Password Reset Request"),
+            "Click on this link to reset your password: ": _("Click on this link to reset your password: "),
+            "Password reset link sent.": _("Password reset link sent."),
+            "details": _("details"),
+            "An error has occurred.": _("An error has occurred."),
+            "Only POST requests are allowed.": _("Only POST requests are allowed."),
+            "Your password has been successfully changed. You can log in now.": _("Your password has been successfully changed. You can log in now."),
+            "An error occurred while updating the password.": _("An error occurred while updating the password."),
+            "An invalid or expired connection. Please try again.": _("An invalid or expired connection. Please try again."),
+            "Verify Code": _("Verify Code"),
+            "Email sent successfully.": _("Email sent successfully."),
         }
         return JsonResponse(messages, status=200)
     except Exception as e:
