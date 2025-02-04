@@ -9,7 +9,7 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
             return content;
         }
     }
-    
+
     const response = await fetch(url);
     if (response.ok) {
         const content = await response.text();
@@ -60,7 +60,7 @@ const routes = {
     '/': { html: './views/log-reg.html', init: () => import("./log-reg.js").then(({ initLogReg }) => initLogReg()) },
     '/profile': { html: './views/profile.html', init: () => import("./profile.js").then(({ initProfile }) => initProfile()) },
     '/about': { html: './views/about-us.html', init: () => import("./about-us.js").then(({ initAbout }) => initAbout()) },
-    '/profile/:id': { html: './views/profile.html', init: () => import("./profile.js").then(({ initProfile }) => initProfile()) },
+    '/profile/:username': { html: './views/profile.html', init: (params) => import("./profile.js").then(({ initProfile }) => initProfile(params)) },
     '/2fac': { html: './views/2factor.html', init: () => import("./2fac.js").then(({ init2fac }) => init2fac()) },
     '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
 };
@@ -68,37 +68,45 @@ const routes = {
 /* ======================[*] Router Fonksiyonu [*]====================== */
 async function router() {
     const path = window.location.pathname;
-    let route = routes[path] || routes['/'];
+    let route = null;
+    let params = {};
 
-    // Dinamik rota kontrolü
-    for (const [key, value] of Object.entries(routes)) {
-        const regex = new RegExp(`^${key.replace(/:\w+/g, '\\w+')}$`);
-        if (regex.test(path)) {
-            route = value;
-            break;
+    // Dynamic route kontrolü
+    const pathSegments = path.split('/').filter(p => p);
+
+    // Profile sayfası kontrolü
+    if (pathSegments[0] === 'profile') {
+        const username = pathSegments[1];
+        if (username) {
+            route = routes['/profile/:username'];
+            params = { username };
+        } else {
+            route = routes['/profile'];
         }
     }
+    // Diğer route kontrolleri...
 
-    document.querySelector('#app').innerHTML = `<h1>Loading...</h1>`; // Loading durumu
+    if (!route) route = routes['/']; // Fallback to home
+
+    document.querySelector('#app').innerHTML = '<h1>Loading...</h1>';
 
     try {
         const content = await fetchWithCache(route.html);
         document.querySelector('#app').innerHTML = content;
         if (route.init) {
-            route.init();
+            await route.init(params); // Parametreleri iletiyoruz
         }
     } catch (err) {
         console.error('Sayfa yüklenirken hata oluştu:', err);
-        showErrorMessage("Bir hata oluştu, lütfen tekrar deneyin.");
-        document.querySelector('#app').innerHTML = `<h1>Sayfa yüklenirken bir hata oluştu.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa yüklenirken bir hata oluştu.</h1>';
     }
 }
-
 /* ======================[*] Link Tıklamalarını Yakala ve Router Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('click', (event) => {
     const target = event.target.closest('a[data-link]');
     if (target) {
         event.preventDefault();
+        console.log("Link tıklandı:", target.getAttribute('href'));
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
         router(); // Sayfayı güncelle
@@ -107,7 +115,10 @@ document.addEventListener('click', (event) => {
 
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
-window.addEventListener('popstate', router);
+window.addEventListener('popstate', () => {
+    // Sayfa geçmişi değiştiğinde parametreleri doğru şekilde al
+    router();
+});
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {

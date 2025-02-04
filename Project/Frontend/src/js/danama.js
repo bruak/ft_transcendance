@@ -164,7 +164,7 @@ export function initProfile() {
 
         /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
         const recentActivitiesList = document.getElementById('recentActivitiesList');
-        fetch(`${apiBaseUrl}/user/recent-activities/${username}`, {
+        fetch(`${apiBaseUrl}/user/recent-activities/${username}`, { // bura henüz çalışmıyor
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -253,7 +253,7 @@ function sendFriendRequest(username, friendUsername) {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Accept-Language': 'tr',
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
             username: username,
