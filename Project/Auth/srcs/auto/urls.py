@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import singup, verifyAccount, singin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account
+from .views import singup, verifyAccount, singin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account, user_update
 
 urlpatterns = [
 	path('singup/', singup, name='register'),
@@ -11,4 +11,5 @@ urlpatterns = [
 	path('singout/', singout, name='singout'),
 	path('validate-token/', validate_token, name='validate_token'),
 	path('retry-verification-account/', retry_verification_account, name='retry_verification_account'),
+    path('put/<str:username>/', user_update, name='user-update'),
 ]

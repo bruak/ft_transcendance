@@ -11,7 +11,7 @@ import json
 from django.core.exceptions import ValidationError
 import os
 from .translate_way import get_translated_message
-
+from django.contrib.auth.hashers import make_password
 
 @csrf_exempt
 def user_list(request):
@@ -92,6 +92,7 @@ def user_get(request, username):
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
 
+# taken form-data and file
 @csrf_exempt
 def user_update(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
@@ -110,6 +111,7 @@ def user_update(request, username):
 		user.username = data.get('username', user.username)
 		user.email = data.get('email', user.email)
 		user.password = data.get('password', user.password)
+	
 		if files:
 			if user.avatar and os.path.exists(f"/app{user.avatar}"):
 				os.remove(f"/app{user.avatar}")
