@@ -12,11 +12,6 @@ from rest_framework.parsers import JSONParser
 from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
 from .translate_way import get_translated_message
 
-def get_translated_message_test(): # THIS IS FOR TEST, REMOVE THIS FUNCTION NO NEED
-		message_key = "USER_PASSWORD_ERROR"
-		user_language = "tr"  # Test for Turkish language
-		return JsonResponse({'message': get_translated_message(message_key, user_language)}, status=200)
-
 @csrf_exempt
 def singin(request):
 	if request.method == "POST":
@@ -264,20 +259,19 @@ def retry_verification_account(request):
 # İntra Login
 def intra_login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	redirect_uri = "https://localhost:8080/api/auth/callback/"  # Callback URL
 	auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
-	return redirect(auth_url)
+	return JsonResponse({'url': auth_url}, status=200)
 
 #İntra Callback
-def callback(request):
+def callback(request, code):
 	user_language = request.headers.get("Accept-Language", "tr")
-	code = request.GET.get('code')
 	if not code:
 		return JsonResponse({"error": get_translated_message("AUTH_CODE_NOT_FOUND_CALLBACK", user_language)}, status=400)
 
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
 	SECRET = "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"
-	redirect_uri = "http://localhost:8003/callback/"  # Callback URL
+	redirect_uri = "https://localhost:8080/api/auth/callback/"  # Callback URL
 	token_url = "https://api.intra.42.fr/oauth/token"
 	data = {
 		'grant_type': 'authorization_code',
@@ -293,7 +287,7 @@ def callback(request):
 	access_token = token.get('access_token')
 	if not access_token:
 		return JsonResponse({"error": get_translated_message("INTRA_ACCESS_TOKEN_NOT_FOUND", user_language)}, status=400)
-	
+
  # Kullanıcı bilgilerini çekmek için token'ı kullanın
 	user_info_url = "https://api.intra.42.fr/v2/me"
 	headers = {
@@ -313,7 +307,7 @@ def callback(request):
 	if Users.objects.filter(email=data.get('email')).exists():
 		return JsonResponse({'error': get_translated_message("EMAIL_EXISTS", user_language)}, status=409)
 
-	Users.objects.create(
+	user = Users.objects.create(
 		username = username,
 		email= data["email"],
 		is_active= True,
@@ -327,10 +321,14 @@ def callback(request):
 		"first_name" : data.get('first_name'),
 		"last_name" : data.get('last_name'),
 		"username" : data.get('login'),
-		"mail" : data.get('email'),
-		"avatar" : image_intra_create(avatar_url)
+		"email" : data.get('email'),
+		"password": "default",
+		"avatar" : image_intra_create(avatar_url),
 	}
 
 	user_service_response = requests.post(f"http://project-users-1:8000/postjson/", json=user_data, headers=headers)
+	if user_service_response.status_code != 201:
+		user.delete()
+		return JsonResponse({'error': user_service_response.status_code, 'message': user_service_response.json()}, status=user_service_response.status_code)
 	return(JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=201))
 

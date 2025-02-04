@@ -1,5 +1,6 @@
 import requests
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -37,8 +38,7 @@ def handle_get(request):
 	try:
 		headers = request.headers
 		response = requests.get(target_url, headers=headers)
-		print(f"url {target_url}")
-		if response.status_code != 200:
+		if response.status_code not in (200, 201):
 			return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code, 'data': response.json()}, status=response.status_code)
 		# Yanıtın boş olup olmadığını kontrol et
 		if response.text.strip() == '':
@@ -46,6 +46,8 @@ def handle_get(request):
 		# Yanıtı JSON olarak çözümle
 		try:
 			response_json = response.json()
+			if response_json.get('url') is not None:
+				return HttpResponseRedirect(response_json.get('url'))
 		except ValueError:
 			return JsonResponse({'error': get_translated_message("INVALID_JSON_RESPONSE", user_language), 'DETAILS': response.text}, status=500)
 
