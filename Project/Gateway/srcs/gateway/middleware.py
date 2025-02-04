@@ -15,6 +15,8 @@ EXCLUDED_PATHS = [
 	"twofactor",
 	"singup",
 	"verify-account",
+	"intra",
+	"callback",
 ]
 
 class ProxyMiddleware:
@@ -27,14 +29,18 @@ class ProxyMiddleware:
 
 	def process_view(self, request, view_func, view_args, view_kwargs):
 		user_language = request.headers.get("Accept-Language", "tr")
+		print(f"request path: {request.path}")
+
 		path_parts = request.path.strip("/").split("/")
 		if len(path_parts) >= 2:
 			service = path_parts[0]  # İlk kısım servisin adı
 			path = "/".join(path_parts[1:])  # Yolun geri kalanını birleştiriyoruz
-
+			if 'code' in request.GET:
+				code_value = request.GET.get('code')
+				path += f"/{code_value}"
 
 			service_url = SERVICES.get(service)
-
+			print(f"path: {path}")
 			if not service_url:
 				return JsonResponse({'message': get_translated_message("SERVICE_NOT_FOUND", user_language)}, status=404)  # Servis bulunamazsa 404 döneriz
 			if not any(path.startswith(excluded) for excluded in EXCLUDED_PATHS):
