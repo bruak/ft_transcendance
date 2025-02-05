@@ -6,6 +6,11 @@ __pycache_*
 *$py.class
 # C extensions
 *.so
+*.png
+*.jpg
+*.jpeg
+
+!srcs/media/default.jpg
 
 # Distribution / packaging
 .Python
