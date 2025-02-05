@@ -1,3 +1,4 @@
+
 <div class="profile-page">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -9,6 +10,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <!-- Örnek rotalar -->
                         <li class="nav-item mt-2">
                             <a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
                         </li>
@@ -18,16 +20,20 @@
                         <li class="nav-item mt-2 mb-2">
                             <a class="nav-link" href="/about" data-link>About</a>
                         </li>
+                        <!-- Arkadaş Arama Alanı -->
                         <li class="nav-item mt-2 mb-2 position-relative">
                             <input autocomplete="off" autofocus class="form-control search-input" name="query"
                                 placeholder="Arkadaş ara..." spellcheck="false" dir="auto"
-                                style="width: 250px; margin-left: 15px;" id="friendSearchInput">
-                            <ul id="friendSuggestions" class="list-group position-absolute mt-2" 
+                                style="width: 250px; margin-left: 15px;" 
+                                id="friendSearchInput">
+                            <ul id="friendSuggestions" 
+                                class="list-group position-absolute mt-2" 
                                 style="width: 250px; z-index: 1000;"></ul>
                         </li>
                     </ul>
                 </div>
             </div>
+            <!-- Profil Küçük Resmi - Dropdown -->
             <div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                     id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -36,17 +42,17 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#">New project...</a></li>
                     <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile" data-link>Profile</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
+                    <!-- Çıkış işlemi profile.js içinde #signout yakalanarak yapılacak -->
                     <li><a class="dropdown-item" href="#signout">Sign out</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    <!-- Navbar -->
-
+    <!-- /Navbar -->
 
     <main class="container my-5">
         <!-- Profil Bilgileri -->
@@ -54,18 +60,33 @@
             <article class="card p-4">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-center">
-                        <img id="profileImageDisplay" src="" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
+                        <img id="profileImageDisplay" 
+                             src="" 
+                             alt="Profil Fotoğrafı" 
+                             class="rounded-circle" 
+                             width="150">
                     </div>
                     <div class="col-md-4 text-center text-md-start">
                         <h1 id="profileNameDisplay"></h1>
-                        <p id="profileTitleDisplay" class="title">Öğrenci</p>
-                        <p id="profileLocationDisplay">42 Türkiye</p>
+                        <p id="profileTitleDisplay" class="title"></p>
+                        <p id="profileLocationDisplay"></p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
+                        <!-- Profili Düzenle Butonu (Sadece kendi profilinizde görünür) -->
                         <button class="btn btn-outline-primary mt-2" data-bs-toggle="modal"
                             data-bs-target="#editProfileModal">Profili Düzenle</button>
-                        <button class="btn btn-outline-secondary mt-2" id="viewFriendsButton" data-bs-toggle="modal"
-                            data-bs-target="#friendsModal">Dostlar</button>
+
+                        <!-- Arkadaşlar Modalını açar -->
+                        <button class="btn btn-outline-secondary mt-2" 
+                                id="viewFriendsButton" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#friendsModal">Dostlar</button>
+
+                        <!-- Gelen İstekler Modalını açar -->
+                        <button class="btn btn-outline-secondary mt-2" 
+                                id="showRequestsButton" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#requestsModal">İstekler</button>
                     </div>
                 </div>
             </article>
@@ -76,6 +97,7 @@
             <h2 class="text-center">Oyun Seçenekleri</h2>
             <div class="card p-4" id="gameOptions">
                 <div class="row">
+                    <!-- Örnek Oyun Kartları (Yapay Zeka, Turnuva, Online, vb.) -->
                     <section class="col-md-3 p-3 game-option-card" data-option="aiOptions">
                         <h3>Yapay Zeka</h3>
                         <p>Bota Karşı Oyna</p>
@@ -127,7 +149,6 @@
                     <option>10 Dakika</option>
                     <option>Sınırsız</option>
                 </select>
-            
                 <button class="btn btn-success mt-3">Başlat</button>
             </div>
             
@@ -178,13 +199,10 @@
                     <option>10 Dakika</option>
                     <option>15 Dakika</option>
                 </select>
-            
                 <hr>
                 <button class="btn btn-success mt-3">Oyunu Başlat</button>
             </div>
-            
         </div>
-
 
         <!-- Son Etkinlikler -->
         <section class="my-5">
@@ -204,18 +222,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <!-- Kendi profilinde isOwnProfile=true ise görüntülenecek -->
                         <form id="editProfileForm">
                             <div class="mb-3">
                                 <label for="profileName" class="form-label">İsim</label>
-                                <input type="text" class="form-control" id="profileName" value="İbrahim Ethem Delemen">
+                                <input type="text" class="form-control" id="profileName">
                             </div>
                             <div class="mb-3">
                                 <label for="profileTitle" class="form-label">Başlık</label>
-                                <input type="text" class="form-control" id="profileTitle" value="Öğrenci">
+                                <input type="text" class="form-control" id="profileTitle">
                             </div>
                             <div class="mb-3">
                                 <label for="profileLocation" class="form-label">Blog</label>
-                                <input type="text" class="form-control" id="profileLocation" value="42 Türkiye">
+                                <input type="text" class="form-control" id="profileLocation">
                             </div>
                             <div class="mb-3">
                                 <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
@@ -228,7 +247,7 @@
             </div>
         </div>
 
-        <!-- Dostlar Modal -->
+        <!-- Dostlar (Arkadaşlar) Modal -->
         <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -237,13 +256,28 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <!-- Arkadaş listesi profil.js içinde listFriendsSection fonksiyonuyla doldurulur -->
                         <ul id="friendsList" class="list-group"></ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Gelen İstekler Modal -->
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="requestsModalLabel">Gelen İstekler</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <!-- Arkadaşlık isteklerini profile.js içindeki showFriendRequestsSection doldurur -->
+                    <div class="modal-body" id="friendRequestsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Oyun Seçenekleri Modal -->
         <div class="modal fade" id="gameOptionsModal" tabindex="-1" aria-labelledby="gameOptionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -252,7 +286,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                     </div>
                     <div class="modal-body" id="modalContent">
-                        <!-- Dinamik içerik buraya eklenecek -->
+                        <!-- Dinamik içerik buraya eklenecek (profile.js) -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
@@ -262,8 +296,9 @@
         </div>
 
         <!-- Footer -->
-        <footer class="bg-dark text-white text-center py-3">
+        <footer class="bg-dark text-white text-center py-3 mt-5">
             <p>&copy; 2025 Tüm hakları saklı değildir.</p>
         </footer>
     </main>
 </div>
+
