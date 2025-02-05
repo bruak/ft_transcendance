@@ -6,9 +6,10 @@ __pycache_*
 *$py.class
 # C extensions
 *.so
-*.png
-*.jpg
-*.jpeg
+
+Project/Auth/srcs/media/*.jpeg
+Project/Auth/srcs/media/*.jpg
+Project/Auth/srcs/media/*.png
 
 !srcs/media/default.jpg
 
