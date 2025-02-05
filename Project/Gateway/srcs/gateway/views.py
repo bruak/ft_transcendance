@@ -30,7 +30,6 @@ def handle_post(request):
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
-
 @csrf_exempt
 def handle_get(request):
 	user_language = request.headers.get("Accept-Language", "tr")
@@ -69,10 +68,9 @@ def handle_formdata(request):
 		if response.status_code == 200 or response.status_code == 201:
 			return JsonResponse({'message': get_translated_message("REQUEST_SUCCESSFUL", user_language), 'data': response_json}, status=response.status_code)
 		else:
-			return JsonResponse({'message': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code}, status=500)
+			return JsonResponse({'message': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code, 'response_json': response_json}, status=500)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
-
 
 @csrf_exempt  # CSRF kontrolü atlanacak
 def api_gateway(request, *args, **kwargs):

@@ -18,61 +18,64 @@ import os
 @csrf_exempt
 def user_update(request, username):
     user_language = request.headers.get("Accept-Language", "tr")
+
     if request.method != "POST":
         return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+    
     try:
-        user = Users.objects.get(username=username)
+        userDB_response = requests.get(
+            f"http://project-users-1:8000/getuser/{username}/"
+            )
 
-        data = request.POST
-        files = request.FILES.get('avatar', None)
-        if files:
-            avatar = image_to_url(files, data.get('username', user.username))
-
-        user.first_name = data.get('first_name', user.first_name)
-        user.last_name = data.get('last_name', user.last_name)
-        user.username = data.get('username', user.username)
-        user.email = data.get('email', user.email)
-        user.password = data.get('password', user.password)
+        if userDB_response.status_code != 200:
+            return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
         
-        if files:
-            if user.avatar and os.path.exists(f"/app{user.avatar}"):
-                os.remove(f"/app{user.avatar}")
-            user.avatar = avatar
+        user = Users.objects.get(username=username)
+        data = request.POST
+        avatar = request.FILES.get('avatar', None)
+        new_password = data.get('password', None)
+        first_name = data.get('first_name', userDB_response.json().get('message').get('first_name'))
+        last_name = data.get('last_name', userDB_response.json().get('message').get('last_name'))
+        
+        if new_password:
+            user.password = make_password(new_password)
+
+        if avatar:
+            if avatar and os.path.exists(f"/app/{userDB_response.json().get('message').get('avatar')}"):
+                os.remove(f"/app/{userDB_response.json().get('message').get('avatar')}")
+            new_avatar = image_to_url(avatar, username)
+        else:
+            new_avatar = userDB_response.json().get('message').get('avatar')
+
         user.save()
 
-        headers = {
-            'Accept-Language': user_language
-        }
-
+        headers = {"Accept-Language": "application/json"}
         user_data = {
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'username': user.username,
-            'email': user.email,
-            'password': user.password,
-            'avatar': user.avatar,
+            "username": username,
+            "password": user.password,
+            "avatar": new_avatar,
+            "first_name": first_name,
+            "last_name": last_name,
         }
-
-        files_data = {}
-        if files:
-            files_data['avatar'] = files
 
         user_response = requests.post(
             f"http://project-users-1:8000/put/{username}/",
             json=user_data,
             headers=headers
         )
-        #if user_response.status_code != 200:
-            #return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=500)
+
+        if user_response.status_code != 200:
+            return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=500)
 
         return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
+    
     except Users.DoesNotExist:
         return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+    
     except Exception as e:
-        return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=500)
+        return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
 
-
-
+# reklamının da anasını sikecem sesinin de anasını sikeycem yeter amk ya amk yerinde suriyeli bii ıldıukl
 @csrf_exempt
 def singin(request):
     if request.method == "POST":
