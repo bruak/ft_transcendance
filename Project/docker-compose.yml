@@ -20,9 +20,9 @@ services:
 
   users:
     build:
-     context: ./Django
+     context: ./User
     volumes:
-      - ./Django/srcs:/app
+      - ./User/srcs:/app
     networks:
       - webnet
     ports:
@@ -138,11 +138,11 @@ services:
       - 8080:443
     volumes:
       - ./Frontend:/run/nginx/html
-      - ./Django/srcs/staticfiles:/run/nginx/html/static_user
+      - ./User/srcs/staticfiles:/run/nginx/html/static_user
       - ./Friend/srcs/staticfiles:/run/nginx/html/static_friend
       - ./Mail/srcs/staticfiles:/run/nginx/html/static_mail
       - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
-
+      - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
 
 # MONITORING START HERE
 # ITS HAS TO DOIN FINE TUNE
@@ -157,7 +157,7 @@ services:
   #     - webnet
 
   # grafana:
-  #   image: grafana/grafana
+  #   image: grafana/grafanaj
   #   container_name: grafana
   #   ports:
   #     - "3000:3000"
@@ -277,7 +277,7 @@ services:
 
   translation:
     build:
-      context: ./Translation 
+      context: ./Translation
     volumes:
       - ./Translation/srcs:/app
       - ./Translation/locale:/app/locale
@@ -293,7 +293,7 @@ services:
       - DB_HOST=translation_db
       - POSTGRES_DB=translation
       - LANG=C.UTF-8
- 
+
   translation_db:
     image: postgres:13
     container_name: translation_db

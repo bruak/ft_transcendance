@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import translation_auth
+from .views import translation
 
 urlpatterns = [
-    path("get_translation/", translation_auth, name="get_translation"),
+	path("translation/<str:key>/", translation, name="get_translation"),
 ]
