@@ -1,99 +1,110 @@
 /* ======================[*] BUDUR SONN Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
-export function initProfile() {
+import { router } from './app.js';
+
+export function initProfile(params = {}) {
     try {
-        const host = window.location.host;
-        const apiBaseUrl = `https://${host}/api`;
-        const path = window.location.pathname;
-        const isOwnProfile = path === '/profile';
-        const username = isOwnProfile ? localStorage.getItem("username") : path.split('/').pop();
-        const accessToken = localStorage.getItem("accessToken");
-
-        console.log('Profil sayfası:', path);
-
-        // /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
-        // fetch('/views/navbar.html')
-        //     .then(response => response.text())
-        //     .then(data => document.getElementById('navbar-container').innerHTML = data)
-        //     .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
-
-        // /* ======================[*] Kaydedilmiş Profil Resmini Yükleme [*]====================== */
-        // const savedProfileImage = localStorage.getItem('profileImage');
-        // if (savedProfileImage) {
-        //     document.getElementById('profileImageDisplay').src = savedProfileImage;
-        //     document.getElementById('profileSmallPhoto').src = savedProfileImage;
-        // }
-
-        /* ======================[*] Kullanıcı Bilgilerini API'den Çekme [*]====================== */
-        fetch(`${apiBaseUrl}/user/getuser/${username}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
+      // 1) Rota parametresi ile giriş yapmış kullanıcı adı
+      const routeUser = params.username || null; 
+      const currentUser = localStorage.getItem('username') || null;
+      
+      // 2) Hangi kullanıcı profilini görüntüleyeceğiz?
+      //    Eğer rota parametresi varsa, o kullanıcıyı yükler.
+      //    Yoksa "kendi" profilini (currentUser) yükleyebilirsiniz.
+      //    Proje mantığınıza göre bu kısım değişebilir.
+      const userToLoad = routeUser || currentUser; 
+      if (!userToLoad) {
+        // Kullanıcı adı yoksa, belki anasayfaya dönmek istersiniz:
+        console.error('No username found to load profile.');
+        return;
+      }
+  
+      // 3) Kendi profilim mi, başkasının profili mi?
+      const isOwnProfile = (userToLoad === currentUser);
+  
+      // 4) URL ve Token
+      const host = window.location.host;
+      const apiBaseUrl = `https://${host}/api`;
+      const accessToken = localStorage.getItem("accessToken");
+  
+      console.log('Profil sayfası başlatılıyor:', { userToLoad, isOwnProfile });
+  
+      /* =============== Kullanıcı Bilgilerini API'den Çekme =============== */
+      fetch(`${apiBaseUrl}/user/getuser/${userToLoad}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Accept-Language': 'tr',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Kullanıcı bilgisi çekilirken hata: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(user => {
+        // Örneğin API "user.data" formatında veri döndürüyor olabilir
+        updateProfileUI(user);  // user -> { data: {...} } 
+        
+        if (!isOwnProfile) {
+          // Örneğin düzenleme butonlarını gizleyin
+          const profileActions = document.getElementById('profileActions');
+          if (profileActions) {
+            profileActions.style.display = 'none';
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Kullanıcı bilgileri yüklenirken hata oluştu:', error);
+        showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+      });
+  
+      /* =============== Profil Düzenleme Formu İşleme =============== */
+      const editProfileForm = document.getElementById('editProfileForm');
+      if (editProfileForm) {
+        if (!isOwnProfile) {
+          // Başkasının profilinde düzenleme formunu gösterme
+          editProfileForm.style.display = 'none';
+        } else {
+          // Kendi profilimiz
+          editProfileForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Örnek form işleme (FormData vs.)
+            const formData = new FormData(this);
+  
+            // Örnek: Avatar, isim, vs. yakalayabilirsiniz
+            // const newAvatarFile = document.getElementById('profileImage').files[0];
+            // if (newAvatarFile) formData.append('avatar', newAvatarFile);
+  
+            fetch(`${apiBaseUrl}/auth/singup/`, {
+              method: 'POST',
+              headers: {
                 'Accept': 'application/json',
                 'Accept-Language': 'tr',
                 'Authorization': `Bearer ${accessToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(user => {
-            updateProfileUI(user);
-            if (!isOwnProfile) {
-                document.getElementById('profileActions').style.display = 'none';
-            }
-        })
-        .catch(error => {
-            console.error('Kullanıcı bilgileri yüklenirken hata oluştu:', error);
-            showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
-        });
-
-        /* ======================[*] Profil Düzenleme Formu İşleme [*]====================== */
-        const editProfileForm = document.getElementById('editProfileForm');
-        if (editProfileForm && isOwnProfile) {
-            editProfileForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const formData = new FormData();
-                formData.append('first_name', document.getElementById('profileName').value);
-                formData.append('title', document.getElementById('profileTitle').value);
-                formData.append('location', document.getElementById('profileLocation').value);
-
-                const image = document.getElementById('profileImage').files[0];
-                if (image) {
-                    formData.append('avatar', image);
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        localStorage.setItem('profileImage', e.target.result);
-                        document.getElementById('profileImageDisplay').src = e.target.result;
-                        document.getElementById('profileSmallPhoto').src = e.target.result;
-                    };
-                    reader.readAsDataURL(image);
-                }
-
-                fetch(`${apiBaseUrl}/auth/singup/`, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Accept-Language': 'tr',
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Profil başarıyla güncellendi!');
-                        updateProfileUI(data);
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
-                        if (modal) modal.hide();
-                    } else {
-                        alert('Profil güncellenemedi.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Profil güncellenirken hata oluştu:', error);
-                    showErrorMessage("Profil güncellenirken bir hata oluştu.");
-                });
+                // Content-Type ayarı FormData kullandığınızda otomatik atanır.
+              },
+              body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                alert('Profil başarıyla güncellendi!');
+                // Profil yeniden yüklensin isterseniz tekrar fetch atabilirsiniz:
+                // Or data içinde güncellenmiş user varsa updateProfileUI(data);
+              } else {
+                alert('Profil güncellenemedi: ' + (data.message || 'Bilinmeyen hata.'));
+              }
+            })
+            .catch(err => {
+              console.error('Profil güncellerken hata:', err);
+              showGlobalError("Profil güncellenirken bir hata oluştu.");
             });
+          });
         }
+      }
     /* ======================[*] Arkadaş Arama İşlemi [*]====================== */
     const friendSearchInput = document.getElementById('friendSearchInput');
 
@@ -131,7 +142,7 @@ export function initProfile() {
                 .then(result => {
                     console.log('Arama sonuçları:', result);
                     suggestionsList.innerHTML = '';
-
+                     // result = { data: [ {...}, {...} ] } veya { data: {...} }
                     if (Array.isArray(result.data) && result.data.length > 0) {
                         result.data.forEach(user => createSuggestionItem(user, suggestionsList));
                     } else if (result.data && typeof result.data === 'object') {
@@ -160,7 +171,7 @@ export function initProfile() {
     
         // Kullanıcı adını tıklanabilir yap
         const userNameLink = document.createElement('a');
-        userNameLink.href = `/profile/${user.username}`;
+        userNameLink.href = `/${user.username}`;
         userNameLink.textContent = `${user.first_name} ${user.last_name}`;
         userNameLink.className = 'text-decoration-none text-dark';
         
@@ -168,7 +179,8 @@ export function initProfile() {
         userNameLink.addEventListener('click', function(e) {
             e.preventDefault();
             history.pushState(null, null, this.href);
-            router(); // Router'ı tetikle
+            if (typeof router === 'function')
+                router(); // Router'ı tetikle
         });
     
         listItem.appendChild(userNameLink);
@@ -369,15 +381,23 @@ function displayFriendsList(friends) {
 }
 
 /* ======================[*] Profil Bilgilerini Güncelleme [*]====================== */
+// updateProfileUI fonksiyonu
 export function updateProfileUI(user) {
+    // Eğer user = { data: {...} } ise:
     const userData = user.data;
+    if (!userData) {
+      console.error("Beklenen formatta kullanıcı datası yok.");
+      return;
+    }
+  
+    // DOM elementlerini doldurun:
     document.getElementById('profileNameDisplay').textContent = `${userData.first_name} ${userData.last_name}`;
     document.getElementById('profileTitleDisplay').textContent = userData.title || 'Ayarlanmamış';
     document.getElementById('profileLocationDisplay').textContent = userData.location || 'Ayarlanmamış';
-    document.getElementById('profileImageDisplay').src = userData.avatar || 'img/default-avatar.png';
-    document.getElementById('profileSmallPhoto').src = userData.avatar || 'img/default-avatar.png';
-}
-
+    const avatarUrl = userData.avatar || 'img/default-avatar.png';
+    document.getElementById('profileImageDisplay').src = avatarUrl;
+    document.getElementById('profileSmallPhoto').src = avatarUrl;
+  }
 /* ======================[*] Oyuna Katılma Fonksiyonu [*]====================== */
 function joinGame(gameId) {
     window.location.href = `/game/${gameId}`;
