@@ -37,6 +37,9 @@ msgstr "Kullanıcı Bulunamadı"
 msgid "Only POST requests are allowed."
 msgstr "Sadece POST isteklerine izin verilir."
 
+msgid "Only GET request are allowed"
+msgstr "Sadece GET isteklerine izin verilir"
+
 msgid "There is a problem in user service"
 msgstr "'user' servisinde bir sorun var"
 
@@ -81,3 +84,120 @@ msgstr "Arkadaşlık isteği kabul edildi."
 
 msgid "No friends found."
 msgstr "Arkadaş bulunamadı."
+
+msgid "User successfully signout."
+msgstr "Kullanıcı başarıyla çıkış yaptı."
+
+msgid "There was a problem logging the user sigoout."
+msgstr "Kullanıcı çıkış yaparken bir sorun oluştu."
+
+msgid "invalid validate token"
+msgstr "geçersiz doğrulama jetonu"
+
+msgid "Invalid Token Error when trying to signout"
+msgstr "Geçersiz Jeton Hatası - Çıkış yaparken"
+
+msgid "Invalid Token Error when trying to validate token"
+msgstr "Geçersiz Jeton Hatası - Jetonu doğrularken"
+
+msgid "User not found."
+msgstr "Kullanıcı bulunamadı"
+
+msgid "Token has expired. New token has been sent to your email."
+msgstr "Token süresi doldu. Yeni token e-postanıza gönderildi"
+
+msgid "invalid verification token"
+msgstr "geçersiz doğrulama jetonu"
+
+msgid "Authorization code not found in intra callback"
+msgstr "intra callback'te yetkilendirme kodu bulunamadı"
+
+msgid "Unable to fetch access token"
+msgstr "Erişim jetonu alınamıyor"
+
+msgid "Intra access token not faund"
+msgstr "Intra erişim jetonu bulunamadı"
+
+msgid "Unable to fetch user data"
+msgstr "Kullanıcı verileri alınamıyor"
+
+msgid "this username already exist"
+msgstr "bu kullanıcı adı zaten mevcut"
+
+msgid "this email already exist"
+msgstr "bu e-posta zaten mevcut"
+
+msgid "an error occurred while creating a user"
+msgstr "bir kullanıcı oluşturulurken bir hata oluştu"
+
+msgid "an error occurred while getting a user"
+msgstr "bir kullanıcı alınırken bir hata oluştu"
+
+msgid "an error occurred while updating a user"
+msgstr "kullanıcı güncellenirken bir hata oluştu"
+
+msgid "Avatar download error"
+msgstr "Avatar indirme hatası"
+
+msgid "Friend blocked."
+msgstr "Arkadaş engellendi."
+
+msgid "Friend relationship not found."
+msgstr "Arkadaş ilişkisi bulunamadı."
+
+msgid "Service not found."
+msgstr "Servis bulunamadı."
+
+msgid "Missing token"
+msgstr "Eksik jeton"
+
+msgid "Invalid validate token"
+msgstr "Geçersiz doğrulama jetonu"
+
+msgid "Invalid path argument"
+msgstr "Geçersiz yol argümanı"
+
+msgid "Empty response from target URL"
+msgstr "Hedef URL'den boş yanıt"
+
+msgid "Request was successful"
+msgstr "İstek başarılı oldu"
+
+msgid "Request failed"
+msgstr "İstek başarısız oldu"
+
+msgid "Invalid JSON response"
+msgstr "Geçersiz JSON yanıtı"
+
+msgid "Username required."
+msgstr "Kullanıcı adı gerekli"
+
+msgid "Password Reset Request"
+msgstr "Şifre Sıfırlama İsteği"
+
+msgid "Click on this link to reset your password: "
+msgstr "Şifrenizi sıfırlamak için bu bağlantıya tıklayın: "
+
+msgid "Password reset link sent."
+msgstr "Şifre sıfırlama bağlantısı gönderildi."
+
+msgid "An error has occurred."
+msgstr "Bir hata oluştu."
+
+msgid "details"
+msgstr "detaylar"
+
+msgid "Your password has been successfully changed. You can log in now."
+msgstr "Şifreniz başarıyla değiştirildi. Şimdi giriş yapabilirsiniz."
+
+msgid "An error occurred while updating the password."
+msgstr "Şifre güncellenirken bir hata oluştu."
+
+msgid "An invalid or expired connection. Please try again."
+msgstr "Geçersiz veya süresi dolmuş bir bağlantı. Lütfen tekrar deneyin."
+
+msgid "Verify Code"
+msgstr "Doğrulama kodu"
+
+msgid "Email sent successfully."
+msgstr "E-posta başarıyla gönderildi."
