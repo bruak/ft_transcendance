@@ -40,7 +40,7 @@ def send_reset_email(request):
 			# Mail gönder
 			send_mail(
 				subject=get_translated_message("PASSWORD_RESET_REQUEST", user_language),
-				message=get_translated_message("PASSWORD_RESET_LINK", user_language) + reset_link,
+				message=get_translated_message("PASSWORD_RESET_LINK", user_language) + " " + reset_link,
 				from_email='lmrnbzkrt0@gmail.com',
 				recipient_list=[user_json.get('email')],
 			)
@@ -78,7 +78,6 @@ def reset_password(request, token):
 		except Profile.DoesNotExist:
 			return HttpResponse(get_translated_message("INVALID_OR_EXPIRED_CONNECTION", user_language), status=400)
 	return render(request, 'reset_password.html', {'token': token}, status=200)
-
 
 @csrf_exempt
 def send_verification_email(request):
