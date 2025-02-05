@@ -1,31 +1,41 @@
-import { router } from './router';
+/* ======================[*] BUDUR SONN Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
+export function initProfile() {
+    try {
+        const host = window.location.host;
+        const apiBaseUrl = `https://${host}/api`;
+        const path = window.location.pathname;
+        const isOwnProfile = path === '/profile';
+        const username = isOwnProfile ? localStorage.getItem("username") : path.split('/').pop();
+        const accessToken = localStorage.getItem("accessToken");
 
-/* ======================[*] SON Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
-export function initProfile(params = {}) {
-    const host = window.location.host;
-    const apiBaseUrl = `https://${host}/api`;
+        console.log('Profil sayfası:', path);
 
-    const pathParts = window.location.pathname.split('/');
-    const username = params.username || window.location.pathname.split('/')[2] || localStorage.getItem("username");
-    const isOwnProfile = username === localStorage.getItem("username");  // Kendi profilini kontrol et
+        // /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
+        // fetch('/views/navbar.html')
+        //     .then(response => response.text())
+        //     .then(data => document.getElementById('navbar-container').innerHTML = data)
+        //     .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
 
-    const accessToken = localStorage.getItem("accessToken");
+        // /* ======================[*] Kaydedilmiş Profil Resmini Yükleme [*]====================== */
+        // const savedProfileImage = localStorage.getItem('profileImage');
+        // if (savedProfileImage) {
+        //     document.getElementById('profileImageDisplay').src = savedProfileImage;
+        //     document.getElementById('profileSmallPhoto').src = savedProfileImage;
+        // }
 
-    console.log('Görüntülenen kullanıcı:', username);
-
-    fetch(`${apiBaseUrl}/user/getuser/${username}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
+        /* ======================[*] Kullanıcı Bilgilerini API'den Çekme [*]====================== */
+        fetch(`${apiBaseUrl}/user/getuser/${username}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Accept-Language': 'tr',
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
         .then(response => response.json())
         .then(user => {
             updateProfileUI(user);
-            console.log('Kullanıcı bilgileri:', user);
-            // Eğer kendi profilin değilse düzenleme butonlarını gizle
             if (!isOwnProfile) {
                 document.getElementById('profileActions').style.display = 'none';
             }
@@ -35,38 +45,38 @@ export function initProfile(params = {}) {
             showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
         });
 
-    /* ======================[*] Profil Düzenleme Formu İşleme [*]====================== */
-    const editProfileForm = document.getElementById('editProfileForm');
-    if (editProfileForm && isOwnProfile) {
-        editProfileForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+        /* ======================[*] Profil Düzenleme Formu İşleme [*]====================== */
+        const editProfileForm = document.getElementById('editProfileForm');
+        if (editProfileForm && isOwnProfile) {
+            editProfileForm.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-            const formData = new FormData();
-            formData.append('first_name', document.getElementById('profileName').value);
-            formData.append('title', document.getElementById('profileTitle').value);
-            formData.append('location', document.getElementById('profileLocation').value);
+                const formData = new FormData();
+                formData.append('first_name', document.getElementById('profileName').value);
+                formData.append('title', document.getElementById('profileTitle').value);
+                formData.append('location', document.getElementById('profileLocation').value);
 
-            const image = document.getElementById('profileImage').files[0];
-            if (image) {
-                formData.append('avatar', image);
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    localStorage.setItem('profileImage', e.target.result);
-                    document.getElementById('profileImageDisplay').src = e.target.result;
-                    document.getElementById('profileSmallPhoto').src = e.target.result;
-                };
-                reader.readAsDataURL(image);
-            }
+                const image = document.getElementById('profileImage').files[0];
+                if (image) {
+                    formData.append('avatar', image);
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        localStorage.setItem('profileImage', e.target.result);
+                        document.getElementById('profileImageDisplay').src = e.target.result;
+                        document.getElementById('profileSmallPhoto').src = e.target.result;
+                    };
+                    reader.readAsDataURL(image);
+                }
 
-            fetch(`${apiBaseUrl}/auth/singup/`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Accept-Language': 'tr',
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                body: formData
-            })
+                fetch(`${apiBaseUrl}/auth/singup/`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Accept-Language': 'tr',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -82,8 +92,8 @@ export function initProfile(params = {}) {
                     console.error('Profil güncellenirken hata oluştu:', error);
                     showErrorMessage("Profil güncellenirken bir hata oluştu.");
                 });
-        });
-    }
+            });
+        }
     /* ======================[*] Arkadaş Arama İşlemi [*]====================== */
     const friendSearchInput = document.getElementById('friendSearchInput');
 
@@ -236,68 +246,68 @@ export function initProfile(params = {}) {
         });
     }
 
-    // /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
-    // const recentActivitiesList = document.getElementById('recentActivitiesList');
-    // fetch(`${apiBaseUrl}/user/recent-activities/${username}`, { // bura henüz çalışmıyor
-    //     method: 'GET',
-    //     headers: {
-    //         'Accept': 'application/json',
-    //         'Accept-Language': 'tr',
-    //         'Authorization': `Bearer ${accessToken}`
-    //     }
-    // })
-    // .then(response => response.json())
-    // .then(activities => {
-    //     if (recentActivitiesList) {
-    //         recentActivitiesList.innerHTML = activities.length > 0
-    //             ? activities.map(activity => {
-    //                 const isPlaying = activity.status === 'playing';
-    //                 return `<li class="list-group-item bg-dark text-white">
-    //                             ${activity.description}
-    //                             ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
-    //                         </li>`;
-    //             }).join('')
-    //             : '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
-    //     }
-    // })
-    // .catch(error => {
-    //     console.error('Son etkinlikler yüklenirken hata oluştu:', error);
-    //     showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
-    // });
+        // /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
+        // const recentActivitiesList = document.getElementById('recentActivitiesList');
+        // fetch(`${apiBaseUrl}/user/recent-activities/${username}`, { // bura henüz çalışmıyor
+        //     method: 'GET',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Accept-Language': 'tr',
+        //         'Authorization': `Bearer ${accessToken}`
+        //     }
+        // })
+        // .then(response => response.json())
+        // .then(activities => {
+        //     if (recentActivitiesList) {
+        //         recentActivitiesList.innerHTML = activities.length > 0
+        //             ? activities.map(activity => {
+        //                 const isPlaying = activity.status === 'playing';
+        //                 return `<li class="list-group-item bg-dark text-white">
+        //                             ${activity.description}
+        //                             ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
+        //                         </li>`;
+        //             }).join('')
+        //             : '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error('Son etkinlikler yüklenirken hata oluştu:', error);
+        //     showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
+        // });
 
-    /* ======================[*] Oyun Seçenekleri Bölümü İşleme [*]====================== */
-    const gameOptionButtons = document.querySelectorAll('.game-option-button');
-    gameOptionButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const selectedCard = this.closest('.game-option-card');
-            const optionId = selectedCard.getAttribute('data-option');
-            const optionTitle = selectedCard.querySelector('h3').textContent;
+        /* ======================[*] Oyun Seçenekleri Bölümü İşleme [*]====================== */
+        const gameOptionButtons = document.querySelectorAll('.game-option-button');
+        gameOptionButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const selectedCard = this.closest('.game-option-card');
+                const optionId = selectedCard.getAttribute('data-option');
+                const optionTitle = selectedCard.querySelector('h3').textContent;
 
-            document.getElementById('gameOptionsModalLabel').textContent = `${optionTitle} Seçenekleri`;
-            const optionContent = document.getElementById('hiddenOptions').querySelector(`#${optionId}`).cloneNode(true);
+                document.getElementById('gameOptionsModalLabel').textContent = `${optionTitle} Seçenekleri`;
+                const optionContent = document.getElementById('hiddenOptions').querySelector(`#${optionId}`).cloneNode(true);
+                
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = '';
+                modalContent.appendChild(optionContent);
 
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = '';
-            modalContent.appendChild(optionContent);
-
-            const modal = new bootstrap.Modal(document.getElementById('gameOptionsModal'));
-            modal.show();
+                const modal = new bootstrap.Modal(document.getElementById('gameOptionsModal'));
+                modal.show();
+            });
         });
-    });
 
-    /* ======================[*] Çıkış Yapma [*]====================== */
-    const signOutLink = document.querySelector('.dropdown-menu a[href="#signout"]');
-    if (signOutLink) {
-        signOutLink.addEventListener('click', function () {
-            fetch(`${apiBaseUrl}/auth/singout/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Accept-Language': 'tr',
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            })
+        /* ======================[*] Çıkış Yapma [*]====================== */
+        const signOutLink = document.querySelector('.dropdown-menu a[href="#signout"]');
+        if (signOutLink) {
+            signOutLink.addEventListener('click', function () {
+                fetch(`${apiBaseUrl}/auth/singout/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Accept-Language': 'tr',
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                })
                 .then(response => {
                     if (response.ok) {
                         localStorage.clear();
@@ -310,9 +320,13 @@ export function initProfile(params = {}) {
                     console.error('Çıkış yaparken hata oluştu:', error);
                     showErrorMessage("Çıkış yaparken bir hata oluştu.");
                 });
-        });
-    }
+            });
+        }
 
+    } catch (error) {
+        console.error('initializeProfile fonksiyonunda hata oluştu:', error);
+        showErrorMessage("Profil yüklenirken bir hata oluştu.");
+    }
 }
 
 /* ======================[*] Arkadaşlık İsteği Gönderme Fonksiyonu [*]====================== */
@@ -330,18 +344,18 @@ function sendFriendRequest(username, friendUsername) {
             friend: friendUsername
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Arkadaşlık isteği gönderildi!');
-            } else {
-                alert('Arkadaşlık isteği gönderilemedi.');
-            }
-        })
-        .catch(error => {
-            console.error('Arkadaşlık isteği gönderilirken hata oluştu:', error);
-            showErrorMessage("Arkadaşlık isteği gönderilirken bir hata oluştu.");
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Arkadaşlık isteği gönderildi!');
+        } else {
+            alert('Arkadaşlık isteği gönderilemedi.');
+        }
+    })
+    .catch(error => {
+        console.error('Arkadaşlık isteği gönderilirken hata oluştu:', error);
+        showErrorMessage("Arkadaşlık isteği gönderilirken bir hata oluştu.");
+    });
 }
 
 /* ======================[*] Arkadaş Listesini Gösterme [*]====================== */
