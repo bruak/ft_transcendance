@@ -91,7 +91,7 @@ export function initLogReg() {
                 try {
                     const response = await fetch(`https://${host}/api/auth/singup/`, {
                         method: 'POST',
-                        headers: { 'Accept': 'application/json', 'Accept-Language': 'tr' }, // ✅ "Content-Type" KALDIRILDI!
+                        headers: { 'Accept': 'application/json', 'Accept-Language': 'tr' },
                         body: formData,
                     });
                     if (response.ok) {
