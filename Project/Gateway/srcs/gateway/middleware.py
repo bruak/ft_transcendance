@@ -44,7 +44,6 @@ class ProxyMiddleware:
 			print(f"path: {path}")
 			if not service_url:
 				return JsonResponse({'message': get_translated_message("SERVICE_NOT_FOUND", user_language)}, status=404)  # Servis bulunamazsa 404 döneriz
-			print(f"lll: {path}")
 			if not any(path.startswith(excluded) for excluded in EXCLUDED_PATHS):
 				# Token kontrolü yapıyoruz
 				token = request.headers.get('Authorization')
