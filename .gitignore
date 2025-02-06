@@ -6,11 +6,11 @@ __pycache_*
 *$py.class
 # C extensions
 *.so
+*.mo
 
 Project/Auth/srcs/media/*.jpeg
 Project/Auth/srcs/media/*.jpg
 Project/Auth/srcs/media/*.png
-
 !srcs/media/default.jpg
 
 # Distribution / packaging
