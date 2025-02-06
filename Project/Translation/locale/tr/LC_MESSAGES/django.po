@@ -201,3 +201,15 @@ msgstr "Doğrulama kodu"
 
 msgid "Email sent successfully."
 msgstr "E-posta başarıyla gönderildi."
+
+msgid "Password can not be empty."
+msgstr "Şifre boş olamaz."
+
+msgid "Avatar can not be empty."
+msgstr "Avatar boş olamaz."
+
+msgid "First name can not be empty."
+msgstr "Ad boş olamaz."
+
+msgid "Last name can not be empty."
+msgstr "Soyad boş olamaz."

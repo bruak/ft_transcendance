@@ -7,6 +7,14 @@ __pycache_*
 # C extensions
 *.so
 
+*.mo
+Project/Translation/locale/en/LC_MESSAGES/django.mo
+Project/Translation/locale/tr/LC_MESSAGES/django.po
+Project/Auth/srcs/media/*.jpeg
+Project/Auth/srcs/media/*.jpg
+Project/Auth/srcs/media/*.png
+!srcs/media/default.jpg
+
 # Distribution / packaging
 .Python
 env/
