@@ -1,3 +1,4 @@
+Here is the updated API documentation with the requested base URL added to the endpoints:
 
 ---
 
@@ -17,7 +18,7 @@
 
 ---
 
-## <a name="sign-up"></a> 1. **Sign Up** - `POST /api/auth/signup/`
+## <a name="sign-up"></a> 1. **Sign Up** - `POST https://localhost:8080/api/auth/signup/`
 
 **Request Body**:  
 FormData type, includes a file upload.
@@ -37,7 +38,7 @@ FormData type, includes a file upload.
 
 ---
 
-## <a name="sign-in"></a> 2. **Sign In** - `POST /api/auth/signin/`
+## <a name="sign-in"></a> 2. **Sign In** - `POST https://localhost:8080/api/auth/signin/`
 
 **Request Body**:  
 JSON format.
@@ -53,7 +54,7 @@ JSON format.
 
 ---
 
-## <a name="two-factor-authentication"></a> 3. **Two-Factor Authentication** - `POST /api/auth/twofactor/`
+## <a name="two-factor-authentication"></a> 3. **Two-Factor Authentication** - `POST https://localhost:8080/api/auth/twofactor/`
 
 **Request Body**:  
 JSON format.
@@ -69,7 +70,7 @@ JSON format.
 
 ---
 
-## <a name="sign-out"></a> 4. **Sign Out** - `GET /api/auth/signout/`
+## <a name="sign-out"></a> 4. **Sign Out** - `GET https://localhost:8080/api/auth/signout/`
 
 **Headers**:
 - `Content-Type`: `application/json`
@@ -79,7 +80,7 @@ JSON format.
 
 ---
 
-## <a name="get-all-users"></a> 5. **Get All Users** - `GET /api/user/get/`
+## <a name="get-all-users"></a> 5. **Get All Users** - `GET https://localhost:8080/api/user/get/`
 
 **Headers**:
 - `Content-Type`: `application/json`
@@ -92,7 +93,7 @@ Returns a list of all registered users.
 
 ---
 
-## <a name="get-specific-user"></a> 6. **Get Specific User** - `GET /api/user/getuser/<username>/`
+## <a name="get-specific-user"></a> 6. **Get Specific User** - `GET https://localhost:8080/api/user/getuser/<username>/`
 
 **Headers**:
 - `Content-Type`: `application/json`
@@ -102,7 +103,7 @@ Returns a list of all registered users.
 
 ---
 
-## <a name="send-friend-request"></a> 7. **Send Friend Request** - `POST /api/friend/send_friend_request/`
+## <a name="send-friend-request"></a> 7. **Send Friend Request** - `POST https://localhost:8080/api/friend/send_friend_request/`
 
 **Request Body**:  
 JSON format.
@@ -119,7 +120,7 @@ JSON format.
 
 ---
 
-## <a name="get-friend-requests"></a> 8. **Get Friend Requests** - `GET /api/friend/list_friend_requests/<username>/`
+## <a name="get-friend-requests"></a> 8. **Get Friend Requests** - `GET https://localhost:8080/api/friend/list_friend_requests/<username>/`
 
 **Headers**:
 - `Content-Type`: `application/json`
@@ -132,7 +133,7 @@ Returns all friend requests sent to the user.
 
 ---
 
-## <a name="get-friends"></a> 9. **Get Friends** - `GET /api/friend/friends/<username>/`
+## <a name="get-friends"></a> 9. **Get Friends** - `GET https://localhost:8080/api/friend/friends/<username>/`
 
 **Headers**:
 - `Content-Type`: `application/json`
@@ -145,7 +146,7 @@ Returns a list of the user's friends.
 
 ---
 
-## <a name="accept-friend-request"></a> 10. **Accept Friend Request** - `POST /api/friend/accept_friend_request/`
+## <a name="accept-friend-request"></a> 10. **Accept Friend Request** - `POST https://localhost:8080/api/friend/accept_friend_request/`
 
 **Request Body**:  
 JSON format.
@@ -162,7 +163,7 @@ JSON format.
 
 ---
 
-## <a name="reject-friend-request"></a> 11. **Reject Friend Request** - `POST /api/friend/reject_friend_request/`
+## <a name="reject-friend-request"></a> 11. **Reject Friend Request** - `POST https://localhost:8080/api/friend/reject_friend_request/`
 
 **Request Body**:  
 JSON format.
@@ -176,5 +177,30 @@ JSON format.
 **Body Fields**:
 - `username` (Text)
 - `friendname` (Text)
+
+## <a name="translate-servıce-test"></a> 12. **Translate service test** - `POST https://localhost:8080/translation/"MESSAGE"/`
+
+**Request Body**:
+NONE
+
+**Headers**:
+- `Accept-Language`: `tr`
+OR
+- `Accept-Language`: `en`
+OR
+- `Accept-Language`: `fr`
+
+NOTE: IF NOT SPECIFIED, DEFAULT LANGUAGE IS tr.
+
+**Response**:
+- `Content-Type`: `application/json`
+
+**RETURN EXAMPLE**:
+
+```json
+{
+    "message": "MESAJ"
+}
+```
 
 ---
