@@ -17,6 +17,7 @@ EXCLUDED_PATHS = [
 	"verify-account",
 	"intra",
 	"callback",
+	"api" # değişicek
 ]
 
 class ProxyMiddleware:

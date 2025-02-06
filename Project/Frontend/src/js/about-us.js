@@ -1,13 +1,13 @@
 /* ======================[*] Hakkımızda Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initAbout() {
 
-    /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
-    fetch('/views/navbar.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('navbar-container').innerHTML = data;
-    })
-    .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
+    const username = localStorage.getItem('username');
+
+    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+    const homeLink = document.querySelector('.nav-link.active');
+    if (homeLink) {
+        homeLink.href = username;
+    }
 
     /* ======================[*] Form İşleme [*]====================== */
     const form = document.querySelector('form');

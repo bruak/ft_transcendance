@@ -1,30 +1,25 @@
-/* ======================[*] SON Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
-export function initProfile() {
+/* ======================[*] BUDUR SONN Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
+export function initProfile(params = {}) {
     try {
+        if (params)
+        {
+            const user1 = params.username;
+            
+            console.log('Profil sayfası başlatılıyor:', user1);
+        }
         const host = window.location.host;
         const apiBaseUrl = `https://${host}/api`;
         const path = window.location.pathname;
-        const isOwnProfile = path === '/profile';
+        const isOwnProfile = path;
         const username = isOwnProfile ? localStorage.getItem("username") : path.split('/').pop();
+        console.log('username', username);
         const accessToken = localStorage.getItem("accessToken");
 
         console.log('Profil sayfası:', path);
 
-        /* ======================[*] Navbar İçeriğini Yükleme [*]====================== */
-        fetch('/views/navbar.html')
-            .then(response => response.text())
-            .then(data => document.getElementById('navbar-container').innerHTML = data)
-            .catch(error => console.error('Navbar yüklenirken hata oluştu:', error));
-
-        /* ======================[*] Kaydedilmiş Profil Resmini Yükleme [*]====================== */
-        const savedProfileImage = localStorage.getItem('profileImage');
-        if (savedProfileImage) {
-            document.getElementById('profileImageDisplay').src = savedProfileImage;
-            document.getElementById('profileSmallPhoto').src = savedProfileImage;
-        }
 
         /* ======================[*] Kullanıcı Bilgilerini API'den Çekme [*]====================== */
-        fetch(`${apiBaseUrl}/user/getuser/${username}`, {
+        fetch(`${apiBaseUrl}/user/getuser/${user1}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -94,102 +89,186 @@ export function initProfile() {
                 });
             });
         }
+    /* ======================[*] Arkadaş Arama İşlemi [*]====================== */
+    const friendSearchInput = document.getElementById('friendSearchInput');
 
-        /* ======================[*] Arkadaş Arama İşlemi [*]====================== */
-        const friendSearchInput = document.getElementById('friendSearchInput');
-        if (friendSearchInput) {
-            friendSearchInput.addEventListener('input', function () {
-                const searchInput = friendSearchInput.value;
-                const suggestionsList = document.getElementById('friendSuggestions');
+    if (friendSearchInput) {
+        friendSearchInput.addEventListener('input', debounce(handleFriendSearch, 300));
+    }
 
-                if (searchInput) {
-                    fetch(`${apiBaseUrl}/user/get/?query=${searchInput}`, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Accept-Language': 'tr',
-                            'Authorization': `Bearer ${accessToken}`
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(users => {
-                        suggestionsList.innerHTML = '';
-                        users.forEach(user => {
-                            const listItem = document.createElement('li');
-                            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                            listItem.textContent = `${user.first_name} ${user.last_name}`;
+    function handleFriendSearch() {
+        const searchInput = friendSearchInput.value.trim();
+        const suggestionsList = document.getElementById('friendSuggestions');
 
-                            const addButton = document.createElement('button');
-                            addButton.className = 'btn btn-primary';
-                            addButton.textContent = 'Arkadaş Ekle';
-                            addButton.onclick = () => sendFriendRequest(username, user.username);
-                            
-                            listItem.appendChild(addButton);
-                            suggestionsList.appendChild(listItem);
-                        });
-                        suggestionsList.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Arkadaşlar aranırken hata oluştu:', error);
-                        showErrorMessage("Arkadaşlar aranırken bir hata oluştu.");
-                    });
-                } else {
-                    suggestionsList.innerHTML = '';
-                    suggestionsList.style.display = 'none';
+        if (searchInput.length >= 3) {
+            console.log('Arkadaş arama sorgusu:', searchInput);
+
+            // "Yükleniyor..." göstergesi
+            suggestionsList.innerHTML = '<li class="list-group-item">Yükleniyor...</li>';
+            suggestionsList.style.display = 'block';
+
+            fetch(`${apiBaseUrl}/user/getuser/${searchInput}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Accept-Language': 'tr',
+                    'Authorization': `Bearer ${accessToken}`
                 }
-            });
-        }
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        window.location.href = '/login';  // Yetkilendirme hatasında giriş sayfasına yönlendir
+                        throw new Error('Yetkilendirme hatası');
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    console.log('Arama sonuçları:', result);
+                    suggestionsList.innerHTML = '';
 
-        /* ======================[*] Arkadaşları Görüntüleme [*]====================== */
-        const viewFriendsButton = document.getElementById('viewFriendsButton');
-        if (viewFriendsButton) {
-            viewFriendsButton.addEventListener('click', function () {
-                fetch(`${apiBaseUrl}/friend/friends/${username}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Accept-Language': 'tr',
-                        'Authorization': `Bearer ${accessToken}`
+                    if (Array.isArray(result.data) && result.data.length > 0) {
+                        result.data.forEach(user => createSuggestionItem(user, suggestionsList));
+                    } else if (result.data && typeof result.data === 'object') {
+                        createSuggestionItem(result.data, suggestionsList);
+                    } else {
+                        suggestionsList.innerHTML = '<li class="list-group-item">Sonuç bulunamadı.</li>';
                     }
                 })
+                .catch(error => {
+                    console.error('Arkadaşlar aranırken hata oluştu:', error);
+                    suggestionsList.innerHTML = '<li class="list-group-item text-danger">Arama sırasında bir hata oluştu.</li>';
+                });
+
+        } else {
+            console.log('Arama sorgusu çok kısa.');
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+        }
+    }
+
+    
+
+    function createSuggestionItem(user, suggestionsList) {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+    
+        // Kullanıcı adını tıklanabilir yap
+        const userNameLink = document.createElement('a');
+        userNameLink.href = `/profile/${user.username}`;
+        userNameLink.textContent = `${user.first_name} ${user.last_name}`;
+        userNameLink.className = 'text-decoration-none text-dark';
+        
+        // Tıklama olayını yakala ve SPA davranışı ekle
+        userNameLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.pushState(null, null, this.href);
+            router(); // Router'ı tetikle
+        });
+    
+        listItem.appendChild(userNameLink);
+    
+        // Arkadaş ekleme butonu
+        const addButton = document.createElement('button');
+        addButton.className = 'btn btn-primary btn-sm';
+        addButton.textContent = 'Arkadaş Ekle';
+        addButton.onclick = () => sendFriendRequest(localStorage.getItem("username"), user.username);
+    
+        listItem.appendChild(addButton);
+        suggestionsList.appendChild(listItem);
+    }
+
+    // Debounce fonksiyonu: Çok sık API çağrısı yapılmasını önler
+    function debounce(func, delay) {
+        let debounceTimer;
+        return function (...args) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Hata mesajlarını göstermek için yardımcı fonksiyon
+    function showErrorMessage(message) {
+        const suggestionsList = document.getElementById('friendSuggestions');
+        suggestionsList.innerHTML = `<li class="list-group-item text-danger">${message}</li>`;
+        suggestionsList.style.display = 'block';
+    }
+
+    // Arkadaş ekleme fonksiyonu (bu API'nin çalışma şekline göre uyarlanabilir)
+    function sendFriendRequest(fromUser, toUser) {
+        fetch(`${apiBaseUrl}/friend/request`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ fromUser, toUser })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Arkadaşlık isteği gönderildi!');
+                } else {
+                    alert('Arkadaşlık isteği gönderilemedi.');
+                }
+            })
+            .catch(error => {
+                console.error('Arkadaş ekleme sırasında hata:', error);
+                alert('Bir hata oluştu, lütfen tekrar deneyin.');
+            });
+    }
+
+
+    /* ======================[*] Arkadaşları Görüntüleme [*]====================== */
+    const viewFriendsButton = document.getElementById('viewFriendsButton');
+    if (viewFriendsButton) {
+        viewFriendsButton.addEventListener('click', function () {
+            fetch(`${apiBaseUrl}/friend/friends/${username}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Accept-Language': 'tr',
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
                 .then(response => response.json())
                 .then(friends => displayFriendsList(friends))
                 .catch(error => {
                     console.error('Arkadaşlar yüklenirken hata oluştu:', error);
                     showErrorMessage("Arkadaşlar yüklenirken bir hata oluştu.");
                 });
-            });
-        }
-
-        /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
-        const recentActivitiesList = document.getElementById('recentActivitiesList');
-        fetch(`${apiBaseUrl}/user/recent-activities/${username}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Accept-Language': 'tr',
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(activities => {
-            if (recentActivitiesList) {
-                recentActivitiesList.innerHTML = activities.length > 0
-                    ? activities.map(activity => {
-                        const isPlaying = activity.status === 'playing';
-                        return `<li class="list-group-item bg-dark text-white">
-                                    ${activity.description}
-                                    ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
-                                </li>`;
-                    }).join('')
-                    : '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
-            }
-        })
-        .catch(error => {
-            console.error('Son etkinlikler yüklenirken hata oluştu:', error);
-            showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
         });
+    }
+
+        // /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
+        // const recentActivitiesList = document.getElementById('recentActivitiesList');
+        // fetch(`${apiBaseUrl}/user/recent-activities/${username}`, { // bura henüz çalışmıyor
+        //     method: 'GET',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Accept-Language': 'tr',
+        //         'Authorization': `Bearer ${accessToken}`
+        //     }
+        // })
+        // .then(response => response.json())
+        // .then(activities => {
+        //     if (recentActivitiesList) {
+        //         recentActivitiesList.innerHTML = activities.length > 0
+        //             ? activities.map(activity => {
+        //                 const isPlaying = activity.status === 'playing';
+        //                 return `<li class="list-group-item bg-dark text-white">
+        //                             ${activity.description}
+        //                             ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
+        //                         </li>`;
+        //             }).join('')
+        //             : '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error('Son etkinlikler yüklenirken hata oluştu:', error);
+        //     showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
+        // });
 
         /* ======================[*] Oyun Seçenekleri Bölümü İşleme [*]====================== */
         const gameOptionButtons = document.querySelectorAll('.game-option-button');
@@ -253,7 +332,7 @@ function sendFriendRequest(username, friendUsername) {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Accept-Language': 'tr',
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
             username: username,

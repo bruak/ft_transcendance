@@ -26,20 +26,21 @@ def send_reset_email(request):
 			if user_response.status_code != 200:
 				return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 
-			user_json = user_response.json()
+			user_json = user_response.json().get('message')
 
 			# Token oluştur ve profili kaydet
 			token = get_random_string(32)
+
 			Profile.objects.create(
 				username=user_json.get('username'),
 				reset_token=token
 			)
 			# Şifre sıfırlama bağlantısı oluştur
-			reset_link = f"http://127.0.0.1:8002/api/reset-password/{token}/"
+			reset_link = f"https://localhost:8080/api/mail/api/reset-password/{token}/"
 			# Mail gönder
 			send_mail(
 				subject=get_translated_message("PASSWORD_RESET_REQUEST", user_language),
-				message=get_translated_message("PASSWORD_RESET_LINK", user_language) + reset_link,
+				message=get_translated_message("PASSWORD_RESET_LINK", user_language) + " " + reset_link,
 				from_email='lmrnbzkrt0@gmail.com',
 				recipient_list=[user_json.get('email')],
 			)
@@ -58,15 +59,16 @@ def reset_password(request, token):
 			profile = Profile.objects.get(reset_token=token)
 			username = profile.username
 			user_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
-			user_data = user_response.json()
+			user_data = user_response.json().get('message')
 			payload = {
 				"password" : new_password
 			}
-
+			# Değişicek
 			headers = {
 				"Content-Type": "application/x-www-form-urlencoded"
 			}
-			update_response = requests.post(f"http://project-users-1:8000/put/{username}/", data=payload,  headers=headers)
+			return (JsonResponse({'maraba': "Burdasın"}))
+			#update_response = requests.post(f"http://project-users-1:8000/put/{username}/", data=payload,  headers=headers)
 			if update_response.status_code == 200:
 				profile.reset_token = None
 				profile.save()
@@ -76,7 +78,6 @@ def reset_password(request, token):
 		except Profile.DoesNotExist:
 			return HttpResponse(get_translated_message("INVALID_OR_EXPIRED_CONNECTION", user_language), status=400)
 	return render(request, 'reset_password.html', {'token': token}, status=200)
-
 
 @csrf_exempt
 def send_verification_email(request):
