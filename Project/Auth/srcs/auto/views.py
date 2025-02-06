@@ -19,6 +19,8 @@ import os
 def user_update(request, username):
     user_language = request.headers.get("Accept-Language", "tr")
 
+
+
     if request.method != "POST":
         return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
     
