@@ -1,7 +1,9 @@
+import { router } from "./app.js";
+
 /* ======================[*] Giriş ve Kayıt Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initLogReg() {
     const host = window.location.host;
-    console.log(host);
+    // console.log(host);
     const switchToRegister = document.getElementById('switch-to-register');
     const switchToLogin = document.getElementById('switch-to-login');
     const loginForm = document.getElementById('login-form');
@@ -57,9 +59,10 @@ export function initLogReg() {
                     }
                     const data = await response.json();
 
-                    alert(data.message); // its came from backend
+                    console.log(data.message); // its came from backend
                     if (response.ok) {
-                        window.location.href = "/2fac";  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                        history.pushState(null, null, "/2fac");  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                        router();
                     }
 
                 } catch (error) {
@@ -87,7 +90,7 @@ export function initLogReg() {
                 formData.append('email', email);
                 formData.append('password', password);
                 formData.append('avatar', avatar);
-                console.log(password);
+                // console.log(password);
                 try {
                     const response = await fetch(`https://${host}/api/auth/singup/`, {
                         method: 'POST',
@@ -95,7 +98,7 @@ export function initLogReg() {
                         body: formData,
                     });
                     if (response.ok) {
-                        console.error('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+                        console.log('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
                         switchToLogin.click();
                     } else {
                         console.error('Kayıt başarısız!');

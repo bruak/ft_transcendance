@@ -90,7 +90,7 @@ export async function router() {
                 break;
             }
         }
-        console.log('Params:', params); // params konsole yazdır
+        // console.log('Params:', params); // params konsole yazdır
     }
 
 
@@ -132,14 +132,14 @@ window.addEventListener('popstate', router);
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
-    console.log("Kullanıcı bilgisi güncellendi:", event.detail);
+    // console.log("Kullanıcı bilgisi güncellendi:", event.detail);
     import("./profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
 });
 
 /* ======================[*] Kullanıcı Yetkilendirmesi Kontrolü [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     if (!event.detail.token) {
-        console.log("Kullanıcı oturum açmamış!");
+        // console.log("Kullanıcı oturum açmamış!");
         history.pushState(null, null, "/");
         router();
     }
