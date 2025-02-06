@@ -16,20 +16,21 @@ export function initGame() {
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
-
+    
     // 2) Kamera
+    const canvas = document.getElementById('gameCanvas');
     const camera = new THREE.PerspectiveCamera(
-      75,           // FOV
-      window.innerWidth / window.innerHeight, // en-boy oranı
+      60,           // FOV
+      canvas.clientWidth / canvas.clientHeight , // en-boy oranı
       0.1,          // near
       1000          // far
     );
+    
     camera.position.set(0, -10, 15); // Kamera pozisyonunu ayarla
     camera.lookAt(0, 0, 0); // Kameranın bakış açısını ayarla
 
     // 3) Renderer
-    const canvas = document.getElementById('gameCanvas');
-    const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
+    const renderer = new THREE.WebGLRenderer({antialias: true, canvas: canvas });
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
     // Işık ekleyelim
@@ -58,8 +59,8 @@ export function initGame() {
     scene.add(ball);
 
     const scoreboard = document.getElementById('scoreboard');
-
-    const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/a/');
+    let roomName = "room1/";
+    const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/' + roomName + '?token=' + localStorage.getItem('accessToken'));
 
     let playerId = 'spectator';
     
@@ -86,6 +87,10 @@ export function initGame() {
         ball.position.z = state.ball.z;
 
         scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+      }
+      else
+      {
+        console.log('Sunucudan mesaj alındı:', data);
       }
     };
 

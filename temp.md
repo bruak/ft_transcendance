@@ -29,6 +29,9 @@
 - username kısmına kullanıcı adını gönderip fetch atcan kanks
 
 
+# Game 
+- game random eslestirme mekanigi hazir api gerway eklenecek
+- Eslestirme icin kisi aramayi bitirirse odayi kapatacak 
 
 
 

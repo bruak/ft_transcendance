@@ -4,3 +4,4 @@ daphne==4.0.0
 channels
 channels_redis
 djangorestframework
+requests
