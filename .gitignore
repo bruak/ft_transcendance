@@ -6,8 +6,10 @@ __pycache_*
 *$py.class
 # C extensions
 *.so
-*.mo
 
+*.mo
+Project/Translation/locale/en/LC_MESSAGES/django.mo
+Project/Translation/locale/tr/LC_MESSAGES/django.po
 Project/Auth/srcs/media/*.jpeg
 Project/Auth/srcs/media/*.jpg
 Project/Auth/srcs/media/*.png
