@@ -75,7 +75,6 @@ def user_update(request, username):
     except Exception as e:
         return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
 
-# reklamının da anasını sikecem sesinin de anasını sikeycem yeter amk ya amk yerinde suriyeli bii ıldıukl
 @csrf_exempt
 def singin(request):
     if request.method == "POST":
