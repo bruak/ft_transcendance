@@ -10,7 +10,6 @@ from rest_framework.decorators import api_view
 from .translate_way import get_translated_message
 
 @csrf_exempt
-@api_view(["POST"])
 def send_friend_request(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "POST":
@@ -46,7 +45,7 @@ def list_friend_requests(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
 	requests = Friends.objects.filter(friendname=username, status="pending")
 	if not requests.exists():
-		return JsonResponse({"error": get_translated_message("NO_PENDING_FRIEND_REQUESTS", user_language)}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({"error": get_translated_message("NO_PENDING_FRIEND_REQUESTS", user_language)}, status=status.HTTP_200_OK)
 	serializer = FriendsSerializer(requests, many=True)
 	return JsonResponse({'message': serializer.data}, safe=False, status=status.HTTP_200_OK)
 
@@ -65,7 +64,6 @@ def rejected_friend_request(request):
 	except Friends.DoesNotExist:
 		return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_NOT_FOUND", user_language)}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(["POST"])
 @csrf_exempt
 def accept_friend_request(request):
 	user_language = request.headers.get("Accept-Language", "tr")
@@ -94,7 +92,7 @@ def friends(request, username):
 		)
 
 		if not response.exists():
-			return JsonResponse({"message": get_translated_message("NO_FRIENDS_FOUND", language)}, status=status.HTTP_404_NOT_FOUND)
+			return JsonResponse({"message": get_translated_message("NO_FRIENDS_FOUND", language)}, status=status.status.HTTP_200_OK)
 
 		modified_data = []
 
@@ -114,7 +112,6 @@ def friends(request, username):
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(["POST"])
 def block_friend(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	data = request.data
