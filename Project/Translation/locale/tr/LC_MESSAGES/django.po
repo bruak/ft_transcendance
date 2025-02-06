@@ -213,3 +213,15 @@ msgstr "Ad boş olamaz."
 
 msgid "Last name can not be empty."
 msgstr "Soyad boş olamaz."
+
+msgid "Missing parameters."
+msgstr "Eksik parametreler."
+
+msgid "Friendship not found."
+msgstr "Arkadaşlık bulunamadı."
+
+msgid "Friend removed successfully."
+msgstr "Arkadaş başarıyla kaldırıldı."
+
+msgid "You cannot remove this friend."
+msgstr "Bu arkadaşı kaldıramazsınız."
