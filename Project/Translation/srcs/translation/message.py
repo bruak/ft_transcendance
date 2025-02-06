@@ -63,4 +63,8 @@ MESSAGES = {
     "AVATAR_EMPTY_ERROR": "Avatar can not be empty.",
     "FIRST_NAME_EMPTY": "First name can not be empty.",
     "LAST_NAME_EMPTY": "Last name can not be empty.",
+    "MISSING_PARAMETERS": "Missing parameters.",
+    "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
+    "FRIEND_REMOVED_SUCCESS": "Friend removed successfully.",
+    "CANNOT_REMOVE_FRIEND": "You cannot remove this friend.",
 }

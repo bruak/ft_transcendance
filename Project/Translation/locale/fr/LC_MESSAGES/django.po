@@ -1,0 +1,215 @@
+# NE SUPPRIMEZ PAS CES LIGNES, CES LIGNES SONT LA CONFIGURATION
+# UN TITRE DESCRIPTIF.
+# Copyright (C) ANNÉE LE DÉTENTEUR DU DROIT D'AUTEUR DU PACKAGE
+# Ce fichier est distribué sous la même licence que le package PACKAGE.
+# PREMIER AUTEUR <EMAIL@ADDRESS>, ANNÉE.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-30 13:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "User Password Error"
+msgstr "Erreur de mot de passe utilisateur"
+
+msgid "Mail Could Not Be Sent"
+msgstr "L'email n'a pas pu être envoyé"
+
+msgid "Mail already exists"
+msgstr "L'email existe déjà"
+
+msgid "Successful"
+msgstr "Réussi"
+
+msgid "Not Found User"
+msgstr "Utilisateur non trouvé"
+
+msgid "Only POST requests are allowed."
+msgstr "Seules les requêtes POST sont autorisées."
+
+msgid "Only GET request are allowed"
+msgstr "Seules les requêtes GET sont autorisées"
+
+msgid "There is a problem in user service"
+msgstr "Il y a un problème dans le service utilisateur"
+
+msgid "User signup Error"
+msgstr "Erreur d'inscription utilisateur"
+
+msgid "User authentication not done"
+msgstr "Authentification du compte non effectuée"
+
+msgid "Invalid code"
+msgstr "Code invalide"
+
+msgid "Two factor authentication code not found"
+msgstr "Code de vérification à deux facteurs non trouvé"
+
+msgid "Mail token has expired check your mail for new authentication token link"
+msgstr "Le token de l'email a expiré, vérifiez votre email pour un nouveau lien de token d'authentification"
+
+msgid "authontication successful"
+msgstr "authentification réussie"
+
+msgid "Token not found"
+msgstr "Token non trouvé"
+
+msgid "You cannot send a request to your own account."
+msgstr "Vous ne pouvez pas envoyer une demande à votre propre compte."
+
+msgid "Friend request already exists or you are already friends."
+msgstr "La demande d'ami existe déjà ou vous êtes déjà amis."
+
+msgid "Friend request sent successfully."
+msgstr "Demande d'ami envoyée avec succès."
+
+msgid "No pending friend requests found."
+msgstr "Aucune demande d'ami en attente trouvée."
+
+msgid "Friend request not found."
+msgstr "Demande d'ami non trouvée."
+
+msgid "Friend request accepted."
+msgstr "Demande d'ami acceptée."
+
+msgid "No friends found."
+msgstr "Aucun ami trouvé."
+
+msgid "User successfully signout."
+msgstr "Utilisateur déconnecté avec succès."
+
+msgid "There was a problem logging the user signout."
+msgstr "Il y a eu un problème lors de la déconnexion de l'utilisateur."
+
+msgid "invalid validate token"
+msgstr "token de validation invalide"
+
+msgid "Invalid Token Error when trying to signout"
+msgstr "Erreur de token invalide lors de la déconnexion"
+
+msgid "Invalid Token Error when trying to validate token"
+msgstr "Erreur de token invalide lors de la validation du token"
+
+msgid "User not found."
+msgstr "Utilisateur non trouvé"
+
+msgid "Token has expired. New token has been sent to your email."
+msgstr "Le token a expiré. Un nouveau token a été envoyé à votre email."
+
+msgid "invalid verification token"
+msgstr "token de vérification invalide"
+
+msgid "Authorization code not found in intra callback"
+msgstr "Code d'autorisation non trouvé dans le rappel intra"
+
+msgid "Unable to fetch access token"
+msgstr "Impossible de récupérer le token d'accès"
+
+msgid "Intra access token not found"
+msgstr "Token d'accès intra non trouvé"
+
+msgid "Unable to fetch user data"
+msgstr "Impossible de récupérer les données de l'utilisateur"
+
+msgid "this username already exist"
+msgstr "ce nom d'utilisateur existe déjà"
+
+msgid "this email already exist"
+msgstr "cet email existe déjà"
+
+msgid "an error occurred while creating a user"
+msgstr "une erreur s'est produite lors de la création d'un utilisateur"
+
+msgid "an error occurred while getting a user"
+msgstr "une erreur s'est produite lors de la récupération d'un utilisateur"
+
+msgid "an error occurred while updating a user"
+msgstr "une erreur s'est produite lors de la mise à jour d'un utilisateur"
+
+msgid "Avatar download error"
+msgstr "Erreur de téléchargement de l'avatar"
+
+msgid "Friend blocked."
+msgstr "Ami bloqué."
+
+msgid "Friend relationship not found."
+msgstr "Relation d'ami non trouvée."
+
+msgid "Service not found."
+msgstr "Service non trouvé."
+
+msgid "Missing token"
+msgstr "Token manquant"
+
+msgid "Invalid validate token"
+msgstr "Token de validation invalide"
+
+msgid "Invalid path argument"
+msgstr "Argument de chemin invalide"
+
+msgid "Empty response from target URL"
+msgstr "Réponse vide de l'URL cible"
+
+msgid "Request was successful"
+msgstr "La demande a été réussie"
+
+msgid "Request failed"
+msgstr "La demande a échoué"
+
+msgid "Invalid JSON response"
+msgstr "Réponse JSON invalide"
+
+msgid "Username required."
+msgstr "Nom d'utilisateur requis"
+
+msgid "Password Reset Request"
+msgstr "Demande de réinitialisation du mot de passe"
+
+msgid "Click on this link to reset your password: "
+msgstr "Cliquez sur ce lien pour réinitialiser votre mot de passe : "
+
+msgid "Password reset link sent."
+msgstr "Le lien de réinitialisation du mot de passe a été envoyé."
+
+msgid "An error has occurred."
+msgstr "Une erreur s'est produite."
+
+msgid "details"
+msgstr "détails"
+
+msgid "Your password has been successfully changed. You can log in now."
+msgstr "Votre mot de passe a été changé avec succès. Vous pouvez maintenant vous connecter."
+
+msgid "An error occurred while updating the password."
+msgstr "Une erreur s'est produite lors de la mise à jour du mot de passe."
+
+msgid "An invalid or expired connection. Please try again."
+msgstr "Une connexion invalide ou expirée. Veuillez réessayer."
+
+msgid "Verify Code"
+msgstr "Code de vérification"
+
+msgid "Email sent successfully."
+msgstr "Email envoyé avec succès."
+
+msgid "Password can not be empty."
+msgstr "Le mot de passe ne peut pas être vide."
+
+msgid "Avatar can not be empty."
+msgstr "L'avatar ne peut pas être vide."
+
+msgid "First name can not be empty."
+msgstr "Le prénom ne peut pas être vide."
+
+msgid "Last name can not be empty."
+msgstr "Le nom de famille ne peut pas être vide."
