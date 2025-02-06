@@ -59,4 +59,8 @@ MESSAGES = {
 	"VERIFY_CODE": "Verify Code",
 	"EMAIL_SENT_SUCCESSFULLY": "Email sent successfully.",
     "ONLY_GET_REQUESTS_ALLOWED": "Only GET requests are allowed.",
+    "PASSWORD_EMPTY": "Password can not be empty.",
+    "AVATAR_EMPTY_ERROR": "Avatar can not be empty.",
+    "FIRST_NAME_EMPTY": "First name can not be empty.",
+    "LAST_NAME_EMPTY": "Last name can not be empty.",
 }
