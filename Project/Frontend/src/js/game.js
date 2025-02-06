@@ -60,7 +60,7 @@ export function initGame() {
 
     const scoreboard = document.getElementById('scoreboard');
     let roomName = "room1/";
-    const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/' + roomName);
+    const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/' + roomName + '?token=' + localStorage.getItem('accessToken'));
 
     let playerId = 'spectator';
     
@@ -87,6 +87,10 @@ export function initGame() {
         ball.position.z = state.ball.z;
 
         scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+      }
+      else
+      {
+        console.log('Sunucudan mesaj alındı:', data);
       }
     };
 
