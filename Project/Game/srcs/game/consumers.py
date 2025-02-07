@@ -66,7 +66,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         if message_type == 'move':
             player_id = data.get('player_id')
             position_change = data.get('position_change', 0)
-            if player_id in self.game_state['players'] and -5 <= self.game_state['players'][player_id]['position'] + position_change <= 5:
+            if player_id in self.game_state['players'] and -4.5 <= self.game_state['players'][player_id]['position'] + position_change <= 4.5:
                 self.game_state['players'][player_id]['position'] += position_change
             await self.broadcast_game_state()
 

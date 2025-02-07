@@ -1,4 +1,3 @@
-
 <div class="profile-page">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -42,7 +41,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#">Örnek1</a></li>
                     <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">Settings</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -72,10 +71,7 @@
                         <p id="profileLocationDisplay"></p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
-                        <!-- Profili Düzenle Butonu (Sadece kendi profilinizde görünür) -->
-                        <button class="btn btn-outline-primary mt-2" data-bs-toggle="modal"
-                            data-bs-target="#editProfileModal">Profili Düzenle</button>
-
+                        <!-- Profili Düzenle Butonu kaldırıldı -->
                         <!-- Arkadaşlar Modalını açar -->
                         <button class="btn btn-outline-secondary mt-2" 
                                 id="viewFriendsButton" 
@@ -212,40 +208,7 @@
             </ul>
         </section>
 
-        <!-- Profil Düzenleme Modal -->
-        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
-        >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editProfileModalLabel">Profili Düzenle</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Kendi profilinde isOwnProfile=true ise görüntülenecek -->
-                        <form id="editProfileForm">
-                            <div class="mb-3">
-                                <label for="profileName" class="form-label">İsim</label>
-                                <input type="text" class="form-control" id="profileName">
-                            </div>
-                            <div class="mb-3">
-                                <label for="profileTitle" class="form-label">Başlık</label>
-                                <input type="text" class="form-control" id="profileTitle">
-                            </div>
-                            <div class="mb-3">
-                                <label for="profileLocation" class="form-label">Blog</label>
-                                <input type="text" class="form-control" id="profileLocation">
-                            </div>
-                            <div class="mb-3">
-                                <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
-                                <input type="file" class="form-control" id="profileImage">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Kaydet</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Profil Düzenleme Modal kaldırıldı -->
 
         <!-- Dostlar (Arkadaşlar) Modal -->
         <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel">
@@ -290,6 +253,47 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Ayarları Modal -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">Kullanıcı Ayarları</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="settingsForm">
+                            <div class="mb-3">
+                                <label for="settingsEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="settingsEmail">
+                            </div>
+                            <div class="mb-3">
+                                <label for="settingsPassword" class="form-label">Şifre</label>
+                                <input type="password" class="form-control" id="settingsPassword">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileName" class="form-label">İsim</label>
+                                <input type="text" class="form-control" id="profileName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileTitle" class="form-label">Başlık</label>
+                                <input type="text" class="form-control" id="profileTitle">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileLocation" class="form-label">Blog</label>
+                                <input type="text" class="form-control" id="profileLocation">
+                            </div>
+                            <div class="mb-3">
+                                <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
+                                <input type="file" class="form-control" id="profileImage">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </form>
                     </div>
                 </div>
             </div>

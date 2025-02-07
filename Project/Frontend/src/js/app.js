@@ -2,23 +2,28 @@
 const cache = new Map();
 
 async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
-    const now = Date.now();
-    if (cache.has(url)) {
-        const { timestamp, content } = cache.get(url);
-        if (now - timestamp < cacheTime) {
-            return content;
+    try {
+        const now = Date.now();
+        if (cache.has(url)) {
+            const { timestamp, content } = cache.get(url);
+            if (now - timestamp < cacheTime) {
+                return content;
+            }
         }
-    }
-    
-    const response = await fetch(url);
-    if (response.ok) {
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP Hatası: ${response.status}`);
+        
         const content = await response.text();
         cache.set(url, { timestamp: now, content });
         return content;
-    } else {
-        throw new Error("Sayfa yüklenemedi");
+    } catch (error) {
+        console.error("fetchWithCache Hata:", error);
+        showErrorMessage("Veri yüklenirken hata oluştu.");
+        return ""; // Hata durumunda boş string dönelim.
     }
 }
+
 
 /* ======================[*] Global State Yönetimi [*]====================== */
 const globalState = new Proxy(

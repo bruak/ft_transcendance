@@ -32,7 +32,6 @@ export function initProfile(params = {}) {
       console.error('No username found to load profile.');
       return;
     }
-
     // Kendi profilim mi?
     const isOwnProfile = (userToLoad === currentUser);
 
@@ -76,22 +75,19 @@ export function initProfile(params = {}) {
         showErrorMessage("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
       });
 
-    /* ---------------- 3) Profil Düzenleme Formu ---------------- */
-    const editProfileForm = document.getElementById('editProfileModal');
-    if (editProfileForm) {
+    /* ---------------- 3) Profil Düzenleme İşlemleri (Settings) ---------------- */
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
       if (!isOwnProfile) {
         // Başkasının profilinde formu gizle
-        editProfileForm.style.display = 'none';
+        settingsForm.style.display = 'none';
       } else {
         // Kendi profilimiz: Submit işlemi
-        editProfileForm.addEventListener('submit', function (e) {
+        settingsForm.addEventListener('submit', function (e) {
           e.preventDefault();
           const formData = new FormData(this);
 
-          // Örneğin avatar ekliyorsanız: formData.append('avatar', fileInput.files[0]);
-          // formData.append('first_name', 'mehmet'); vs.
-
-          fetch(`${apiBaseUrl}/auth/singup/`, {
+          fetch(`${apiBaseUrl}/user/update_profile/`, {
             method: 'POST',
             headers: {
               // multipart/form-data olduğundan Content-Type otomatik atanır
@@ -107,6 +103,8 @@ export function initProfile(params = {}) {
                 // console.log('Profil başarıyla güncellendi!');
                 // Gerekirse tekrar profil bilgisi çek: 
                 // or data içinde güncel user varsa updateProfileUI(data);
+                
+                updateProfileUI(data);
               } else {
                 console.log('Profil güncellenemedi: ' + (data.message || 'Bilinmeyen hata.'));
               }
@@ -122,7 +120,7 @@ export function initProfile(params = {}) {
     /* ---------------- 4) Arkadaş Arama & Ekleme ---------------- */
     const friendSearchInput = document.getElementById('friendSearchInput');
     if (friendSearchInput) {
-      friendSearchInput.addEventListener('input', debounce(handleFriendSearch, 300));
+      friendSearchInput.addEventListener('input', debounce(handleFriendSearch, 500));
     }
 
     function handleFriendSearch() {
@@ -284,6 +282,7 @@ export function initProfile(params = {}) {
           });
       });
     }
+
 
   } catch (error) {
     console.error('initProfile hata:', error);

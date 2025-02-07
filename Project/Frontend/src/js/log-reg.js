@@ -3,13 +3,102 @@ import { router } from "./app.js";
 /* ======================[*] Giriş ve Kayıt Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initLogReg() {
     const host = window.location.host;
-    // console.log(host);
     const switchToRegister = document.getElementById('switch-to-register');
     const switchToLogin = document.getElementById('switch-to-login');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const loginWith42 = document.getElementById('42-login');
 
+    /* ======================[*] ENTER TUŞUNA BASILDIĞINDA SONRAKİ ADIMA GEÇ [*]====================== */
+    const formContainer = document.getElementById('register-form');
+    formContainer.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            
+            const currentStepElement = document.querySelector(".form-step-card.active");
+            const inputFields = currentStepElement.querySelectorAll("input");
+
+            // Boş alan olup olmadığını kontrol et
+            let isEmpty = false;
+            inputFields.forEach(input => {
+                if (input.value.trim() === "") {
+                    isEmpty = true;
+                }
+            });
+
+            // Eğer boş alan yoksa bir sonraki adıma geç
+            if (!isEmpty) {
+                nextStep();
+            }
+        }
+    });
+
+    
+
+
+    /* Adım kartları */
+    const steps = document.querySelectorAll(".form-step-card");
+    let currentStep = 0;
+
+    /**
+     * Adım geçişlerini kontrol eden fonksiyonlar
+     */
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => {
+            step.classList.toggle("active", index === stepIndex);
+            step.classList.toggle("hidden", index !== stepIndex);
+        });
+    }
+
+    function nextStep() {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            showStep(currentStep);
+            updateStepperUI(currentStep);
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 0) {
+            currentStep--;
+            showStep(currentStep);
+            updateStepperUI(currentStep);
+        }
+    }
+
+    /**
+     * Stepper göstergesini güncelle
+     */
+    function updateStepperUI(stepIndex) {
+        const stepIndicators = document.querySelectorAll(".step");
+        stepIndicators.forEach((step, i) => {
+            step.classList.toggle("active", i <= stepIndex);
+        });
+        updateProgressBar(stepIndex);
+    }
+
+    /**
+     * Progres bar'ı güncelle
+     */
+    function updateProgressBar(stepIndex) {
+        const progressBar = document.getElementById('progress-bar');
+        if (!progressBar) return;
+
+        // Toplam 6 adım var
+        const totalSteps = 6; 
+        const progress = ((stepIndex + 1) / totalSteps) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    // İlk yüklendiğinde adım 0
+    document.addEventListener("DOMContentLoaded", () => {
+        showStep(currentStep);
+        updateStepperUI(currentStep);
+    });
+
+    /**
+     * İki form arasında geçiş yap (giriş/kayıt)
+     */
     function switchForm(hideForm, showForm) {
         hideForm.classList.add('slide-out');
         showForm.classList.remove('hidden');
@@ -21,8 +110,40 @@ export function initLogReg() {
         }, 200);
     }
 
-    /* ======================[*] Form Geçişleri [*]====================== */
-    if (switchToRegister && switchToLogin && loginForm && registerForm && loginWith42) {
+    /**
+     * Şifre göster/gizle fonksiyonu
+     */
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('toggle-password')) {
+            const targetId = event.target.getAttribute('data-target');
+            const passwordField = document.getElementById(targetId);
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                event.target.textContent = 'Gizle';
+            } else {
+                passwordField.type = 'password';
+                event.target.textContent = 'Göster';
+            }
+        }
+    });
+
+    /**
+     * E-posta alanı için basit validasyon örneği
+     */
+    const emailInput = document.getElementById('register-email');
+    const emailError = document.getElementById('email-error');
+    if (emailInput && emailError) {
+        emailInput.addEventListener('input', () => {
+            if (!emailInput.validity.valid) {
+                emailError.style.display = 'block';
+            } else {
+                emailError.style.display = 'none';
+            }
+        });
+    }
+
+    /* ======================[*] Form Geçiş Butonları [*]====================== */
+    if (switchToRegister && switchToLogin) {
         switchToRegister.addEventListener('click', (event) => {
             event.preventDefault();
             switchForm(loginForm, registerForm);
@@ -30,18 +151,118 @@ export function initLogReg() {
 
         switchToLogin.addEventListener('click', (event) => {
             event.preventDefault();
+            // Adımları sıfırla
+            currentStep = 0;
+            showStep(currentStep);
+            updateStepperUI(currentStep);
             switchForm(registerForm, loginForm);
         });
+    }
 
-        /* ======================[*] Giriş Formu İşleme [*]====================== */
+    /**
+     * Kayıt formu adımları (ileri/geri) validasyonu
+     */
+    const next1 = document.getElementById('next-1');
+    const next2 = document.getElementById('next-2');
+    const next3 = document.getElementById('next-3');
+    const next4 = document.getElementById('next-4');
+    const next5 = document.getElementById('next-5');
+    const prev2 = document.getElementById('prev-2');
+    const prev3 = document.getElementById('prev-3');
+    const prev4 = document.getElementById('prev-4');
+    const prev5 = document.getElementById('prev-5');
+    const prev6 = document.getElementById('prev-6');
+
+    // Adım 1 (Ad)
+    if (next1) {
+        next1.addEventListener('click', () => {
+            const firstName = document.getElementById('register-first_name').value.trim();
+            if (!firstName) {
+                alert("Lütfen isminizi girin.");
+                return;
+            }
+            nextStep();
+        });
+    }
+
+    // Adım 2 (Soyad)
+    if (next2) {
+        next2.addEventListener('click', () => {
+            const lastName = document.getElementById('register-last_name').value.trim();
+            if (!lastName) {
+                alert("Lütfen soyadınızı girin.");
+                return;
+            }
+            nextStep();
+        });
+        prev2.addEventListener('click', () => prevStep());
+    }
+
+    // Adım 3 (Kullanıcı Adı)
+    if (next3) {
+        next3.addEventListener('click', () => {
+            const username = document.getElementById('register-username').value.trim();
+            if (!username) {
+                alert("Lütfen kullanıcı adınızı girin.");
+                return;
+            }
+            nextStep();
+        });
+        prev3.addEventListener('click', () => prevStep());
+    }
+
+    // Adım 4 (E-posta)
+    if (next4) {
+        next4.addEventListener('click', () => {
+            const email = document.getElementById('register-email').value.trim();
+            // Basit kontrol: HTML5 validasyonu da var, ama yine de kontrol edebiliriz
+            if (!email || !emailInput.validity.valid) {
+                alert("Lütfen geçerli bir e-posta giriniz.");
+                return;
+            }
+            nextStep();
+        });
+        prev4.addEventListener('click', () => prevStep());
+    }
+
+    // Adım 5 (Şifre)
+    if (next5) {
+        next5.addEventListener('click', () => {
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+            if (!password || !passwordConfirm) {
+                alert("Lütfen şifre alanlarını boş bırakmayın.");
+                return;
+            }
+            if (password !== passwordConfirm) {
+                alert("Şifreler eşleşmiyor!");
+                return;
+            }
+            nextStep();
+        });
+        prev5.addEventListener('click', () => prevStep());
+    }
+
+    // Adım 6 (Profil Fotoğrafı)
+    if (prev6) {
+        prev6.addEventListener('click', () => prevStep());
+    }
+
+    /* ======================[*] Giriş Formu İşleme [*]====================== */
+    if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const sign = document.getElementById('login-sign').value;
             const password = document.getElementById('login-password').value;
+            const submitBtn = document.getElementById('login-submit-btn');
 
             localStorage.setItem("username", sign);
 
             if (sign && password) {
+                // Loading deneyimi
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Giriş Yapılıyor...';
+
                 try {
                     const response = await fetch(`https://${host}/api/auth/singin/`, {
                         method: 'POST',
@@ -55,24 +276,29 @@ export function initLogReg() {
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => null);
-                        throw new Error(errorData?.message || "Authentication failed in sing in js");
+                        throw new Error(errorData?.message || "Authentication failed");
                     }
-                    const data = await response.json();
 
-                    console.log(data.message); // its came from backend
+                    const data = await response.json();
+                    console.log(data.message); // Backend'den gelen mesaj
+
                     if (response.ok) {
-                        history.pushState(null, null, "/2fac");  // Giriş yaptıktan sonra yönlendirilen sayfa.
+                        history.pushState(null, null, "/2fac");  // Giriş yaptıktan sonra yönlendirilen sayfa
                         router();
                     }
-
                 } catch (error) {
                     console.error("Hata:", error);
                     alert(error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Giriş Yap';
                 }
             }
         });
+    }
 
-        /* ======================[*] Kayıt Formu İşleme [*]====================== */
+    /* ======================[*] Kayıt Formu İşleme [*]====================== */
+    if (registerForm) {
         registerForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const firstName = document.getElementById('register-first_name').value;
@@ -81,8 +307,13 @@ export function initLogReg() {
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const avatar = document.getElementById('register-avatar').files[0];
+            const submitBtn = document.getElementById('register-submit-btn');
 
             if (firstName && lastName && username && email && password && avatar) {
+                // Loading deneyimi
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Kayıt Yapılıyor...';
+
                 const formData = new FormData();
                 formData.append('first_name', firstName);
                 formData.append('last_name', lastName);
@@ -90,35 +321,46 @@ export function initLogReg() {
                 formData.append('email', email);
                 formData.append('password', password);
                 formData.append('avatar', avatar);
-                // console.log(password);
+
                 try {
                     const response = await fetch(`https://${host}/api/auth/singup/`, {
                         method: 'POST',
-                        headers: { 'Accept': 'application/json', 'Accept-Language': 'tr' },
+                        headers: {
+                            'Accept': 'application/json',
+                            'Accept-Language': 'tr'
+                            // 'Content-Type' atanmıyor, FormData kullanıyoruz
+                        },
                         body: formData,
                     });
+
                     if (response.ok) {
                         console.log('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+                        // Kayıt başarılıysa giriş formuna dön
                         switchToLogin.click();
                     } else {
-                        console.error('Kayıt başarısız!');
-                        console.error(response.status);
+                        console.error('Kayıt başarısız! Durum Kodu:', response.status);
                     }
                 } catch (err) {
                     console.error('Kayıt hatası:', err);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Kayıt Ol';
                 }
             }
         });
+    }
 
-        /* ======================[*] 42 ile Giriş Yapma [*]====================== */
+
+    /* ======================[*] 42 ile Giriş Yapma [*]====================== */
+    if (loginWith42) {
         loginWith42.addEventListener('click', (event) => {
             event.preventDefault();
+            // Henüz OAuth linki hazır değilse # örneği
+            // Arka planda 42 OAuth için gerekli yönlendirmeyi sağlayabilirsin
             window.location.href = '#api/42-login';
         });
     }
 }
 
-/* ======================[*] Dinamik Script Yüklendikten Sonra initLogReg Fonksiyonunu Çağır [*]====================== */
+/* ======================[*] Sayfa Yüklendiğinde initLogReg Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('DOMContentLoaded', initLogReg);
-
-

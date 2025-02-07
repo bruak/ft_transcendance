@@ -1,85 +1,169 @@
 <div class="log-reg-page">
     <main>
-        <!-- Header -->
-        <header class="bg-dark text-white text-center ">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-                <a class="navbar-brand" href="#">
-                    <img src="../img/pongbaslık-Photoroom.png" width="90" class="d-inline-block align-top" alt=""
-                        loading="lazy">
-                </a>
-                <h3 class="mb-0 text-center">Hoşgeldiniz..</h3>
+  
+      <!-- Formlar -->
+      <section>
+        <!-- Giriş Formu -->
+        <form id="login-form" class="form-container slide-in">
+          <h1>Giriş Yap</h1>
+          <article>
+            <label for="login-sign">Kullanıcı Adı:</label>
+            <input type="text" id="login-sign" name="sign" required>
+          </article>
+          <article>
+            <label for="login-password">Şifre:</label>
+            <div class="password-wrapper">
+              <input type="password" id="login-password" name="password" required>
+              <button type="button" class="toggle-password" data-target="login-password">Göster</button>
             </div>
-        </header>
-        <!-- Header Sonu -->
-        <!-- Form -->
-        <section>
-            <!-- Giriş Formu -->
-            <form id="login-form" class="form-container">
-                <h1>Giriş Yap</h1>
-                <article>
-                    <label for="login-sign">Kullanıcı Adı:</label>
-                    <input type="text" id="login-sign" name="sign" required>
-                </article>
-                <article>
-                    <label for="login-password">Şifre:</label>
-                    <input type="password" id="login-password" name="password" required>
-                </article>
-                <article>
-                    <button type="submit">Giriş Yap</button>
-                </article>
-                <article class="divider-wrapper">
-                    <span class="divider">YA DA</span>
-                </article>
-                <article class="social-section" id="42-login">
-                    <button class="social-btn">
-                        <img class="social-btn-icon" src="../img/42logo.svg" alt="42" width="20">
-                        <span> ile Giriş Yap</span>
-                    </button>
-                </article>
-                <article>
-                    <a href="#" id="switch-to-register" style="text-decoration: none;">Hesabım yok</a>
-                </article>
-                <article>
-                    <a href="/profile" data-link style="text-decoration: none;">dümenden giris</a>
-                </article>
-            </form>
-            <!-- Kayıt Formu -->
-            <form id="register-form" class="form-container hidden">
-                <h1>Kayıt Ol</h1>
-                <article>
-                    <label for="register-first_name">Ad:</label>
-                    <input type="text" id="register-first_name" name="first_name" required>
-                </article>
-                <article>
-                    <label for="register-last_name">Soyad:</label>
-                    <input type="text" id="register-last_name" name="last_name" required>
-                </article>
-                <article>
-                    <label for="register-username">Kullanıcı Adı:</label>
-                    <input type="text" id="register-username" name="username" required>
-                </article>
-                <article>
-                    <label for="register-email">E-posta:</label>
-                    <input type="email" id="register-email" name="email" required>
-                </article>
-                <article>
-                    <label for="register-password">Şifre:</label>
-                    <input type="password" id="register-password" name="password" required>
-                </article>
-                <article>
-                    <label for="register-avatar">Profil Fotoğrafı:</label>
-                    <input type="file" id="register-avatar" name="avatar" accept="image/*" required>
-                </article>
-                <article>
-                    <button type="submit">Kayıt Ol</button>
-                </article>
-                <article>
-                    <a href="#" id="switch-to-login" style="text-decoration: none;">Hesabım var</a>
-                </article>
-            </form>
-        </section>
-        <!-- Form Sonu -->
-        <!-- Özel JS -->
-        <!-- <script src="../js/log-reg.js"></script> -->
+          </article>
+          <article>
+            <button type="submit" id="login-submit-btn">Giriş Yap</button>
+          </article>
+          <article class="divider-wrapper">
+            <span class="divider">YA DA</span>
+          </article>
+          <article class="social-section" id="42-login">
+            <button class="social-btn">
+              <img class="social-btn-icon" src="../img/42logo.svg" alt="42" width="20">
+              <span> ile Giriş Yap</span>
+            </button>
+          </article>
+          <article>
+            <a href="#" id="switch-to-register" style="text-decoration: none; color: #4ca1af;">Hesabım yok</a>
+          </article>
+          <article>
+            <a href="/profile" data-link style="text-decoration: none; color: #f39c12;">Dümenden Giriş</a>
+          </article>
+        </form>
+        <!-- Giriş Formu Sonu -->
+  
+        <!-- Kayıt Formu -->
+        <form id="register-form" class="form-container hidden">
+          <h1>Kayıt Ol</h1>
+  
+          <!-- Adım Göstergesi (Stepper) -->
+          <div class="stepper-container">
+            <div class="step active">
+              <div class="step-number">1</div>
+              <div class="step-title">Ad</div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-title">Soyad</div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-title">Kullanıcı Adı</div>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-title">E-posta</div>
+            </div>
+            <div class="step">
+              <div class="step-number">5</div>
+              <div class="step-title">Şifre</div>
+            </div>
+            <div class="step">
+              <div class="step-number">6</div>
+              <div class="step-title">Profil Fotoğrafı</div>
+            </div>
+          </div>
+          
+          <!-- Progres Bar -->
+          <div class="progress-bar-wrapper">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+  
+          <!-- Adım 1 (Ad) -->
+          <div class="form-step-card active">
+            <article>
+              <label for="register-first_name">Ad:</label>
+              <input type="text" id="register-first_name" name="first_name" required>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-next" id="next-1">İleri</button>
+            </div>
+          </div>
+  
+          <!-- Adım 2 (Soyad) -->
+          <div class="form-step-card hidden">
+            <article>
+              <label for="register-last_name">Soyad:</label>
+              <input type="text" id="register-last_name" name="last_name" required>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-prev" id="prev-2">Geri</button>
+              <button type="button" class="btn-next" id="next-2">İleri</button>
+            </div>
+          </div>
+  
+          <!-- Adım 3 (Kullanıcı Adı) -->
+          <div class="form-step-card hidden">
+            <article>
+              <label for="register-username">Kullanıcı Adı:</label>
+              <input type="text" id="register-username" name="username" required>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-prev" id="prev-3">Geri</button>
+              <button type="button" class="btn-next" id="next-3">İleri</button>
+            </div>
+          </div>
+  
+          <!-- Adım 4 (E-posta) -->
+          <div class="form-step-card hidden">
+            <article>
+              <label for="register-email">E-posta:</label>
+              <input type="email" id="register-email" name="email" required>
+              <!-- Basit hata mesajı örneği -->
+              <p class="error-message" id="email-error">Lütfen geçerli bir e-posta giriniz.</p>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-prev" id="prev-4">Geri</button>
+              <button type="button" class="btn-next" id="next-4">İleri</button>
+            </div>
+          </div>
+  
+          <!-- Adım 5 (Şifre) -->
+          <div class="form-step-card hidden">
+            <article>
+              <label for="register-password">Şifre:</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password" name="password" required>
+                <button type="button" class="toggle-password" data-target="register-password">Göster</button>
+              </div>
+            </article>
+            <article>
+              <label for="register-password-confirm">Şifre (Tekrar):</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password-confirm" name="password_confirm" required>
+                <button type="button" class="toggle-password" data-target="register-password-confirm">Göster</button>
+              </div>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-prev" id="prev-5">Geri</button>
+              <button type="button" class="btn-next" id="next-5">İleri</button>
+            </div>
+          </div>
+  
+          <!-- Adım 6 (Profil Fotoğrafı) -->
+          <div class="form-step-card hidden">
+            <article>
+              <label for="register-avatar">Profil Fotoğrafı:</label>
+              <input type="file" id="register-avatar" name="avatar" accept="image/*" required>
+            </article>
+            <div class="button-group">
+              <button type="button" class="btn-prev" id="prev-6">Geri</button>
+              <button type="submit" class="btn-next" id="register-submit-btn">Kayıt Ol</button>
+            </div>
+          </div>
+  
+          <article style="margin-top: 20px;">
+            <a href="#" id="switch-to-login" style="text-decoration: none; color: #4ca1af;">Hesabım var</a>
+          </article>
+        </form>
+        <!-- Kayıt Formu Sonu -->
+      </section>
+      <!-- Form Sonu -->
     </main>
-</div>
+  </div>
