@@ -70,7 +70,8 @@ def user_createJSON(request):
         # Gelen veriyi parse et
         data = JSONParser().parse(request)
         # Kullanıcıyı oluştur ve serialize et
-        serializer = UserSerializer(data=data)
+        print(f"user data: {data.get('avatar')}")
+        serializer = UserSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             user = serializer.save()  # Yeni kullanıcı oluşturulur
             return JsonResponse(UserSerializer(user, context={'request': request}).data, status=201)

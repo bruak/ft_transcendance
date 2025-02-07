@@ -141,6 +141,7 @@ def singup(request):
             return JsonResponse({'error': get_translated_message("MAIL_ALREADY_EXISTS", user_language)}, status=409)
 
         avatar_url = image_to_url(avatar_file, username)
+        print(f"asd: {avatar_url}")
 
         hashed_password = make_password(password)
 
@@ -175,6 +176,7 @@ def singup(request):
             "username" : username,
             "email": email,
         }
+        
         mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
         if mail_response.status_code != 200:
             return JsonResponse({'error': get_translated_message("MAIL_NOT_SENT", user_language)}, status=500)
