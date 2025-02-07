@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 	'rest_framework'
 ]
 MIDDLEWARE = [
-    # Diğer middleware'ler...
+    
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'gateway.middleware.ProxyMiddleware',  # Proxy middleware ekle
+	'gateway.middleware.ProxyMiddleware',
 ]
 
 ROOT_URLCONF = 'gateway_service.urls'

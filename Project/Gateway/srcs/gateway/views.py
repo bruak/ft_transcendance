@@ -3,7 +3,6 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
 from .translate_way import get_translated_message
 
 @csrf_exempt
@@ -72,7 +71,7 @@ def handle_formdata(request):
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
-@csrf_exempt  # CSRF kontrolü atlanacak
+@csrf_exempt
 def api_gateway(request, *args, **kwargs):
 	if request.method == 'POST' and request.content_type == 'multipart/form-data':
 		return handle_formdata(request)
