@@ -51,7 +51,6 @@ def list_friend_requests(request, username):
     serializer = FriendsSerializer(requests, many=True)
     return JsonResponse({'message': serializer.data}, safe=False, status=status.HTTP_200_OK)
 
-
 @csrf_exempt
 def accept_friend_request(request):
     user_language = request.headers.get("Accept-Language", "tr")
@@ -100,6 +99,27 @@ def friends(request, username):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+def friend_list(request):
+    language = request.headers.get("Accept-Language", "tr")
+    try:
+        response = Friends.objects.all()
+
+        if not response:
+            return JsonResponse({'message': []}, safe=False, status=200)
+
+        modified_data = []
+
+        for friend in response:
+            modified_data.append({
+                "username": friend.username,
+                "friendname": friend.friendname,
+                "status": friend.status,
+            })
+        return JsonResponse({'message': modified_data}, safe=False, status=status.HTTP_200_OK)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def block_friend(request):
     user_language = request.headers.get("Accept-Language", "tr")
     data = request.data
@@ -147,7 +167,7 @@ def remove_friend(request):
         # Kullanıcı ve arkadaşını içeren ilişkileri kontrol et (çift yönlü ilişki olabilir)
         try:
             friendship = Friends.objects.get(
-                Q(username=username, friendname=friendname) | 
+                Q(username=username, friendname=friendname) |
                 Q(username=friendname, friendname=username)
             )
         except ObjectDoesNotExist:
@@ -162,3 +182,6 @@ def remove_friend(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+
