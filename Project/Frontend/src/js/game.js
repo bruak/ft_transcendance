@@ -1,203 +1,195 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
-
-const scene = new THREE.Scene();
-
+import { getState } from './app.js';
 document.addEventListener('DOMContentLoaded', () => {
   initGame();
 });
 
-function createWall(width, height, depth, position) {
-  const wallGeometry = new THREE.BoxGeometry(width, height, depth);
-  const wallMaterial = new THREE.MeshStandardMaterial(
-    {
-      color: 0x555555,
-      map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/brick_diffuse.jpg')
+// Game state
+let gameState = {
+  scene: null,
+  camera: null,
+  renderer: null,
+  paddle1: null,
+  paddle2: null,
+  ball: null,
+  socket: null,
+  animationId: null,
+  playerId: 'spectator',
+  handleKeydown: null // Klavye olay fonksiyonunu tutmak için
+};
 
-    }
-  ); // Gri renkli duvar
-  const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-  wall.position.set(position.x, position.y, position.z);
-  wall.rotation.x = Math.PI / 2; // Duvarı yatay konumda oluştur
-  scene.add(wall);
+function disposeObject(obj) {
+  if (!obj) return;
+  if (obj.geometry) obj.geometry.dispose();
+  if (obj.material) {
+      if (Array.isArray(obj.material)) {
+          obj.material.forEach(material => material.dispose());
+      } else {
+          obj.material.dispose();
+      }
+  }
 }
 
-function createGoal(position, rotation) {
-  const goalWidth = 12;
-  const goalHeight = 2 * rotation;
-  const goalDepth = 0.4;
+function cleanupGame() {
+  if (gameState.animationId) {
+      cancelAnimationFrame(gameState.animationId);
+  }
 
-  // Direkleri oluştur
-  const postMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  if (gameState.socket) {
+      gameState.socket.close();
+  }
 
-  // Üst direk
-  const topPost = new THREE.Mesh(new THREE.BoxGeometry(goalWidth, 0.2, goalDepth), postMaterial);
-  topPost.position.set(position.x + (goalHeight / 2), position.y, position.z);
-  topPost.rotation.z = Math.PI / 2;
-  scene.add(topPost);
+  // Remove event listener
+  if (gameState.handleKeydown) {
+      document.removeEventListener('keydown', gameState.handleKeydown);
+  }
 
-  // // Yan direkler
-  const leftPost = new THREE.Mesh(new THREE.BoxGeometry(0.2, goalHeight, goalDepth), postMaterial);
-  leftPost.position.set(position.x, position.y - (goalWidth / 2), position.z);
-  leftPost.rotation.z = Math.PI / 2;
-  scene.add(leftPost);
+  // Dispose THREE.js objects
+  disposeObject(gameState.paddle1);
+  disposeObject(gameState.paddle2);
+  disposeObject(gameState.ball);
 
-  const rightPost = new THREE.Mesh(new THREE.BoxGeometry(0.2, goalHeight, goalDepth), postMaterial);
-  rightPost.position.set(position.x, position.y + (goalWidth / 2), position.z);
-  rightPost.rotation.z = Math.PI / 2;
-  scene.add(rightPost);
+  if (gameState.scene) {
+      while (gameState.scene.children.length > 0) { 
+          const object = gameState.scene.children[0];
+          gameState.scene.remove(object);
+          disposeObject(object);
+      }
+  }
+
+  if (gameState.renderer) {
+      gameState.renderer.dispose();
+  }
+
+  // Reset game state
+  gameState = {
+      scene: null,
+      camera: null,
+      renderer: null,
+      paddle1: null,
+      paddle2: null,
+      ball: null,
+      socket: null,
+      animationId: null,
+      playerId: 'spectator',
+      handleKeydown: null
+  };
 }
-
-function createNet(position) {
-  const netWidth = 4;
-  const netHeight = 2;
-
-  // Ağ dokusu ve transparan yapı
-  const netMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    flatShading: true,
-    wireframe: true,  // File efekti
-    transparent: true, opacity: 0.5, // Hafif şeffaflık
-  });
-
-  const netGeometry = new THREE.PlaneGeometry(netWidth, netHeight, 10, 10);
-  const net = new THREE.Mesh(netGeometry, netMaterial);
-  net.position.set(position.x, position.y, position.z);
-  net.rotation.x = Math.PI / 2;
-  scene.add(net);
-}
-
 
 export function initGame() {
+  // Cleanup existing game if any
+  cleanupGame();
 
-  const username = localStorage.getItem('username');
-
-  // Navbar'daki Home linkinin href özelliğini username olarak ayarla
-  const homeLink = document.querySelector('.nav-link.active');
-  if (homeLink) {
-    homeLink.href = username;
-  }
-
-
-  scene.background = new THREE.Color(0x000000);
-
-  // 2) Kamera
   const canvas = document.getElementById('gameCanvas');
-  const camera = new THREE.PerspectiveCamera(
-    60,           // FOV
-    canvas.clientWidth / canvas.clientHeight, // en-boy oranı
-    0.1,          // near
-    1000          // far
+  if (!canvas) return;
+
+  // Initialize new game
+  gameState.scene = new THREE.Scene();
+  gameState.scene.background = new THREE.Color(0x000000);
+
+  gameState.camera = new THREE.PerspectiveCamera(
+      60,
+      canvas.clientWidth / canvas.clientHeight,
+      0.1,
+      1000
   );
+  gameState.camera.position.set(0, -10, 15);
+  gameState.camera.lookAt(0, 0, 0);
 
-  camera.position.set(0, -10, 15); // Kamera pozisyonunu ayarla
-  camera.lookAt(0, 0, 0); // Kameranın bakış açısını ayarla
+  gameState.renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+  gameState.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
-  // 3) Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-  // Işık ekleyelim
+  // Lights
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
   directionalLight.position.set(0, 10, 10);
-  scene.add(directionalLight);
+  gameState.scene.add(ambientLight);
+  gameState.scene.add(directionalLight);
 
-  // Raket geometrisi
+  // Game objects
   const paddleGeometry = new THREE.BoxGeometry(1, 3, 0.5);
   const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-  const paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  const paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  
+  gameState.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  gameState.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  gameState.paddle1.position.x = -10;
+  gameState.paddle2.position.x = 10;
+  
+  gameState.scene.add(gameState.paddle1);
+  gameState.scene.add(gameState.paddle2);
 
-  // Raketlerin sahneye eklenmesi
-
-  const geometry = new THREE.PlaneGeometry(20, 12);
-  const textureLoader = new THREE.TextureLoader();
-  const grassTexture = textureLoader.load('https://threejs.org/examples/textures/terrain/grasslight-big.jpg'); // Çim dokusu
-
-  const material = new THREE.MeshBasicMaterial({ map: grassTexture, side: THREE.DoubleSide });
-  const field = new THREE.Mesh(geometry, material);
-  field.position.z = -0.5;
-  // scene.add(field);
-
-  // createWall(20, 5, 0.2, { x: 0, y: 12 / 2, z: 2 });  // Ön duvar
-  // createWall(20, 3, 0.2, { x: 0, y: -12 / 2, z: 0 }); // Arka duvar
-  // createGoal({ x: 10, y: 0, z: -0.3 }, 1); // Sol kale
-  // createGoal({ x: -10, y: 0, z: -0.3 }, -1); // Sol kale
-
-
-  paddle1.position.x = -10;
-  paddle2.position.x = 10;
-  scene.add(paddle1);
-  scene.add(paddle2);
-
-  // Top geometrisi
   const ballGeometry = new THREE.SphereGeometry(0.5, 16, 16);
   const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-  const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-  scene.add(ball);
+  gameState.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+  gameState.scene.add(gameState.ball);
 
-  const scoreboard = document.getElementById('scoreboard');
-  let roomName = "room1/";
-  const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/' + roomName + '?token=' + localStorage.getItem('accessToken'));
+  // WebSocket
+  const roomName = getState('detail_url');
+  gameState.socket = new WebSocket(
+      'wss://' + window.location.host + '/game/ws/game/' + roomName + 
+      '?token=' + localStorage.getItem('accessToken')
+  );
 
-  let playerId = 'spectator';
+  gameState.socket.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      if (data.type === 'init' || data.type === 'game_state') {
+          const state = data.state;
+          if (data.player_id) {
+              gameState.playerId = data.player_id;
+          }
 
-  socket.onopen = function () {
-    console.log('WebSocket bağlantısı kuruldu.');
-  };
+          gameState.paddle1.position.y = state.players.player1.position;
+          gameState.paddle2.position.y = state.players.player2.position;
+          gameState.ball.position.set(state.ball.x, state.ball.y, state.ball.z);
 
-  socket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    if (data.type === 'init' || data.type === 'game_state') {
-      const state = data.state;
-
-
-      if (data.player_id) {
-        playerId = data.player_id;
+          const scoreboard = document.getElementById('scoreboard');
+          if (scoreboard) {
+              scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+          }
       }
-      console.log("Kanaldaki Kişi", playerId)
-
-      paddle1.position.y = state.players.player1.position;
-      paddle2.position.y = state.players.player2.position;
-
-      ball.position.x = state.ball.x;
-      ball.position.y = state.ball.y;
-      ball.position.z = state.ball.z;
-
-      scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
-    }
-    else {
-      console.log('Sunucudan mesaj alındı:', data);
-    }
   };
 
-  socket.onclose = function () {
-    console.log('WebSocket bağlantısı kapandı.');
+  // Controls
+  gameState.handleKeydown = (e) => {
+      if (gameState.socket?.readyState === WebSocket.OPEN) {
+          if (e.key === 'w' || e.key === 'W') {
+              gameState.socket.send(JSON.stringify({
+                  type: 'move',
+                  player_id: gameState.playerId,
+                  position_change: 0.5
+              }));
+          }
+          else if (e.key === 's' || e.key === 'S') {
+              gameState.socket.send(JSON.stringify({
+                  type: 'move',
+                  player_id: gameState.playerId,
+                  position_change: -0.5
+              }));
+          }
+      }
   };
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'w' || e.key === 'W') {
-      socket.send(JSON.stringify({
-        type: 'move',
-        player_id: playerId,
-        position_change: 0.5
-      }));
-    }
-    if (e.key === 's' || e.key === 'S') {
-      socket.send(JSON.stringify({
-        type: 'move',
-        player_id: playerId,
-        position_change: -0.5
-      }));
-    }
-  });
+  document.addEventListener('keydown', gameState.handleKeydown);
 
+  // Animation
   function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+      gameState.animationId = requestAnimationFrame(animate);
+      if (gameState.renderer && gameState.scene && gameState.camera) {
+          gameState.renderer.render(gameState.scene, gameState.camera);
+      }
   }
   animate();
-}
 
+  // Update home link
+  const username = localStorage.getItem('username');
+  const homeLink = document.querySelector('.nav-link.active');
+  if (homeLink) {
+      homeLink.href = `/${username}`;
+  }
+
+  // Cleanup on route change
+  return () => {
+      cleanupGame();
+  };
+}
 document.addEventListener('DOMContentLoaded', initGame);

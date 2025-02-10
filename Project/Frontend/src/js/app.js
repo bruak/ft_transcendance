@@ -1,6 +1,5 @@
 /* ======================[*] Önbellek Yapısı [*]====================== */
 const cache = new Map();
-
 async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
     try {
         const now = Date.now();
@@ -43,11 +42,11 @@ const globalState = new Proxy(
     }
 );
 
-function setState(key, value) {
+export function setState(key, value) {
     globalState[key] = value;
 }
 
-function getState(key) {
+export function getState(key) {
     return globalState[key];
 }
 
@@ -70,14 +69,14 @@ const routes = {
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
+
 export async function router() {
     const path = window.location.pathname;
     let route = routes[path] || null;
     let params = {};
 
     // Dinamik rota kontrolü
-    if (!route)
-    {
+    if (!route) {
         for (const [key, value] of Object.entries(routes)) {
             const paramNames = [];
             const regexPath = key.replace(/:\w+/g, (match) => {
@@ -95,17 +94,13 @@ export async function router() {
                 break;
             }
         }
-        // console.log('Params:', params); // params konsole yazdır
     }
-
 
     if (!route) {
-        document.querySelector('#app').innerHTML = `<h1>Sayfa bulunamadı.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa bulunamadı.</h1>';
         return;
     }
-
-
-    document.querySelector('#app').innerHTML = `<h1>Loading...</h1>`; // Loading durumu
+    document.querySelector('#app').innerHTML = '<h1>Loading...</h1>'; // Loading durumu
 
     try {
         const content = await fetchWithCache(route.html);
@@ -116,7 +111,7 @@ export async function router() {
     } catch (err) {
         console.error('Sayfa yüklenirken hata oluştu:', err);
         showErrorMessage("Bir hata oluştu, lütfen tekrar deneyin.");
-        document.querySelector('#app').innerHTML = `<h1>Sayfa yüklenirken bir hata oluştu.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa yüklenirken bir hata oluştu.</h1>';
     }
 }
 
@@ -127,6 +122,9 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
+        if (window.location.pathname !== '/GamePage' && typeof cleanup === 'function') {
+            cleanup();
+        }
         router(); // Sayfayı güncelle
     }
 });

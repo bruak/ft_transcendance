@@ -10,7 +10,7 @@
  */
 
 import { router } from "./app.js";
-
+import { setState, getState } from "./app.js";
 /* ======================[*] Profil Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initProfile(params = {}) {
   try {
@@ -248,8 +248,34 @@ export function initProfile(params = {}) {
         const modalContent = document.getElementById('modalContent');
         modalContent.innerHTML = '';
         modalContent.appendChild(optionContent);
+        const randomMatchBtn = optionContent.querySelector('.btn-outline-info');
+        if (randomMatchBtn && randomMatchBtn.textContent.includes('Rastgele Maç')) {
+            randomMatchBtn.addEventListener('click', () => {
+                fetch(`${apiBaseUrl}/game/random-match/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({ username: localStorage.getItem('username') })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Gelen veriyi global state'e atabilir vs.
+                    console.log('Rastgele maç:', data.data.detail_url);
+                    setState('detail_url', data.data.detail_url);
+                    console.log(getState('detail_url'));
+                    // SPA yönlendirmesi
+                    history.pushState(null, null, '/GamePage');
+                    router();
+                })
+                .catch(err => console.error('Rastgele maç istek hatası:', err));
+            });
+        }
 
-        const modal = new bootstrap.Modal(document.getElementById('gameOptionsModal'));
+        // Modal'ı Bootstrap ile aç
+        const modalEl = document.getElementById('gameOptionsModal');
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
       });
     });

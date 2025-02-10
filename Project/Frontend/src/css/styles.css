@@ -920,7 +920,6 @@ body {
 .game-page .game-area {
     width: 800px;
     height: 600px;
-    border: 2px solid #ccc;
     position: relative;
     margin: 20px auto;
     background-color: #000;
