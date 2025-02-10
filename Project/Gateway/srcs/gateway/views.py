@@ -29,6 +29,29 @@ def handle_post(request):
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=500)
 
+def handle_delete(request):
+	user_language = request.headers.get("Accept-Language", "tr")
+	target_url = request.path
+	try:
+		headers = request.headers
+		# DELETE isteği gönderiyoruz
+		response = requests.delete(target_url, headers=headers)
+		
+		# Yanıtın boş olup olmadığını kontrol et
+		if response.text.strip() == '':
+			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
+		
+		# Yanıtı JSON olarak çözümle
+		response_json = response.json()
+
+		if response.status_code == 200 or response.status_code == 204:
+			return JsonResponse({'message': get_translated_message("REQUEST_SUCCESSFUL", user_language), 'data': response_json}, status=response.status_code)
+		else:
+			return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code, 'data': response_json}, status=response.status_code)
+		
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=500)
+	
 @csrf_exempt
 def handle_get(request):
 	user_language = request.headers.get("Accept-Language", "tr")
@@ -79,5 +102,7 @@ def api_gateway(request, *args, **kwargs):
 		return handle_post(request)
 	elif request.method == 'GET':
 		return handle_get(request)
+	elif request.method == 'DELETE':
+		return handle_delete(request) 
 	else:
 		return JsonResponse({'error': 'Method not allowed'}, status=405)

@@ -225,3 +225,9 @@ msgstr "Arkadaş başarıyla kaldırıldı."
 
 msgid "You cannot remove this friend."
 msgstr "Bu arkadaşı kaldıramazsınız."
+
+msgid "Only DELETE requests are allowed."
+msgstr "Sadece DELETE isteği kabul edilmektedir."
+
+msgid "Error deleting user."
+msgstr "Kullanıcı silinirken bir hata oluştu."

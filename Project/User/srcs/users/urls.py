@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user_list, user_create, user_update, login, callback, user_get, user_createJSON, search
+from .views import user_list, user_create, user_update, login, callback, user_get, user_createJSON, search, adminlist, user_delete
 
 urlpatterns = [
 	path('login/', login, name='login'),
@@ -10,4 +10,7 @@ urlpatterns = [
 	path('post/', user_create, name='user-create'),
 	path('postjson/', user_createJSON, name='user-createJSON'),
     path('search/<str:query>/', search, name='user-search'),
+    path('list/<str:username>/', adminlist, name="adminlist"),
+    path('delete/<str:username>/', user_delete, name="delete"),
+    
 ]

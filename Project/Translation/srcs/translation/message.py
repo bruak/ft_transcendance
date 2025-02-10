@@ -67,4 +67,7 @@ MESSAGES = {
     "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
     "FRIEND_REMOVED_SUCCESS": "Friend removed successfully.",
     "CANNOT_REMOVE_FRIEND": "You cannot remove this friend.",
+    "ONLY_DELETE_REQUESTS_ALLOWED": "Only DELETE requests are allowed.",
+    "USER_DELETE_ERROR": "Error deleting user.",
+
 }

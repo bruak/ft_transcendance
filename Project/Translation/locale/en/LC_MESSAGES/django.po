@@ -213,3 +213,9 @@ msgstr "First name cannot be empty."
 
 msgid "Last name can not be empty."
 msgstr "Last name cannot be empty."
+
+msgid "Only DELETE requests are allowed."
+msgstr "Only DELETE requests are allowed."
+
+msgid "Error deleting user."
+msgstr "Error deleting user."
