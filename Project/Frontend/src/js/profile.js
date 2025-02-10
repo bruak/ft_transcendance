@@ -218,17 +218,45 @@ export function initProfile(params = {}) {
     /* ---------------- 5) Gelen Arkadaş İsteklerini Listele & Kabul Et ---------------- */
     const showRequestsBtn = document.getElementById('showRequestsButton');
     if (showRequestsBtn) {
-      showRequestsBtn.addEventListener('click', () => {
-        showFriendRequestsSection(userToLoad, apiBaseUrl, accessToken);
-      });
+        showRequestsBtn.addEventListener('click', () => {
+            const modal = document.getElementById('requestsModal');
+            modal.removeAttribute('inert');
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.setAttribute('inert', '');
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
+
+            showFriendRequestsSection(userToLoad, apiBaseUrl, accessToken);
+        });
     }
 
     /* ---------------- 6) Arkadaşlar Listesini Göster & Kaldır ---------------- */
     const showFriendsBtn = document.getElementById('viewFriendsButton');
     if (showFriendsBtn) {
-      showFriendsBtn.addEventListener('click', () => {
-        showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken);
-      });
+        showFriendsBtn.addEventListener('click', () => {
+            const modal = document.getElementById('friendsModal');
+            modal.removeAttribute('inert');
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.setAttribute('inert', '');
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
+
+            showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken);
+        });
     }
 
     /* ---------------- 7) Oyun Seçenekleri & Diğer İşlemler ---------------- */
@@ -249,8 +277,16 @@ export function initProfile(params = {}) {
         modalContent.innerHTML = '';
         modalContent.appendChild(optionContent);
 
-        const modal = new bootstrap.Modal(document.getElementById('gameOptionsModal'));
-        modal.show();
+        const modal = document.getElementById('gameOptionsModal');
+        modal.classList.add('animate__animated', 'animate__fadeInDown');
+        modal.removeAttribute('inert');
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+
+        modal.addEventListener('hidden.bs.modal', () => {
+          modal.setAttribute('inert', '');
+          modal.classList.remove('animate__animated', 'animate__fadeInDown');
+        });
       });
     });
 
@@ -290,7 +326,7 @@ export function initProfile(params = {}) {
   }
 }
 
-// /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
+/* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
 // const recentActivitiesList = document.getElementById('recentActivitiesList');
 // fetch(`${apiBaseUrl}/user/recent-activities/${username}`, { // bura henüz çalışmıyor
 //     method: 'GET',
@@ -306,8 +342,10 @@ export function initProfile(params = {}) {
 //         recentActivitiesList.innerHTML = activities.length > 0
 //             ? activities.map(activity => {
 //                 const isPlaying = activity.status === 'playing';
-//                 return `<li class="list-group-item bg-dark text-white">
+//                 return `<li class="list-group-item recent-activity-item ${isPlaying ? 'ongoing' : ''}">
+//                             <i class="bi bi-controller icon"></i>
 //                             ${activity.description}
+//                             <span class="badge">${new Date(activity.timestamp).toLocaleString()}</span>
 //                             ${isPlaying ? `<button class="btn btn-primary btn-sm float-end" onclick="joinGame('${activity.gameId}')">İzle</button>` : ''}
 //                         </li>`;
 //             }).join('')
@@ -527,7 +565,7 @@ function showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken) {
 
         html += `
           <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
-            <span>${friendUsername}</span>
+            <span><span class="badge bg-success me-2"><i class="bi bi-person-check"></i></span>${friendUsername}</span>
             ${showRemove ? `
               <button class="btn btn-sm btn-danger" data-friend="${friendUsername}">
                 Kaldır

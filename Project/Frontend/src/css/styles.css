@@ -1,47 +1,84 @@
+:root {
+  --color-bg: #1c1c1c;
+  --color-bg-dark: #222539;
+  --color-primary: #4ca1af;
+  --color-primary-hover: #5fb9d8;
+  --color-secondary: #f39c12;
+  --color-text: #ddd;
+  --color-text-light: #fff;
+  --color-border: #1a1a2e;
+  --color-shadow: rgba(0, 0, 0, 0.5);
+}
+
 /* Genel Stil */
 body {
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #00041a;
-    color: #ddd;
+    background: linear-gradient(120deg, #2c3e50, var(--color-bg)) no-repeat center center fixed;
+    background-size: cover;
+    color: var(--color-text);
 }
 .hidden { display: none !important; }
 .selected { border: 2px solid #007bff; }
 /* Profile Sayfası Stilleri */
 .profile-page h1, .profile-page h2 {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #4ca1af;
+    color: var(--color-primary);
     text-shadow: 1px 1px #000;
 }
 
 .profile-page h1 {
-    font-size: 2.5rem;
+    font-size: 2rem; /* Responsive font size */
+}
+
+@media (min-width: 768px) {
+    .profile-page h1 {
+        font-size: 2.5rem;
+    }
 }
 
 .profile-page h2, .profile-page h3 {
-    font-size: 2rem;
-    color: #4ca1af;
+    font-size: 1.5rem; /* Responsive font size */
+    color: var(--color-primary);
     margin-bottom: 20px;
     text-align: center;
     text-shadow: 1px 1px #000;
 }
 
+@media (min-width: 768px) {
+    .profile-page h2, .profile-page h3 {
+        font-size: 2rem;
+    }
+}
+
 .profile-page h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem; /* Responsive font size */
     color: cadetblue;
 }
 
+@media (min-width: 768px) {
+    .profile-page h3 {
+        font-size: 1.5rem;
+    }
+}
+
 .profile-page p {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Responsive font size */
     color: #ddd;
 }
 
+@media (min-width: 768px) {
+    .profile-page p {
+        font-size: 1.1rem;
+    }
+}
+
 .profile-page .card {
-    background-color: #1c1c1c;
-    border: 1px solid #1a1a2e;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 16px var(--color-shadow);
     transition: transform 0.3s;
 }
 
@@ -90,10 +127,31 @@ body {
 
 .profile-page footer {
     background-color: #1a1a2e;
-    color: #ddd;
+    color: white;
     padding: 10px 0;
     text-align: center;
+    font-size: 0.9rem;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* İnce çizgi */
+}
+
+.profile-page footer .social-icons {
+    margin-top: 10px;
+}
+
+.profile-page footer .social-icons a {
+    color: white;
+    margin: 0 10px;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.profile-page footer .social-icons a:hover {
+    color: var(--color-primary);
 }
 
 .profile-page img {
@@ -109,6 +167,23 @@ body {
     border: none;
     border-radius: 5px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-page .list-group-item .badge {
+    margin-right: 10px;
+}
+
+.profile-page .list-group-item .btn {
+    background-color: #4ca1af;
+    border: none;
+    color: #fff;
+}
+
+.profile-page .list-group-item .btn:hover {
+    background-color: #2c3e50;
 }
 
 .profile-page .overlay {
@@ -166,17 +241,33 @@ body {
 }
 
 .profile-page .modal-content {
-    background-color: #1c1c1c;
-    color: #ddd;
-    border: 1px solid #1a1a2e;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text);
+    border: 1px solid var(--color-primary-hover);
 }
 
 .profile-page .modal-header, .profile-page .modal-footer {
     border-bottom: 1px solid #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.1); /* Daha ince ve soft border rengi */
 }
 
 .profile-page .modal-header .btn-close {
     filter: invert(1);
+    transition: filter 0.3s, transform 0.3s;
+}
+
+.profile-page .modal-header .btn-close:hover, .profile-page .modal-header .btn-close:focus {
+    filter: invert(0.7);
+    transform: scale(1.1);
+}
+
+.profile-page .modal-title {
+    color: var(--color-primary-hover);
+    transition: color 0.3s;
+}
+
+.profile-page .modal-title:hover, .profile-page .modal-title:focus {
+    color: var(--color-primary);
 }
 
 .profile-page .form-control {
@@ -237,6 +328,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer; /* Tıklanabilir hissi */
+    transition: background-color 0.3s;
+}
+
+.profile-page #friendSuggestions .list-group-item:hover {
+    background-color: rgba(95, 185, 216, 0.2); /* Saydam hover rengi */
 }
 
 .profile-page #friendSuggestions .list-group-item .btn {
@@ -250,27 +347,27 @@ body {
 }
 
 .profile-page .btn-outline-primary {
-    border: 2px solid #4ca1af;
-    color: #4ca1af;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
     background-color: transparent;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .profile-page .btn-outline-primary:hover {
-    background-color: #4ca1af;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
 }
 
 .profile-page .btn-outline-secondary {
-    border: 2px solid #f39c12;
-    color: #f39c12;
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
     background-color: transparent;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .profile-page .btn-outline-secondary:hover {
-    background-color: #f39c12;
-    color: #fff;
+    background-color: var(--color-secondary);
+    color: var(--color-text-light);
 }
 
 .profile-page .form-control {
@@ -310,34 +407,80 @@ body {
     position: relative;
     padding: 5px 10px; /* Add padding */
     border-radius: 5px; /* Add border radius */
+    max-width: 300px; /* Daha kontrollü genişlik */
+    background-color: var(--color-bg-dark); /* Arka plan rengi */
+    color: var(--color-text-light); /* Yazı rengi */
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .search-input::placeholder {
-    color: #aaa; /* Placeholder text color */
+    color: #bbb; /* Placeholder text color */
     opacity: 1; /* Ensure placeholder text is visible */
 }
 
+.search-input:focus {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+}
+
 /* ...existing code... */
+
+.profile-page .recent-activity-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: var(--color-bg-dark);
+    transition: background-color 0.3s, border-left 0.3s;
+}
+
+.profile-page .recent-activity-item .icon {
+    margin-right: 10px;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+}
+
+.profile-page .recent-activity-item .badge {
+    margin-left: auto;
+    font-size: 0.8rem;
+    background-color: var(--color-secondary);
+    color: var(--color-text-light);
+}
+
+.profile-page .recent-activity-item.ongoing {
+    border-left: 4px solid var(--color-secondary);
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+.profile-page .recent-activity-item:hover {
+    background-color: rgba(95, 185, 216, 0.2);
+}
 
 /* Oyun Seçenekleri Bölümü Stilleri */
 .profile-page .game-option-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    background-color: #222539; /* Daha açık bir ton */
-    border: 1px solid #4ca1af80; /* Kenar çizgisi daha ince ve transparan */
+    background-color: var(--color-bg-dark); /* Daha açık bir ton */
+    border: 1px solid var(--color-primary-hover); /* Kenar çizgisi daha ince ve transparan */
     border-radius: 200px; /* Daha yumuşak köşeler */
     padding: 25px 20px;
     text-align: center;
     color: #e0e0e0; /* Daha açık yazı rengi */
     margin-bottom: 20px; /* Kartların arasına boşluk ekleyin */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Hafif gölgelendirme */
+    box-shadow: 0 4px 10px var(--color-shadow); /* Hafif gölgelendirme */
 }
 
 .profile-page .game-option-card h3 {
     font-size: 1.8rem;
-    color: #5fb9d8; /* Daha canlı mavi tonu */
+    color: var(--color-primary-hover); /* Daha canlı mavi tonu */
     margin-bottom: 10px;
     letter-spacing: 1px; /* Harf aralığı */
+}
+
+.profile-page .game-option-card h3 i {
+    margin-right: 5px;
 }
 
 .profile-page .game-option-card p {
@@ -348,9 +491,9 @@ body {
 }
 
 .profile-page .game-option-card .btn {
-    background-color: #5fb9d8;
+    background-color: var(--color-primary);
     border: none;
-    color: #1a1a2e;
+    color: var(--color-bg);
     padding: 10px 20px;
     border-radius: 12px;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -359,36 +502,40 @@ body {
 }
 
 .profile-page .game-option-card .btn:hover {
-    background-color: #4ca1af;
+    background-color: var(--color-primary-hover);
     transform: translateY(-3px); /* Hover efekti için hafif yukarı kaldırma */
-    color: #fff;
+    color: var(--color-text-light);
 }
 
 .profile-page .game-option-card:hover {
     transform: scale(1.05); /* Daha hafif bir büyüme efekti */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5); /* Gölgeyi yumuşatma */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7), 0 0 10px var(--color-primary-hover); /* Gölgeyi yumuşatma ve parlama */
 }
 
 .profile-page .game-option-card.selected {
-    border: 2px solid #ffb347; /* Daha sıcak bir turuncu tonu */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--color-secondary); /* Daha sıcak bir turuncu tonu */
+    box-shadow: 0 12px 25px var(--color-shadow);
 }
-
 
 /* Modal Stilleri */
 .modal-content {
-    background-color: #222539;
-    color: #e0e0e0;
-    border: 1px solid #5fb9d8;
-    border-radius: 15px;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text);
+    border: 1px solid var(--color-primary-hover);
 }
 
 .modal-header, .modal-footer {
     border-color: rgba(92, 182, 229, 0.3);
+    border-color: rgba(255, 255, 255, 0.1); /* Daha ince ve soft border rengi */
 }
 
 .modal-title {
-    color: #5fb9d8;
+    color: var(--color-primary-hover);
+    transition: color 0.3s;
+}
+
+.modal-title:hover, .modal-title:focus {
+    color: var(--color-primary);
 }
 
 .modal-body .btn {
@@ -804,6 +951,24 @@ body {
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* İnce çizgi */
+}
+
+.about-us-page footer .social-icons {
+    margin-top: 10px;
+}
+
+.about-us-page footer .social-icons a {
+    color: white;
+    margin: 0 10px;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.about-us-page footer .social-icons a:hover {
+    color: var(--color-primary);
 }
 
 
@@ -881,6 +1046,7 @@ body {
     background-color: #1a1a2e;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1050; /* Z-index değeri artırıldı */
 }
 
 .navbar .dropdown-item {
@@ -895,6 +1061,16 @@ body {
 
 .navbar .dropdown-divider {
     border-top: 1px solid #4ca1af;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  transition: color 0.3s, border-bottom 0.3s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover, 
+.navbar-dark .navbar-nav .nav-link:focus {
+  color: var(--color-primary);
+  text-decoration: underline; /* veya border-bottom eklenebilir */
 }
 
 /* Game Sayfası Stilleri */
@@ -972,5 +1148,43 @@ body {
 .game-page .btn-warning:hover {
     background-color: #e3c9a8;
 }
+
+.dropdown .dropdown-toggle img {
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+}
+
+.dropdown .dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown .dropdown-toggle span {
+  color: var(--color-text-light);
+}
+
+.form-label {
+    font-weight: bold;
+    color: var(--color-primary);
+
+    margin-bottom: 10px; /* Dikey boşluk artırıldı */
+}
+
+/* ...existing code... */
+.profile-page .btn i {
+    margin-right: 5px;
+}
+
+.profile-page .game-option-card h3 i {
+    margin-right: 5px;
+}
+
+/* ...existing code... */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* ...existing code... */
 
 
