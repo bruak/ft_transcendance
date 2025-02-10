@@ -4,7 +4,7 @@ from django.db import models
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, AdminSerializer
 from .tools import username_check, image_to_url, image_intra_create
 from rest_framework.parsers import JSONParser
 from django.core.exceptions import ValidationError
@@ -22,6 +22,33 @@ def user_list(request):
 		return JsonResponse({'message': serializer.data}, safe=False, status=200)
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+
+def adminlist(request, username):
+	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "GET":
+		return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+	try:
+		user = User.objects.get(username=username)  # Tek bir kullanıcı döner
+		serializer = AdminSerializer(user)  # Tekil kullanıcı için many=False (varsayılan)
+		return JsonResponse({'message': serializer.data}, status=200)
+	except User.DoesNotExist:
+		return JsonResponse({"message": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+	except Exception as e:
+		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
+
+@csrf_exempt
+def user_delete(request, username):
+    user_language = request.headers.get("Accept-Language", "tr")
+    if request.method != "DELETE":
+        return JsonResponse({"error": get_translated_message("ONLY_DELETE_REQUESTS_ALLOWED", user_language)}, status=405)
+    try:
+        user = User.objects.get(username=username)
+        user.delete()  # Delete the user
+        return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": get_translated_message("USER_DELETE_ERROR", user_language), "str": str(e)}, status=500)
 
 @csrf_exempt
 def user_create(request):
@@ -81,7 +108,7 @@ def user_createJSON(request):
 def user_get(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "GET":
-		return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+		return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 	try:
 		user = User.objects.get(username=username)  # Tek bir kullanıcı döner
 		serializer = UserSerializer(user)  # Tekil kullanıcı için many=False (varsayılan)
@@ -128,8 +155,6 @@ def user_update(request, username):
 		return JsonResponse({"error": get_translated_message("USER_UPDATE_ERROR", user_language), "str": str(e)}, status=500)
 
 
-
-
 def search(request, query):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "GET":
@@ -147,10 +172,6 @@ def search(request, query):
 		return JsonResponse({'message': serializer.data}, status=200)
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500) # değişcek
-
-
-
-
 
 
 
