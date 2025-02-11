@@ -124,18 +124,23 @@ export function initGame() {
   gameState.scene.add(gameState.ball);
 
   // WebSocket
+  const token = localStorage.getItem('accessToken');
   const roomName = getState('detail_url');
   gameState.socket = new WebSocket(
-      'wss://' + window.location.host + '/game/ws/game/' + roomName + 
-      '?token=' + localStorage.getItem('accessToken')
+      'wss://' + window.location.host + '/game/ws/game/' + roomName  + 
+      '?token=' + token
   );
 
+    gameState.socket.onopen = function() {
+        console.log('WebSocket connection opened.');
+    };
   gameState.socket.onmessage = function(event) {
       const data = JSON.parse(event.data);
       if (data.type === 'init' || data.type === 'game_state') {
           const state = data.state;
           if (data.player_id) {
               gameState.playerId = data.player_id;
+              console.log('Player ID:', gameState.playerId);
           }
 
           gameState.paddle1.position.y = state.players.player1.position;
@@ -147,8 +152,17 @@ export function initGame() {
               scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
           }
       }
+      else
+      {
+        console.log(data);
+      }
   };
 
+  // <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+  // <button class="btn btn-outline-info">Rastgele Maç</button>
+    gameState.socket.onclose = function() {
+        console.log('WebSocket connection closed.');
+    }
   // Controls
   gameState.handleKeydown = (e) => {
       if (gameState.socket?.readyState === WebSocket.OPEN) {

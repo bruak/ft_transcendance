@@ -1,46 +1,59 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 
 class PongConsumer(AsyncWebsocketConsumer):
-    game_state = {
-        'players': {
-            'player1': {'position': 0, 'score': 0},
-            'player2': {'position': 0, 'score': 0},
-        },
-        'ball': {
-            'x': 0.0,
-            'y': 0.0,
-            'z': 0.0,
-            'vx': 0.1,
-            'vy': 0.1,
-            'vz': 0.0,
-        }
-    }
+    room_data = {}  # Her oda için oyuncu bilgilerini saklayacak bir yapı
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.groups = []
         self.game_loop_running = False
+        self.game_state = None
 
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"game_{self.room_name}"
+        self.room_group_name = self.room_name
+
+        # Eğer oda için data yoksa, odayı başlat
+        if self.room_name not in PongConsumer.room_data:
+            PongConsumer.room_data[self.room_name] = {"host": None, "guest": None, "spectators": []}
+
+        room_info = PongConsumer.room_data[self.room_name]
+
+        # Oyun durumu her oda için özel
+        self.game_state = {
+            'players': {
+                'player1': {'position': 0, 'score': 0},
+                'player2': {'position': 0, 'score': 0},
+            },
+            'ball': {
+                'x': 0.0,
+                'y': 0.0,
+                'z': 0.0,
+                'vx': 0.1,
+                'vy': 0.1,
+                'vz': 0.0,
+            }
+        }
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-        print("Kanal isimi",self.channel_name)
-        if not hasattr(self.channel_layer, 'host'):
-            self.channel_layer.host = self.channel_name
+
+        # Odaya gelen kullanıcıyı atanıyor
+        if not room_info["host"]:
+            room_info["host"] = self.channel_name
             self.player_id = 'player1'
-        elif not hasattr(self.channel_layer, 'guest'):
-            self.channel_layer.guest = self.channel_name
+        elif not room_info["guest"]:
+            room_info["guest"] = self.channel_name
             self.player_id = 'player2'
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
         else:
+            room_info["spectators"].append(self.channel_name)
             self.player_id = 'spectator'
+
+        print(f"Oda: {self.room_name}, Kanal: {self.channel_name}, Rol: {self.player_id}")
 
         await self.send(json.dumps({
             'type': 'init',
@@ -50,12 +63,21 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        if self.channel_name == getattr(self.channel_layer, 'host', None):
-            del self.channel_layer.host
-        elif self.channel_name == getattr(self.channel_layer, 'guest', None):
-            del self.channel_layer.guest
 
-        self.game_loop_running = False
+        room_info = PongConsumer.room_data[self.room_name]
+
+        # Kullanıcı rolüne göre çıkarılıyor
+        if room_info["host"] == self.channel_name:
+            room_info["host"] = None
+        elif room_info["guest"] == self.channel_name:
+            room_info["guest"] = None
+            self.game_loop_running = False
+        elif self.channel_name in room_info["spectators"]:
+            room_info["spectators"].remove(self.channel_name)
+
+        # Eğer oda boşsa, temizle
+        if not room_info["host"] and not room_info["guest"] and not room_info["spectators"]:
+            del PongConsumer.room_data[self.room_name]
 
     async def receive(self, text_data=None, bytes_data=None):
         if self.player_id == 'spectator':

@@ -241,8 +241,8 @@ export function initProfile(params = {}) {
 
         document.getElementById('gameOptionsModalLabel').textContent = `${optionTitle} Seçenekleri`;
         const optionContent = document
-          .getElementById('hiddenOptions')
-          .querySelector(`#${optionId}`)
+        .getElementById('hiddenOptions')
+        .querySelector(`#${optionId}`)
           .cloneNode(true);
 
         const modalContent = document.getElementById('modalContent');

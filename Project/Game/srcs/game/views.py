@@ -22,7 +22,8 @@ def random_match_view(request):
 			match.save()
 			return JsonResponse({"match_id": match.id, "detail_url": f"room_{match.id}/"}, status=200)
 		elif match.filter(player1=username, status='waiting').exists():
-			return JsonResponse({"error": "You are already in the queue."}, status=400)
+			match = match.filter(player1=username, status='waiting').first()
+			return JsonResponse({"match_id": match.id, "detail_url": f"room_{match.id}/"}, status=200)
 		elif match.filter(status='waiting').exists():
 			match = match.filter(status='waiting').first()
 			match.player2 = username
