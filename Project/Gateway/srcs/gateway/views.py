@@ -68,7 +68,7 @@ def handle_get(request):
 		try:
 			response_json = response.json()
 			if response_json.get('url') is not None:
-				return HttpResponseRedirect(response_json.get('url'))
+				return JsonResponse({'message': response_json}, status=response.status_code)
 		except ValueError:
 			return JsonResponse({'error': get_translated_message("INVALID_JSON_RESPONSE", user_language), 'DETAILS': response.text}, status=500)
 		return JsonResponse({'message': get_translated_message("REQUEST_SUCCESSFUL", user_language), 'data': response_json.get('message')}, status=response.status_code)

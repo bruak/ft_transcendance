@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import singup, verifyAccount, singin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account, user_update, user_delete, MailTokenlist, twoFactorList
+from .views import singup, verifyAccount, singin, twofactor, intra_login, callback, singout, validate_token, retry_verification_account, user_update, user_delete, MailTokenlist, twoFactorList, listUsers, validate_admin
 
 urlpatterns = [
 	path('singup/', singup, name='register'),
@@ -15,4 +15,6 @@ urlpatterns = [
     path('delete/<str:username>/', user_delete, name="delete"),
     path('listmail/', MailTokenlist, name="mailtokenlist"),
     path('listtwofactor/', twoFactorList, name="twofactorlist"),
+    path('listusers/<str:username>/', listUsers, name="listUsers"),
+    path('validate_admin/', validate_admin, name="admin"  ),
 ]

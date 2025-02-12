@@ -62,6 +62,7 @@ const routes = {
     '/about': { html: './views/about-us.html', init: () => import("./about-us.js").then(({ initAbout }) => initAbout()) },
     '/2fac': { html: './views/2factor.html', init: () => import("./2fac.js").then(({ init2fac }) => init2fac()) },
     '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
+    '/a': { html: './admin/index.html', init: () => import("./../admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */

@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Admin Panel</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <!-- Sol kısım: Menü -->
+    <ul class="navbar-nav me-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Features</a>
+      </li>
+    </ul>
+
+    <!-- Sağ kısım: Arama çubuğu, bildirim ve profil -->
+    <form id="searchForm" class="d-flex me-3 position-relative">
+      <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+      <ul id="userList" class="dropdown-menu dropdown-menu-end show" style="position: absolute; top: 100%; left: 0; right: 0; display: none;">
+        <!-- Arama sonuçları burada listelenecek -->
+      </ul>
+    </form>
+
+
+    <div class="d-flex align-items-center">
+      <!-- Dil Değiştirme Bayrağı -->
+      <div class="dropdown me-3">
+        <button class="btn btn-light" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="/admin/img/tr.png" alt="TR" class="me-2" style="width: 20px;"> TR
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+          <li>
+            <a class="dropdown-item" data-lang="en">
+              <img src="/admin/img/en.png" alt="EN" class="me-2" style="width: 20px;"> EN
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" data-lang="tr">
+              <img src="/admin/img/tr.png" alt="TR" class="me-2" style="width: 20px;"> TR
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center">
+      <!-- Bildirim Butonu -->
+      <div class="dropdown me-3">
+        <button class="btn btn-light position-relative" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-bell"></i>
+          <span id="notification-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            3
+            <span class="visually-hidden">unread messages</span>
+          </span>
+        </button>
+        <ul id="notification" class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <!-- Mesajlar -->
+        </ul>
+      </div>
+
+      <!-- Profil Butonu -->
+      <div class="dropdown" id="adminuser">
+        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="#" class="rounded-circle me-2" width="30" height="30">
+          <span>Profile</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="#">My Account</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a href="/" class="dropdown-item" id="logout" >Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -57,6 +57,7 @@ export function init2fac() {
         // Store tokens and redirect to profile
         localStorage.setItem('accessToken', data.data.message.access_token.token);
         localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
+        localStorage.setItem('language', 'tr')
         const accessToken = data.data.message.access_token.token;
         const refreshToken = data.data.message.refresh_token.token;
         console.log("Access Token:", accessToken);
