@@ -3,44 +3,45 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 
 class PongConsumer(AsyncWebsocketConsumer):
-    room_data = {}  # Her oda için oyuncu bilgilerini saklayacak bir yapı
+    room_data = {}  # Her oda için oyuncu bilgilerini ve oyun durumunu saklayacak bir yapı
+    position_change = 0.2
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.groups = []
         self.game_loop_running = False
-        self.game_state = None
 
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = self.room_name
 
-        # Eğer oda için data yoksa, odayı başlat
+        # Eğer oda için data yoksa, odayı başlat ve game_state oluştur
         if self.room_name not in PongConsumer.room_data:
-            PongConsumer.room_data[self.room_name] = {"host": None, "guest": None, "spectators": []}
+            PongConsumer.room_data[self.room_name] = {
+                "host": None,
+                "guest": None,
+                "spectators": [],
+                "game_state": {
+                    'players': {
+                        'player1': {'position': 0, 'score': 0, 'move_up': False, 'move_down': False},
+                        'player2': {'position': 0, 'score': 0, 'move_up': False, 'move_down': False},
+                    },
+                    'ball': {
+                        'x': 0.0,
+                        'y': 0.0,
+                        'vx': 0.1,
+                        'vy': 0.1,
+                    }
+                }
+            }
 
         room_info = PongConsumer.room_data[self.room_name]
-
-        # Oyun durumu her oda için özel
-        self.game_state = {
-            'players': {
-                'player1': {'position': 0, 'score': 0},
-                'player2': {'position': 0, 'score': 0},
-            },
-            'ball': {
-                'x': 0.0,
-                'y': 0.0,
-                'z': 0.0,
-                'vx': 0.1,
-                'vy': 0.1,
-                'vz': 0.0,
-            }
-        }
+        self.game_state = room_info["game_state"]  # Odadaki ortak game_state
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        # Odaya gelen kullanıcıyı atanıyor
+        # Odaya gelen kullanıcı atanıyor
         if not room_info["host"]:
             room_info["host"] = self.channel_name
             self.player_id = 'player1'
@@ -86,11 +87,12 @@ class PongConsumer(AsyncWebsocketConsumer):
         message_type = data.get('type')
 
         if message_type == 'move':
-            player_id = data.get('player_id')
-            position_change = data.get('position_change', 0)
-            if player_id in self.game_state['players'] and -4.5 <= self.game_state['players'][player_id]['position'] + position_change <= 4.5:
-                self.game_state['players'][player_id]['position'] += position_change
-            await self.broadcast_game_state()
+            move_up = data.get('move_up', False)
+            move_down = data.get('move_down', False)
+            # Oyuncunun hareket bilgilerini güncelle
+            if self.player_id in self.game_state['players']:
+                self.game_state['players'][self.player_id]['move_up'] = move_up
+                self.game_state['players'][self.player_id]['move_down'] = move_down
 
     async def broadcast_game_state(self):
         await self.channel_layer.group_send(self.room_group_name,
@@ -106,6 +108,14 @@ class PongConsumer(AsyncWebsocketConsumer):
             'state': event['state']
         }))
 
+    def update_paddle_positions(self):
+        for player_id in ['player1', 'player2']:
+            player = self.game_state['players'][player_id]
+            if player['move_up'] and player['position'] > -3:
+                player['position'] -= self.position_change
+            if player['move_down'] and player['position'] < 3:
+                player['position'] += self.position_change
+
     def update_ball_position(self):
         ball = self.game_state['ball']
         ball['x'] += ball['vx']
@@ -119,25 +129,26 @@ class PongConsumer(AsyncWebsocketConsumer):
         paddle1 = self.game_state['players']['player1']
         paddle2 = self.game_state['players']['player2']
 
-        if ball['x'] <= -9 and paddle1['position'] - 2 <= ball['y'] <= paddle1['position'] + 2:
+        if ball['x'] <= -6 and paddle1['position'] - 1 <= ball['y'] <= paddle1['position'] + 1:
             ball['vx'] *= -1
-        if ball['x'] >= 9 and paddle2['position'] - 2 <= ball['y'] <= paddle2['position'] + 2:
+        if ball['x'] >= 6 and paddle2['position'] - 1 <= ball['y'] <= paddle2['position'] + 1:
             ball['vx'] *= -1
 
-        if abs(ball['y']) > 5:
+        if abs(ball['y']) > 3.5:
             ball['vy'] *= -1
-        if abs(ball['x']) > 10:
+        if abs(ball['x']) > 7:
             ball['vx'] *= -1
 
-        if ball['x'] < -10:
+        if ball['x'] < -6.3:
             self.game_state['players']['player2']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
-        elif ball['x'] > 10:
+        elif ball['x'] > 6.3:
             self.game_state['players']['player1']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
 
     async def start_game_loop(self):
         while self.game_loop_running:
+            self.update_paddle_positions()
             self.update_ball_position()
             await self.broadcast_game_state()
             await asyncio.sleep(1 / 60)

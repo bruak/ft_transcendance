@@ -38,6 +38,8 @@ db.sqlite3
 
 # Media files
 uploads/
+media/
+avatars/
 
 # Static files
 staticfiles/
