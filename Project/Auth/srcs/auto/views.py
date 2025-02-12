@@ -1,20 +1,18 @@
-from django.shortcuts import redirect
 from .models import Users, MailTokens, TwofactorCodes
 from .tokenService import TokenService
 from .serializer import MailTokenSerializer, TwoFactoSerializer
+from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
+from .translate_way import get_translated_message
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
-from django.utils.crypto import get_random_string
-import uuid
-import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .tools import image_to_url, generate_random_code, image_intra_create, access_token_validate, username_check
-from .translate_way import get_translated_message
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 import os
+import uuid
+import requests
 
 @csrf_exempt
 def user_update(request, username):
@@ -334,6 +332,30 @@ def validate_token(request):
 		return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
 	return JsonResponse({'valid': True}, status = 200)
 
+
+def validate_admin(request):
+	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "GET":
+		return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+	authorization_header = request.headers.get("Authorization", "")
+	if not authorization_header.startswith("Bearer "):
+		return JsonResponse({'error': get_translated_message("MISSING_BEARER_TOKEN", user_language)}, status=400)
+	access_token = authorization_header[7:]
+	if access_token is None:
+		return JsonResponse({'error': get_translated_message("INVALID_VALIDATE_TOKEN", user_language)}, status=401)
+
+	status = TokenService.is_admin(access_token)
+	data = {
+		"valid": status,
+	}
+	print(status)
+	if status:
+		return JsonResponse({'message': data}, status=200)
+	else:
+		return JsonResponse({'message': data}, status=403)
+
+
+
 # Test Edilcek -> Ihtiyaç Doğrultusuna göre düzenlencek
 @csrf_exempt
 def retry_verification_account(request):
@@ -376,7 +398,7 @@ def callback(request, code):
 		return JsonResponse({"error": get_translated_message("AUTH_CODE_NOT_FOUND_CALLBACK", user_language)}, status=400)
 
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-	SECRET = "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"
+	SECRET = "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"
 	redirect_uri = "https://localhost:8080/api/auth/callback/"  # Callback URL
 	token_url = "https://api.intra.42.fr/oauth/token"
 	data = {
@@ -408,11 +430,21 @@ def callback(request, code):
 	intra_access_token, access_exp = TokenService.generate_access_token(username)
 	refresh_token, refresh_exp = TokenService.generate_refresh_token(username)
 
+	token = {
+		"username": username,
+		"access_token": {"token": intra_access_token, "expiration_date": access_exp},
+		"refresh_token": {
+			"token": refresh_token,
+			"expiration_date": refresh_exp,
+		},
+	}
 	if username_check(username):
-		return JsonResponse({'error': get_translated_message("USERNAME_EXISTS", user_language)}, status=409)
-	if Users.objects.filter(email=data.get('email')).exists():
-		return JsonResponse({'error': get_translated_message("EMAIL_EXISTS", user_language)}, status=409)
-
+		user = Users.objects.get(username=username)
+		user.access_token = intra_access_token
+		user.refresh_token = refresh_token
+		user.save()
+		return(JsonResponse({'message': token,}, status=201))
+	
 	user = Users.objects.create(
 		username = username,
 		email= data["email"],
@@ -436,7 +468,9 @@ def callback(request, code):
 	if user_service_response.status_code != 201:
 		user.delete()
 		return JsonResponse({'error': user_service_response.status_code, 'message': user_service_response.json()}, status=user_service_response.status_code)
-	return(JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=201))
+	
+
+	return(JsonResponse({'message': token,}, status=201))
 
 # Kullanıcı HAkkında Verilcek Bilgiler (Admin İçin)
 def listUsers(request, username):
@@ -445,6 +479,7 @@ def listUsers(request, username):
 		return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 	try:
 		user = Users.objects.get(username=username)
+		print(user.is_active)
 		data = {
 			"is_active": user.is_active,
 			"status" : user.status,
@@ -454,7 +489,7 @@ def listUsers(request, username):
 		return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
-	
+
 # Tüm Mail Token List
 def MailTokenlist(request):
 	user_language = request.headers.get("Accept-Language", "tr")

@@ -44,7 +44,6 @@ class ProxyMiddleware:
 
         if not self.is_excluded_path(path) and not self.validate_token(request, user_language):
             return self.json_response("INVALID_VALIDATE_TOKEN", user_language, 401)
-
         request.path = f"{service_url}/{path}/"
         print(f"Updated request path: {request.path}")
 

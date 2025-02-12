@@ -186,7 +186,7 @@ def callback(request):
 	code = request.GET.get('code')
 	if not code:
 		return JsonResponse({"error": get_translated_message("AUTH_CODE_NOT_FOUND_CALLBACK", user_language)}, status=400)
-
+	print(code)
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
 	SECRET = "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"
 	redirect_uri = "http://localhost:8000/api/callback/"
