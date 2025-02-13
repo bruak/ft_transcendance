@@ -244,7 +244,7 @@ export function initGame() {
   if (token && roomName) {
 
   gameState.socket = new WebSocket(
-      'wss://' + window.location.host + '/game/ws/game/' + roomName  + 
+      'wss://' + window.location.host + '/game/ws/' + roomName  + 
       '?token=' + token
   );
 

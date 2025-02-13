@@ -271,9 +271,33 @@ export function initProfile(params = {}) {
                 })
                 .catch(err => console.error('Rastgele maç istek hatası:', err));
             });
-        }
 
-        // Modal'ı Bootstrap ile aç
+          }
+          const deneme = optionContent.querySelector('.btn-success');
+          if (deneme && deneme.textContent.includes('Başlat')) {
+            deneme.addEventListener('click', () => {
+              fetch(`${apiBaseUrl}/game/bot-match/`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${accessToken}`
+                  },
+                  body: JSON.stringify({ username: localStorage.getItem('username') })
+              })
+              .then(response => response.json())
+              .then(data => {
+                  // Gelen veriyi global state'e atabilir vs.
+                  console.log('Rastgele maç:', data.data.detail_url);
+                  setState('detail_url', data.data.detail_url);
+                  console.log(getState('detail_url'));
+                  // SPA yönlendirmesi
+                  history.pushState(null, null, '/GamePage');
+                  router();
+              })
+              .catch(err => console.error('Rastgele maç istek hatası:', err));
+          });
+          }
+            // Modal'ı Bootstrap ile aç
         const modalEl = document.getElementById('gameOptionsModal');
         const modal = new bootstrap.Modal(modalEl);
         modal.show();
