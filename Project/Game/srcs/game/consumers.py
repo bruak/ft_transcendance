@@ -135,22 +135,24 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         # Paddle collisions
         paddle1 = self.game_state['players']['player1']
         paddle2 = self.game_state['players']['player2']
-        if ball['x'] <= -6 and paddle1['position'] - 1 <= ball['y'] <= paddle1['position'] + 1:
+        if ball['x'] <= -6 and paddle1['position'] - 1 <= ball['y'] <= paddle1['position'] + 1 and ball['vx'] < 0:
             ball['vx'] *= -1
-        if ball['x'] >= 6 and paddle2['position'] - 1 <= ball['y'] <= paddle2['position'] + 1:
+        if ball['x'] >= 6 and paddle2['position'] - 1 <= ball['y'] <= paddle2['position'] + 1 and ball['vx'] > 0:
             ball['vx'] *= -1
 
         # Scoring
-        if ball['x'] < -6.3:
+        if ball['x'] < -6.7:
             self.game_state['players']['player2']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
             self.ball_speed = 1
-        elif ball['x'] > 6.3:
+        elif ball['x'] > 6.7:
             self.game_state['players']['player1']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
             self.ball_speed = 1
 
     async def start_game_loop(self):
+        p1 = self.game_state['players']['player1']
+        p2 = self.game_state['players']['player2']
         while self.game_loop_running:
             self.update_paddle_positions()
             self.update_ball_position()
@@ -159,12 +161,10 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
             if self.speed_timer >= 10:
                 self.ball_speed *= 1.05
                 self.speed_timer = 0
-
-            if self.game_state['players']['player2']['score'] >= 5 or self.game_state['players']['player1']['score'] >= 5:
-                winner = "player1" if self.game_state['players']['player1']['score'] > self.game_state['players']['player2']['score'] else "player2"
+            if p2['score'] >= 5 or p1['score'] >= 5:
+                winner = "player1" if p1['score'] > p2['score'] else "player2"
                 await self.save_match_data(winner)
                 self.game_loop_running = False
-                
             await self.broadcast_game_state()
             await asyncio.sleep(1 / 60)
 
@@ -176,6 +176,11 @@ class PongConsumer(BasePongConsumer):
         elif not room_info["guest"]:
             room_info["guest"] = self.channel_name
             self.player_id = 'player2'
+            match_id = int(self.room_name.split("_")[1])
+            await sync_to_async(Match.objects.filter(id=match_id).update)(
+                status="playing",
+                updated_at=timezone.now(),
+            )
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
         else:
@@ -189,46 +194,18 @@ class PongConsumer(BasePongConsumer):
         }))
 
 class PongBotConsumer(BasePongConsumer):
-    DIFFICULTY_SETTINGS = {
-        'easy': {
-            'prediction_error': 0.8,
-            'reaction_delay': 0.3,
-            'random_move_chance': 0.15,
-            'vision_time': 1.5,
-            'miss_chance': 0.25
-        },
-        'medium': {
-            'prediction_error': 0.5,
-            'reaction_delay': 0.2,
-            'random_move_chance': 0.1,
-            'vision_time': 1.2,
-            'miss_chance': 0.15
-        },
-        'hard': {
-            'prediction_error': 0.3,
-            'reaction_delay': 0.1,
-            'random_move_chance': 0.05,
-            'vision_time': 1.0,
-            'miss_chance': 0.05
-        }
-    }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.last_ball_check = 0
-        self.predicted_y = 0
-        self.can_see_ball = True
-        self.difficulty = 'medium'
-        self.last_movement_time = 0
-        self.should_miss = False
-
     async def handle_player_connection(self, room_info):
         if not room_info["host"]:
             room_info["host"] = self.channel_name
             self.player_id = 'player1'
+            match_id = int(self.room_name.split("_")[1])
+            await sync_to_async(Match.objects.filter(id=match_id).update)(
+                status="playing",
+                updated_at=timezone.now(),
+            )
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
-            asyncio.create_task(self.run_bot())
+            asyncio.create_task(self.bot_loop())  # Bot hareketlerini kontrol eden döngü
         else:
             room_info["spectators"].append(self.channel_name)
             self.player_id = 'spectator'
@@ -236,104 +213,29 @@ class PongBotConsumer(BasePongConsumer):
         await self.send(json.dumps({
             'type': 'init',
             'state': self.game_state,
-            'player_id': self.player_id,
-            'game_mode': 'bot'
+            'player_id': self.player_id
         }))
 
-    async def receive(self, text_data=None, bytes_data=None):
-        if text_data:
-            data = json.loads(text_data)
-            if data.get('type') == 'set_difficulty':
-                new_difficulty = data.get('difficulty', 'easy')
-                if new_difficulty in self.DIFFICULTY_SETTINGS:
-                    self.difficulty = new_difficulty
-                    await self.send(json.dumps({
-                        'type': 'difficulty_changed',
-                        'difficulty': new_difficulty
-                    }))
-            else:
-                await super().receive(text_data, bytes_data)
-
-    def add_prediction_error(self, predicted_y):
-        settings = self.DIFFICULTY_SETTINGS[self.difficulty]
-        
-
-        max_error = 3.0 * settings['prediction_error']
-        error = random.uniform(-max_error, max_error)
-        
-        error *= self.ball_speed
-        
-        return predicted_y + error
-
-    def predict_ball_position(self):
-        ball = self.game_state['ball']
-
-        if ball['vx'] <= 0:
-            return None
-
-        try:
-            distance_to_paddle = 6 - ball['x']
-            time_to_paddle = distance_to_paddle / (ball['vx'] * self.ball_speed)
-
-            predicted_y = ball['y'] + (ball['vy'] * self.ball_speed * time_to_paddle)
-
-            while abs(predicted_y) > 3.5:
-                if predicted_y > 3.5:
-                    predicted_y = 7 - predicted_y
-                elif predicted_y < -3.5:
-                    predicted_y = -7 - predicted_y
-
-            predicted_y = self.add_prediction_error(predicted_y)
-
-            settings = self.DIFFICULTY_SETTINGS[self.difficulty]
-            if random.random() < settings['miss_chance']:
-                self.should_miss = True
-                predicted_y = random.choice([-3, 3])
-            else:
-                self.should_miss = False
-            return predicted_y
-
-        except (ZeroDivisionError, ValueError):
-            return None
-
-    def get_bot_movement(self, target_y, current_y):
-        settings = self.DIFFICULTY_SETTINGS[self.difficulty]
-        current_time = time()
-
-        if current_time - self.last_movement_time < settings['reaction_delay']:
-            return False, False
-
-        self.last_movement_time = current_time
-
-        if random.random() < settings['random_move_chance']:
-            return random.choice([(True, False), (False, True), (False, False)])
-
-        movement_threshold = 0.2 * (1 + settings['prediction_error'])
-        if abs(target_y - current_y) > movement_threshold:
-            if target_y > current_y:
-                return False, True
-            else:
-                return True, False
-        return False, False
-
-    async def run_bot(self):
+    async def bot_loop(self):
+        bot_id = "player2" if self.player_id == "player1" else "player1"
         while self.game_loop_running:
-            current_time = time()
-            bot = self.game_state['players']['player2']
-            settings = self.DIFFICULTY_SETTINGS[self.difficulty]
-            
-            if current_time - self.last_ball_check >= settings['vision_time']:
-                self.last_ball_check = current_time
-                predicted_y = self.predict_ball_position()
-                if predicted_y is not None:
-                    self.predicted_y = predicted_y
+            ball = self.game_state['ball']
+            bot_position = self.game_state['players'][bot_id]['position']
 
-            if self.predicted_y is not None:
-                move_up, move_down = self.get_bot_movement(
-                    self.predicted_y, 
-                    bot['position']
-                )
-                bot['move_up'] = move_up
-                bot['move_down'] = move_down
-            
-            await asyncio.sleep(1/60)
+            error_chance = random.random()  # 0 ile 1 arasında rastgele bir sayı
+            if ball['x'] > 0 and ball['vx'] > 0:
+                if error_chance < 0.15:
+                    if ball['y'] > bot_position + 0.4:  # Tolerans ekleyerek yumuşak hareket
+                        self.game_state['players'][bot_id]['move_up'] = False
+                        self.game_state['players'][bot_id]['move_down'] = True
+                    elif ball['y'] < bot_position - 0.4:
+                        self.game_state['players'][bot_id]['move_up'] = True
+                        self.game_state['players'][bot_id]['move_down'] = False
+                    else:
+                        self.game_state['players'][bot_id]['move_up'] = False
+                        self.game_state['players'][bot_id]['move_down'] = False
+            else:
+                self.game_state['players'][bot_id]['move_up'] = False
+                self.game_state['players'][bot_id]['move_down'] = False
+
+            await asyncio.sleep(1 / 60)

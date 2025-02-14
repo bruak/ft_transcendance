@@ -153,4 +153,3 @@ document.addEventListener("stateChange:user", (event) => {
 //     history.pushState(null, null, "/");
 //     router();
 // }
-

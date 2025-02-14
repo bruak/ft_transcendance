@@ -1,6 +1,6 @@
 <div class="profile-page">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect">
         <div class="container">
             <div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -23,7 +23,6 @@
                         <li class="nav-item mt-2 mb-2 position-relative">
                             <input autocomplete="off" autofocus class="form-control search-input" name="query"
                                 placeholder="Arkadaş ara..." spellcheck="false" dir="auto"
-                                style="width: 250px; margin-left: 15px;" 
                                 id="friendSearchInput">
                             <ul id="friendSuggestions" 
                                 class="list-group position-absolute mt-2" 
@@ -33,10 +32,11 @@
                 </div>
             </div>
             <!-- Profil Küçük Resmi - Dropdown -->
-            <div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
+            <div class="dropdown ms-auto position-relative" style="z-index: 1050;">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                     id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img id="profileSmallPhoto" src="" alt="User" width="30" height="30" class="rounded-circle">
+                    <img id="profileSmallPhoto" src="" alt="User" class="rounded-circle">
+                    <span id="navbarUsername"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#">Örnek1</a></li>
@@ -56,7 +56,7 @@
     <main class="container my-5">
         <!-- Profil Bilgileri -->
         <section>
-            <article class="card p-4">
+            <article class="card p-4 glass-effect">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-center">
                         <img id="profileImageDisplay" 
@@ -66,9 +66,9 @@
                              width="150">
                     </div>
                     <div class="col-md-4 text-center text-md-start">
-                        <h1 id="profileNameDisplay"></h1>
-                        <p id="profileTitleDisplay" class="title"></p>
-                        <p id="profileLocationDisplay"></p>
+                        <h1 id="profileNameDisplay" class="profile-name"></h1>
+                        <p class="title"><i class="bi bi-person"></i> <span id="profileTitleDisplay"></span></p>
+                        <p><i class="bi bi-geo-alt"></i> <span id="profileLocationDisplay"></span></p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
                         <!-- Profili Düzenle Butonu kaldırıldı -->
@@ -76,13 +76,17 @@
                         <button class="btn btn-outline-secondary mt-2" 
                                 id="viewFriendsButton" 
                                 data-bs-toggle="modal"
-                                data-bs-target="#friendsModal">Dostlar</button>
+                                data-bs-target="#friendsModal">
+                            <i class="bi bi-people"></i> Dostlar
+                        </button>
 
                         <!-- Gelen İstekler Modalını açar -->
                         <button class="btn btn-outline-secondary mt-2" 
                                 id="showRequestsButton" 
                                 data-bs-toggle="modal"
-                                data-bs-target="#requestsModal">İstekler</button>
+                                data-bs-target="#requestsModal">
+                            <i class="bi bi-person-plus"></i> İstekler
+                        </button>
                     </div>
                 </div>
             </article>
@@ -90,27 +94,27 @@
 
         <!-- Oyun Seçenekleri Bölümü -->
         <section class="my-5">
-            <h2 class="text-center">Oyun Seçenekleri</h2>
-            <div class="card p-4" id="gameOptions">
+            <h2 class="text-center"><i class="bi bi-controller"></i> Oyun Seçenekleri</h2>
+            <div class="card p-4 glass-effect" id="gameOptions">
                 <div class="row">
                     <!-- Örnek Oyun Kartları (Yapay Zeka, Turnuva, Online, vb.) -->
                     <section class="col-md-3 p-3 game-option-card" data-option="aiOptions">
-                        <h3>Yapay Zeka</h3>
+                        <h3><i class="bi bi-cpu"></i> Yapay Zeka</h3>
                         <p>Bota Karşı Oyna</p>
                         <button class="btn btn-primary game-option-button">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="tournamentOptions">
-                        <h3>Turnuva</h3>
+                        <h3><i class="bi bi-trophy"></i> Turnuva</h3>
                         <p>Turnuva oluştur.</p>
                         <button class="btn btn-primary game-option-button">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="onlineOptions">
-                        <h3>Online</h3>
+                        <h3><i class="bi bi-globe"></i> Online</h3>
                         <p>Online Oyna</p>
                         <button class="btn btn-primary game-option-button">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="quickMatchOptions">
-                        <h3>Hızlı Kapışma</h3>
+                        <h3><i class="bi bi-lightning"></i> Hızlı Kapışma</h3>
                         <p>Lokalde Oyna</p>
                         <button class="btn btn-primary game-option-button">Oyna</button>
                     </section>
@@ -203,7 +207,7 @@
         <!-- Son Etkinlikler -->
         <section class="my-5">
             <h2 class="text-center">Son Etkinlikler</h2>
-            <ul id="recentActivitiesList" class="list-group">
+            <ul id="recentActivitiesList" class="list-group"></ul>
                 <!-- Dinamik içerik buraya eklenecek -->
             </ul>
         </section>
@@ -211,7 +215,7 @@
         <!-- Profil Düzenleme Modal kaldırıldı -->
 
         <!-- Dostlar (Arkadaşlar) Modal -->
-        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel">
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" style="display: none;" inert>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -227,7 +231,7 @@
         </div>
 
         <!-- Gelen İstekler Modal -->
-        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel">
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel" style="display: none;" inert>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -241,7 +245,7 @@
         </div>
 
         <!-- Oyun Seçenekleri Modal -->
-        <div class="modal fade" id="gameOptionsModal" tabindex="-1" aria-labelledby="gameOptionsModalLabel">
+        <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1" aria-labelledby="gameOptionsModalLabel" style="display: none;" inert>
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">

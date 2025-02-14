@@ -78,9 +78,9 @@ form button:hover {
 }
 
 
-.hidden {
+/* .hidden {
 	display: none;
-}
+} */
 
 .form-container {
 	transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
