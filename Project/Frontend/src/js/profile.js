@@ -402,19 +402,11 @@ function sendFriendRequest(username, friendUsername, apiBaseUrl, accessToken) {
     });
 
   function notifyFriendRequestSent(friendUsername) {
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-success';
-    notification.textContent = `Arkadaşlık isteği gönderildi: ${friendUsername}`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    showToast(`Arkadaşlık isteği gönderildi: ${friendUsername}`);
   }
 
   function displayFriendRequestError(message) {
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-danger';
-    notification.textContent = `Arkadaşlık isteği gönderilemedi: ${message}`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    showToast(`Arkadaşlık isteği gönderilemedi: ${message}`, 'danger');
   }
 }
 
@@ -482,21 +474,11 @@ function sendFriendRequest(username, friendUsername, apiBaseUrl, accessToken) {
                   }
 
                   function notifyRequestAcceptanceFailure() {
-                    // Bildirim gösterme örneği
-                    const notification = document.createElement('div');
-                    notification.className = 'alert alert-danger';
-                    notification.textContent = `Arkadaşlık isteği kabul edilemedi: ${result.message || 'Bilinmeyen hata'}`;
-                    document.body.appendChild(notification);
-                    setTimeout(() => notification.remove(), 3000);
+                    showToast(`Arkadaşlık isteği kabul edilemedi: ${result.message || 'Bilinmeyen hata'}`, 'danger');
                   }
 
                   function notifyFriendRequestAccepted() {
-                    // Bildirim gösterme örneği
-                    const notification = document.createElement('div');
-                    notification.className = 'alert alert-success';
-                    notification.textContent = `${friendname} arkadaşlık isteğinizi kabul etti.`;
-                    document.body.appendChild(notification);
-                    setTimeout(() => notification.remove(), 3000);
+                    showToast(`${friendname} arkadaşlık isteğinizi kabul etti.`);
                   }
                 })
                 .catch(err => console.error('İstek kabul hatası:', err));
@@ -621,12 +603,36 @@ function showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken) {
 
 /* ======================[*] Hata Mesajı Gösterme Fonksiyonu [*]====================== */
 function showErrorMessage(message) {
-  const errorDiv = document.createElement("div");
-  errorDiv.className = "error-message alert alert-danger";
-  errorDiv.textContent = message;
-  document.body.appendChild(errorDiv);
-  setTimeout(() => errorDiv.remove(), 3000);
+  showToast(message, 'danger');
 }
 
 /* ======================[*] Router SPA Kullanıyorsanız Bu Satırı Yoruma Alın [*]====================== */
 // document.addEventListener('DOMContentLoaded', initProfile);
+
+/* ======================[*] Toast Bildirimleri [*]====================== */
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast align-items-center text-bg-${type} border-0 position-fixed top-0 start-50 translate-middle-x mt-3`;
+  toast.role = 'alert';
+  toast.ariaLive = 'assertive';
+  toast.ariaAtomic = 'true';
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+
+  toastContainer.appendChild(toast);
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+
+  toast.addEventListener('hidden.bs.toast', () => {
+    toast.remove();
+  });
+}

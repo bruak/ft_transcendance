@@ -1,6 +1,6 @@
 <div class="profile-page">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect" style="position: sticky; top: 0; z-index: 999;">
         <div class="container">
             <div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -21,8 +21,8 @@
                         </li>
                         <!-- Arkadaş Arama Alanı -->
                         <li class="nav-item mt-2 mb-2 position-relative">
-                            <input autocomplete="off" autofocus class="form-control search-input" name="query"
-                                placeholder="Arkadaş ara..." spellcheck="false" dir="auto"
+                            <input autocomplete="off" autofocus class="form-control search-input" name="query" 
+                                placeholder="Ara..." spellcheck="false" dir="auto"
                                 id="friendSearchInput">
                             <ul id="friendSuggestions" 
                                 class="list-group position-absolute mt-2" 
@@ -307,6 +307,7 @@
         <footer class="bg-dark text-white text-center py-3 mt-5">
             <p>&copy; 2025 Tüm hakları saklı değildir.</p>
         </footer>
+        <div class="toast-container" id="toastContainer"></div>
     </main>
 </div>
 
