@@ -231,3 +231,6 @@ msgstr "Sadece DELETE isteği kabul edilmektedir."
 
 msgid "Error deleting user."
 msgstr "Kullanıcı silinirken bir hata oluştu."
+
+msgid "Access token does not belong to this user"
+msgstr "Erişim belirteci bu kullanıcıya ait değil"

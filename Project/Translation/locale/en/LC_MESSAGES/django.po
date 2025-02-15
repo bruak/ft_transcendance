@@ -219,3 +219,6 @@ msgstr "Only DELETE requests are allowed."
 
 msgid "Error deleting user."
 msgstr "Error deleting user."
+
+msgid "Access token does not belong to this user"
+msgstr "Access token does not belong to this user"
