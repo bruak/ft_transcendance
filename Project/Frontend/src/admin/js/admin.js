@@ -22,7 +22,10 @@ async function Rol() {
 	});
 
 	if (!response.ok) {
-		window.location.href = "/";
+		if (localStorage.getItem("accessToken") && localStorage.getItem('username'))
+			window.location.href = `/${localStorage.getItem('username')}`;
+		else
+			window.location.href = "/";
 	}
 	const responseJson = await response.json(); // API'den dönen yanıt
 	const RoleGuard = responseJson.data;

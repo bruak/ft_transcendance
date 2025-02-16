@@ -32,7 +32,7 @@ class TokenService:
 		return refresh_token, exp
 
 	@staticmethod
-	def create_expiration_date(minutes): # dakika
+	def create_expiration_date(minutes):
 		return timezone.now() + timedelta(minutes=minutes)
 
 	@staticmethod

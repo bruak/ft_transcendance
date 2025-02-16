@@ -126,29 +126,22 @@ def user_get(request, username):
 @csrf_exempt
 def user_update(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
-
 	if request.method != "POST":
 		return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
-
 	try:
 		user = User.objects.get(username=username)
-
-		# JSON verisini al
 		data = JSONParser().parse(request)
 
-		# Alınan veriden gerekli bilgileri çıkart
 		first_name = data.get('first_name', user.first_name)
 		last_name = data.get('last_name', user.last_name)
 		email = data.get('email', user.email)
 		avatar = data.get('avatar', user.avatar)
-
 		user.password = data.get('password', user.password)
 
 		user.first_name = first_name
 		user.last_name = last_name
 		user.email = email
 		user.avatar = avatar
-
 		user.save()
 
 		return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
@@ -156,9 +149,7 @@ def user_update(request, username):
 	except User.DoesNotExist:
 		return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 	except Exception as e:
-		print(str(e))  # Hata için log kaydı
 		return JsonResponse({"error": get_translated_message("USER_UPDATE_ERROR", user_language), "str": str(e)}, status=500)
-
 
 def search(request, query):
 	user_language = request.headers.get("Accept-Language", "tr")
@@ -176,9 +167,7 @@ def search(request, query):
 		serializer = UserSerializer(users, many=True)
 		return JsonResponse({'message': serializer.data}, status=200)
 	except Exception as e:
-		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500) # değişcek
-
-
+		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500) # değişcek (neden -burak)
 
 def login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
