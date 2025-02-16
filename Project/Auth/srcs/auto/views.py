@@ -14,24 +14,22 @@ import os
 import uuid
 import requests
 
+# Updated
 @csrf_exempt
 def user_update(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
-
-
-
 	if request.method != "POST":
 		return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
-	
 	try:
-		userDB_response = requests.get(
-			f"http://project-users-1:8000/getuser/{username}/"
-			)
+		auth = request.headers.get("Authorization")
+		accesToken =  access_token_validate(auth)
 
+		user = Users.objects.get(access_token=accesToken)
+		
+		userDB_response = requests.get(f"http://project-users-1:8000/getuser/{user.username}/", headers=request.headers)
 		if userDB_response.status_code != 200:
 			return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 		
-		user = Users.objects.get(username=username)
 		data = request.POST
 		avatar = request.FILES.get('avatar', None)
 		new_password = data.get('password', None)
@@ -44,26 +42,22 @@ def user_update(request, username):
 		if avatar:
 			if avatar and os.path.exists(f"/app/{userDB_response.json().get('message').get('avatar')}"):
 				os.remove(f"/app/{userDB_response.json().get('message').get('avatar')}")
-			new_avatar = image_to_url(avatar, username)
+			new_avatar = image_to_url(avatar, user.username)
 		else:
 			new_avatar = userDB_response.json().get('message').get('avatar')
 
 		user.save()
 
-		headers = {"Accept-Language": "application/json"}
+		headers = {"Accept-Language": user_language, "Authorization" : auth}
 		user_data = {
-			"username": username,
+			"username": user.username,
 			"password": user.password,
 			"avatar": new_avatar,
 			"first_name": first_name,
 			"last_name": last_name,
 		}
 
-		user_response = requests.post(
-			f"http://project-users-1:8000/put/{username}/",
-			json=user_data,
-			headers=headers
-		)
+		user_response = requests.post(f"http://project-users-1:8000/put/{user.username}/", json=user_data, headers=headers )
 
 		if user_response.status_code != 200:
 			return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=500)
@@ -77,43 +71,8 @@ def user_update(request, username):
 		return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
 
 @csrf_exempt
-def user_delete(request, username):
-	user_language = request.headers.get("Accept-Language", "tr")
-
-	if request.method != "DELETE":
-		return JsonResponse({'error': get_translated_message("ONLY_DELETE_REQUESTS_ALLOWED", user_language)}, status=405)
-	
-	try:
-		user = Users.objects.get(username=username)
-		userDB_response = requests.get(f"http://project-users-1:8000/getuser/{username}/")
-		avatar_path = f"/app/{userDB_response.json().get('message').get('avatar')}"
-
-		# Kullanıcının avatarını ve diğer verilerini silme işlemi
-		if avatar_path != '/media/avatars/default.jpg' and avatar_path:
-			if os.path.exists(avatar_path):
-				os.remove(avatar_path)
-		
-		# Kullanıcıyı sil
-		# Kullanıcı silindikten sonra ilgili kullanıcıyı diğer servisten sil
-		headers = {"Accept-Language": "application/json", "Accept-Language": user_language}
-
-		# Kullanıcıyı diğer servisten silme isteği
-		user_response = requests.delete(f"http://project-users-1:8000/delete/{username}/", headers=headers)
-
-		if user_response.status_code != 200:
-			return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language)}, status=500)
-		user.delete()
-		return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
-	except Users.DoesNotExist:
-		return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
-	except Exception as e:
-		return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language), 'exception': str(e)}, status=500)
-
-@csrf_exempt
 def singin(request):
 	if request.method == "POST":
-		# return get_translated_message_test() # its for test, u can remove this line
-
 		data = JSONParser().parse(request)
 		singin = data.get("sign")
 		password = data.get("password")
@@ -332,22 +291,7 @@ def validate_token(request):
 		return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
 	return JsonResponse({'valid': True}, status = 200)
 
-def validate_token_username(request, username):
-	user_language = request.headers.get("Accept-Language", "tr")
-	if request.method != "GET":
-		return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)},status=405)
-	access_token = access_token_validate(request.headers.get("Authorization"))
-	if access_token is None:
-		return JsonResponse( {'error': get_translated_message("INVALID_VALIDATE_TOKEN", user_language)}, status=401)
-		
-	try:
-		usernameToken = TokenService.validate_access_token(access_token)
-		if username != usernameToken:
-			return JsonResponse( {'error': get_translated_message("TOKEN_USERNAME_MISMATCH", user_language)}, status=403)
-		return JsonResponse( {'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
-	except Exception as e:
-		return JsonResponse({'error': get_translated_message("TOKEN_VALIDATION_ERROR", user_language)},status=401)
-
+# Authorizationda'ki username'i Döndürüyor
 def validate_get_username(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "GET":
@@ -362,30 +306,18 @@ def validate_get_username(request):
 	except Exception as e:
 		return JsonResponse({'error': get_translated_message("TOKEN_VALIDATION_ERROR", user_language)},status=401)
 
-
-
-
-def validate_admin(request):
-	user_language = request.headers.get("Accept-Language", "tr")
-	if request.method != "GET":
-		return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
-	authorization_header = request.headers.get("Authorization", "")
-	if not authorization_header.startswith("Bearer "):
-		return JsonResponse({'error': get_translated_message("MISSING_BEARER_TOKEN", user_language)}, status=400)
-	access_token = authorization_header[7:]
-	if access_token is None:
-		return JsonResponse({'error': get_translated_message("INVALID_VALIDATE_TOKEN", user_language)}, status=401)
-
-	status = TokenService.is_admin(access_token)
-	data = {
-		"valid": status,
-	}
-	print(status)
-	if status:
-		return JsonResponse({'message': data}, status=200)
-	else:
-		return JsonResponse({'message': data}, status=403)
-
+# User Kontrol
+@csrf_exempt
+def user_exists(request, username):
+    user_language = request.headers.get("Accept-Language", "tr")
+    
+    if request.method != "GET":
+        return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+    try:
+        Users.objects.get(username=username)
+        return JsonResponse({"valid": True}, status=200)
+    except Users.DoesNotExist:
+        return JsonResponse({"valid": False}, status=404)
 
 
 # Test Edilcek -> Ihtiyaç Doğrultusuna göre düzenlencek
@@ -419,11 +351,11 @@ def retry_verification_account(request):
 # İntra Login
 def intra_login(request):
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-	redirect_uri = "https://localhost:8080/api/auth/callback/"  # Callback URL
+	redirect_uri = "https://10.12.18.7:8080/api/auth/callback/"  # Callback URL
 	auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
 	return JsonResponse({'url': auth_url}, status=200)
 
-#İntra Callback
+# İntra Callback
 def callback(request, code):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if not code:
@@ -431,7 +363,7 @@ def callback(request, code):
 
 	UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
 	SECRET = "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"
-	redirect_uri = "https://localhost:8080/api/auth/callback/"  # Callback URL
+	redirect_uri = "https://10.12.18.7:8080/api/auth/callback/"  # Callback URL
 	token_url = "https://api.intra.42.fr/oauth/token"
 	data = {
 		'grant_type': 'authorization_code',
@@ -504,7 +436,58 @@ def callback(request, code):
 
 	return(JsonResponse({'message': token,}, status=201))
 
-# Kullanıcı HAkkında Verilcek Bilgiler (Admin İçin)
+# Admin'mi Diye Kontrol
+def validate_admin(request):
+	user_language = request.headers.get("Accept-Language", "tr")
+	if request.method != "GET":
+		return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+	authorization_header = request.headers.get("Authorization", "")
+	if not authorization_header.startswith("Bearer "):
+		return JsonResponse({'error': get_translated_message("MISSING_BEARER_TOKEN", user_language)}, status=400)
+	access_token = authorization_header[7:]
+	if access_token is None:
+		return JsonResponse({'error': get_translated_message("INVALID_VALIDATE_TOKEN", user_language)}, status=401)
+
+	status = TokenService.is_admin(access_token)
+	data = {
+		"valid": status,
+	}
+	print(status)
+	if status:
+		return JsonResponse({'message': data}, status=200)
+	else:
+		return JsonResponse({'message': data}, status=403)
+
+# Admin Fonksiyon Olucak (Admin Kontrolu Edilicek)
+@csrf_exempt
+def user_delete(request, username):
+	user_language = request.headers.get("Accept-Language", "tr")
+
+	if request.method != "DELETE":
+		return JsonResponse({'error': get_translated_message("ONLY_DELETE_REQUESTS_ALLOWED", user_language)}, status=405)
+
+	try:
+		user = Users.objects.get(username=username)
+		userDB_response = requests.get(f"http://project-users-1:8000/getuser/{user.username}/", headers=request.headers)
+		avatar_path = f"/app/{userDB_response.json().get('message').get('avatar')}"
+
+		# Kullanıcının avatarını ve diğer verilerini silme işlemi
+		if avatar_path != '/media/avatars/default.jpg' and avatar_path:
+			if os.path.exists(avatar_path):
+				os.remove(avatar_path)
+
+		user_response = requests.delete(f"http://project-users-1:8000/delete/{user.username}/", headers=request.headers)
+
+		if user_response.status_code != 200:
+			return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language)}, status=500)
+		user.delete()
+		return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
+	except Users.DoesNotExist:
+		return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+	except Exception as e:
+		return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language), 'exception': str(e)}, status=500)
+
+# Kullanıcı Hakkında Verilcek Bilgiler (Admin İçin) (Admin Kontrolu Edilicek)
 def listUsers(request, username):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "GET":
@@ -522,7 +505,7 @@ def listUsers(request, username):
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
 
-# Tüm Mail Token List
+# Tüm Mail Token List (Admin İçin) (Admin Kontrolu Edilicek) 
 def MailTokenlist(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	if request.method != "GET":
@@ -535,7 +518,7 @@ def MailTokenlist(request):
 	except Exception as e:
 		return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", user_language)}, status=500)
 
-# Tüm TwoFactor List
+# Tüm TwoFactor List (Admin İçin) (Admin Kontrolu Edilicek)
 def twoFactorList(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 		

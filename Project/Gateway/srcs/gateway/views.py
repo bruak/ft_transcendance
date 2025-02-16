@@ -83,7 +83,8 @@ def handle_formdata(request):
 		if request.FILES:
 			files = request.FILES
 		payload = request.POST
-		response = requests.post(target_url, data=payload, files=files)
+		headers = {"Accept-Language": request.headers.get("Accept-Language", "tr"), "Authorization" : request.headers.get("Authorization", None)} 
+		response = requests.post(target_url, data=payload, files=files, headers=headers)
 		if response.text.strip() == '':
 			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
 		response_json = response.json()
