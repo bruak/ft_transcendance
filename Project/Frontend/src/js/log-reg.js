@@ -55,6 +55,14 @@ export function initLogReg() {
             currentStep++;
             showStep(currentStep);
             updateStepperUI(currentStep);
+            // Yeni adım görüntülendikten sonra ilk input elemanına odak verelim
+            setTimeout(() => {
+                const currentStepElement = steps[currentStep];
+                const firstInput = currentStepElement.querySelector('input');
+                if (firstInput) {
+                firstInput.focus();
+                }
+            }, 200);
         }
     }
 
