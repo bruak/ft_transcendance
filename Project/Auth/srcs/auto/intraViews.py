@@ -11,7 +11,7 @@ class IntraRequest(View):
     # İntra Login
     def intra_login(request):
         UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-        redirect_uri = "https://10.12.18.7:8080/api/auth/callback/"  # Callback URL
+        redirect_uri = "https://10.12.16.2:8080/api/auth/callback/"  # Callback URL
         auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
         return JsonResponse({'url': auth_url}, status=200)
 
@@ -23,7 +23,7 @@ class IntraRequest(View):
 
         UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
         SECRET = "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"
-        redirect_uri = "https://10.12.18.7:8080/api/auth/callback/"  # Callback URL
+        redirect_uri = "https://10.12.16.2:8080/api/auth/callback/"  # Callback URL
         token_url = "https://api.intra.42.fr/oauth/token"
         data = {
             'grant_type': 'authorization_code',

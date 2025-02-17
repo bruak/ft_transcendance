@@ -20,8 +20,19 @@ EXCLUDED_PATHS = [
     "api",  # değişicek
 ]
 
-AUTH_VALIDATION_URL = "http://project-auth-1:8000/validate-token/"
+ADMIN_PATHS = [
+  #  "http://auth:8000/validate_admin/", bu admin diye kontrol edicek
+    #"http://auth:8000/delete/",
+    "http://auth:8000/listtwofactor/",
+    #"http://auth:8000/listusers/",
+    "http://auth:8000/listmail/",
+    "http://users:8000/list/",
+    #"http://users:8000/delete/",
+    "http://friend:8000/friend_list/",
+]
 
+AUTH_VALIDATION_URL = "http://project-auth-1:8000/validate-token/"
+ADMIN_VALIDATION_URL = "http://project-auth-1:8000/validate_admin/" 
 
 class ProxyMiddleware:
     def __init__(self, get_response):
@@ -44,10 +55,15 @@ class ProxyMiddleware:
 
         if not self.is_excluded_path(path) and not self.validate_token(request, user_language):
             return self.json_response("INVALID_VALIDATE_TOKEN", user_language, 401)
+        
+        
         request.path = f"{service_url}/{path}/"
+        if self.is_admin_path(request.path) and not self.validate_admin(request):
+            return self.json_response("INVALID_VALIDATE_TOKEN", user_language, 401)
         print(f"Updated request path: {request.path}")
 
         return None  # Continue to the view
+        """       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars - ./Frontend:/run/nginx/html """
 
     def extract_service_and_path(self, request):
         """Extracts service name and remaining path from the request."""
@@ -79,3 +95,15 @@ class ProxyMiddleware:
     def json_response(self, message_key, language, status):
         """Returns a standardized JSON response."""
         return JsonResponse({'message': get_translated_message(message_key, language)}, status=status)
+    def is_admin_path(self, path):
+        """Checks if the path is in the admin paths list."""
+        return any(path.startswith(admin) for admin in ADMIN_PATHS)
+    
+    def validate_admin(self, request):
+        """Validates the authentication token."""
+        token = request.headers.get("Authorization")
+        if not token:
+            return False
+    
+        response = requests.get(ADMIN_VALIDATION_URL, headers=request.headers)
+        return response.status_code == 200
