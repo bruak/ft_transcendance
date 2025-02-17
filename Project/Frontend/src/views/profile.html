@@ -1,6 +1,7 @@
 <div class="profile-page">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect"
+        style="position: sticky; top: 0; z-index: 999;">
         <div class="container">
             <div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -22,32 +23,53 @@
                         <!-- Arkadaş Arama Alanı -->
                         <li class="nav-item mt-2 mb-2 position-relative">
                             <input autocomplete="off" autofocus class="form-control search-input" name="query"
-                                placeholder="Arkadaş ara..." spellcheck="false" dir="auto"
-                                id="friendSearchInput">
-                            <ul id="friendSuggestions" 
-                                class="list-group position-absolute mt-2" 
+                                placeholder="Ara..." spellcheck="false" dir="auto" id="friendSearchInput">
+                            <ul id="friendSuggestions" class="list-group position-absolute mt-2"
                                 style="width: 250px; z-index: 1000;"></ul>
                         </li>
                     </ul>
                 </div>
             </div>
             <!-- Profil Küçük Resmi - Dropdown -->
-            <div class="dropdown ms-auto position-relative" style="z-index: 1050;">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img id="profileSmallPhoto" src="" alt="User" class="rounded-circle">
-                    <span id="navbarUsername"></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Örnek1</a></li>
-                    <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">Settings</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <!-- Çıkış işlemi profile.js içinde #signout yakalanarak yapılacak -->
-                    <li><a class="dropdown-item" href="#signout">Sign out</a></li>
-                </ul>
+            <div class="d-flex align-items-center position-relative">
+                <!-- Bildirim Çanı -->
+                <div class="dropdown ms-3 position-relative">
+                    <a href="#" class="nav-link text-white" id="notificationBell" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+                        <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            0
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationBell">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" id="requestsMenu">
+                                <i class="bi bi-person-plus me-2"></i> Gelen İstekler
+                                <span class="badge bg-primary ms-auto">2</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle me-2"></i> Daha Fazla Bildirim</a></li>
+                    </ul>
+                </div>
+                <!-- Profil Dropdown -->
+                <div class="dropdown ms-3">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                        id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img id="profileSmallPhoto" src="" alt="User" class="rounded-circle" width="40" height="40">
+                        <span id="navbarUsername" class="ms-2"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Örnek1</a></li>
+                        <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                data-bs-target="#settingsModal">Settings</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#signout">Sign out</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
@@ -59,11 +81,7 @@
             <article class="card p-4 glass-effect">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-center">
-                        <img id="profileImageDisplay" 
-                             src="" 
-                             alt="Profil Fotoğrafı" 
-                             class="rounded-circle" 
-                             width="150">
+                        <img id="profileImageDisplay" src="" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
                     </div>
                     <div class="col-md-4 text-center text-md-start">
                         <h1 id="profileNameDisplay" class="profile-name"></h1>
@@ -73,20 +91,16 @@
                     <div class="col-md-4 text-center" id="profileActions">
                         <!-- Profili Düzenle Butonu kaldırıldı -->
                         <!-- Arkadaşlar Modalını açar -->
-                        <button class="btn btn-outline-secondary mt-2" 
-                                id="viewFriendsButton" 
-                                data-bs-toggle="modal"
-                                data-bs-target="#friendsModal">
-                            <i class="bi bi-people"></i> Dostlar
+                        <button class="btn friends-card-3d" id="viewFriendsButton" data-bs-toggle="modal" data-bs-target="#friendsModal">
+                            <i class="bi bi-people-fill"></i> Dostlar
                         </button>
+                        
 
-                        <!-- Gelen İstekler Modalını açar -->
-                        <button class="btn btn-outline-secondary mt-2" 
-                                id="showRequestsButton" 
-                                data-bs-toggle="modal"
-                                data-bs-target="#requestsModal">
+                        <!-- Gelen İstekler Modalını açar
+                        <button class="btn btn-outline-secondary mt-2" id="showRequestsButton" data-bs-toggle="modal"
+                            data-bs-target="#requestsModal">
                             <i class="bi bi-person-plus"></i> İstekler
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </article>
@@ -133,7 +147,7 @@
                     <button class="btn btn-secondary">Orta</button>
                     <button class="btn btn-secondary">Zor</button>
                 </div>
-                
+
                 <hr>
                 <p>Bot davranışını seçin:</p>
                 <div class="btn-group" role="group">
@@ -141,7 +155,7 @@
                     <button class="btn btn-outline-info">Savunmacı</button>
                     <button class="btn btn-outline-info">Dengeli</button>
                 </div>
-            
+
                 <hr>
                 <p>Oyun süresi:</p>
                 <select class="form-control mb-3">
@@ -151,7 +165,7 @@
                 </select>
                 <button class="btn btn-success mt-3" data-bs-dismiss="modal">Başlat</button>
             </div>
-            
+
             <!-- Turnuva Seçenekleri -->
             <div id="tournamentOptions" class="game-options">
                 <p>Katılımcı sayısını seçin:</p>
@@ -169,7 +183,7 @@
                     <button class="btn btn-success">Oda Kur</button>
                 </div>
             </div>
-            
+
             <!-- Online Oyun Seçenekleri -->
             <div id="onlineOptions" class="game-options">
                 <h4>Online Oyun Seçenekleri</h4>
@@ -178,7 +192,7 @@
                     <button class="btn btn-outline-info" data-bs-dismiss="modal">Rastgele Maç</button>
                     <button class="btn btn-outline-info" >Arkadaşlarla Oyna</button>
                 </div>
-            
+
                 <hr>
                 <p>Oda Kur / Katıl:</p>
                 <div class="input-group mb-3">
@@ -186,10 +200,10 @@
                     <button class="btn btn-outline-success">Katıl</button>
                     <button class="btn btn-success">Oda Kur</button>
                 </div>
-            
+
                 <button class="btn btn-primary mt-3">Oyuna Başla</button>
             </div>
-            
+
             <!-- Hızlı Kapışma Seçenekleri -->
             <div id="quickMatchOptions" class="game-options">
                 <h4>Hızlı Kapışma Seçenekleri</h4>
@@ -208,14 +222,15 @@
         <section class="my-5">
             <h2 class="text-center">Son Etkinlikler</h2>
             <ul id="recentActivitiesList" class="list-group"></ul>
-                <!-- Dinamik içerik buraya eklenecek -->
+            <!-- Dinamik içerik buraya eklenecek -->
             </ul>
         </section>
 
         <!-- Profil Düzenleme Modal kaldırıldı -->
 
         <!-- Dostlar (Arkadaşlar) Modal -->
-        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" style="display: none;" inert>
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel"
+            style="display: none;" inert>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -231,7 +246,8 @@
         </div>
 
         <!-- Gelen İstekler Modal -->
-        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel" style="display: none;" inert>
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel"
+            style="display: none;" inert>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -245,7 +261,8 @@
         </div>
 
         <!-- Oyun Seçenekleri Modal -->
-        <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1" aria-labelledby="gameOptionsModalLabel" style="display: none;" inert>
+        <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1"
+            aria-labelledby="gameOptionsModalLabel" style="display: none;" inert>
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -307,6 +324,7 @@
         <footer class="bg-dark text-white text-center py-3 mt-5">
             <p>&copy; 2025 Tüm hakları saklı değildir.</p>
         </footer>
+        <div class="toast-container" id="toastContainer"></div>
     </main>
 </div>
 

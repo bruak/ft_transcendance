@@ -542,6 +542,61 @@ body {
     margin: 5px;
 }
 
+.profile-page #notificationBell {
+    position: relative;
+}
+
+.profile-page #notificationBadge {
+    font-size: 0.8rem;
+    animation: pulse 1s infinite;
+}
+
+.profile-page #requestsMenu i {
+    font-size: 1.2rem;
+}
+
+.profile-page .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-page .dropdown-menu .dropdown-item:hover {
+    background-color: var(--color-primary-hover);
+    color: var(--color-text-light);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+
+
+.friends-card-3d {
+    background: #4ca1af;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 6px #2c3e50;
+    transition: all 0.3s ease;
+}
+
+.friends-card-3d:hover {
+    background: #5fb9d8;
+    box-shadow: 0 4px #2c3e50;
+    transform: translateY(-2px);
+}
+
+
 
 /* =================== Log-Reg Sayfası Tasarımı =================== */
 

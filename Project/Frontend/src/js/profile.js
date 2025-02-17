@@ -64,6 +64,9 @@ export function initProfile(params = {}) {
         // user -> { data: {...} }
         updateProfileUI(user);
 
+        // Bildirimleri güncelle
+        updateNotifications(user.notifications);
+
         // Başkasının profiliyse düzenleme aksiyonlarını/btn'leri gizleyin
         if (!isOwnProfile) {
           const profileActions = document.getElementById('profileActions');
@@ -105,7 +108,7 @@ export function initProfile(params = {}) {
                 // console.log('Profil başarıyla güncellendi!');
                 // Gerekirse tekrar profil bilgisi çek: 
                 // or data içinde güncel user varsa updateProfileUI(data);
-                
+
                 updateProfileUI(data);
               } else {
                 console.log('Profil güncellenemedi: ' + (data.message || 'Bilinmeyen hata.'));
@@ -218,47 +221,47 @@ export function initProfile(params = {}) {
     }
 
     /* ---------------- 5) Gelen Arkadaş İsteklerini Listele & Kabul Et ---------------- */
-    const showRequestsBtn = document.getElementById('showRequestsButton');
+    const showRequestsBtn = document.getElementById('requestsMenu');
     if (showRequestsBtn) {
-        showRequestsBtn.addEventListener('click', () => {
-            const modal = document.getElementById('requestsModal');
-            modal.removeAttribute('inert');
-            const bootstrapModal = new bootstrap.Modal(modal);
-            bootstrapModal.show();
+      showRequestsBtn.addEventListener('click', () => {
+        const modal = document.getElementById('requestsModal');
+        modal.removeAttribute('inert');
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
 
-            modal.addEventListener('hidden.bs.modal', () => {
-                modal.setAttribute('inert', '');
-                document.body.classList.remove('modal-open');
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            });
-
-            showFriendRequestsSection(userToLoad, apiBaseUrl, accessToken);
+        modal.addEventListener('hidden.bs.modal', () => {
+          modal.setAttribute('inert', '');
+          document.body.classList.remove('modal-open');
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove();
+          }
         });
+
+        showFriendRequestsSection(userToLoad, apiBaseUrl, accessToken);
+      });
     }
 
     /* ---------------- 6) Arkadaşlar Listesini Göster & Kaldır ---------------- */
     const showFriendsBtn = document.getElementById('viewFriendsButton');
     if (showFriendsBtn) {
-        showFriendsBtn.addEventListener('click', () => {
-            const modal = document.getElementById('friendsModal');
-            modal.removeAttribute('inert');
-            const bootstrapModal = new bootstrap.Modal(modal);
-            bootstrapModal.show();
+      showFriendsBtn.addEventListener('click', () => {
+        const modal = document.getElementById('friendsModal');
+        modal.removeAttribute('inert');
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
 
-            modal.addEventListener('hidden.bs.modal', () => {
-                modal.setAttribute('inert', '');
-                document.body.classList.remove('modal-open');
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            });
-
-            showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken);
+        modal.addEventListener('hidden.bs.modal', () => {
+          modal.setAttribute('inert', '');
+          document.body.classList.remove('modal-open');
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove();
+          }
         });
+
+        showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken);
+      });
     }
 
     /* ---------------- 7) Oyun Seçenekleri & Diğer İşlemler ---------------- */
@@ -457,131 +460,111 @@ function sendFriendRequest(username, friendUsername, apiBaseUrl, accessToken) {
     });
 
   function notifyFriendRequestSent(friendUsername) {
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-success';
-    notification.textContent = `Arkadaşlık isteği gönderildi: ${friendUsername}`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    showToast(`Arkadaşlık isteği gönderildi: ${friendUsername}`);
   }
 
   function displayFriendRequestError(message) {
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-danger';
-    notification.textContent = `Arkadaşlık isteği gönderilemedi: ${message}`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    showToast(`Arkadaşlık isteği gönderilemedi: ${message}`, 'danger');
   }
 }
 
 
-    /* ======================[*] Gelen İstekleri Listele & Kabul Et [*]====================== */
-    function showFriendRequestsSection(username, apiBaseUrl, accessToken) {
-      const friendRequestsContainer = document.getElementById('friendRequestsContainer');
-      if (!friendRequestsContainer) return;
+/* ======================[*] Gelen İstekleri Listele & Kabul Et [*]====================== */
+function showFriendRequestsSection(username, apiBaseUrl, accessToken) {
+  // İstekleri göstermek için modal veya bir container kullanabilirsiniz
+  const friendRequestsContainer = document.getElementById('friendRequestsContainer'); // İsteklerin yükleneceği HTML elemanı
+  if (!friendRequestsContainer) {
+    console.error('friendRequestsContainer bulunamadı.');
+    return;
+  }
 
+  // İstekleri çek
+  fetch(`${apiBaseUrl}/friend/list_friend_requests/${username}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Language': 'tr',
+      'Authorization': `Bearer ${accessToken}`
+    }
+  })
+    .then(res => {
+      if (res.status === 404) return { notFound: true };
+      if (!res.ok) {
+        throw new Error(`Arkadaşlık istekleri listelenirken hata: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const requests = data.data || [];
+      if (requests.length === 0) {
+        friendRequestsContainer.innerHTML = `<p>Gelen arkadaşlık isteği yok.</p>`;
+        return;
+      }
 
-      // 1) İstekleri çek
-      fetch(`${apiBaseUrl}/friend/list_friend_requests/${username}/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Accept-Language': 'tr',
-          'Authorization': `Bearer ${accessToken}`
-        }
-      })
-        .then(res => {
-          if (res.status === 404)
-            return { notFound: true };
-          if (!res.ok) {
-            throw new Error(`Arkadaşlık istekleri listelenirken hata: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          // console.log('Gelen istekler:', data);
-          const requests = data.data || [];
-          if (requests.length === 0) {
-            friendRequestsContainer.innerHTML = `<p>Gelen arkadaşlık isteği yok.</p>`;
-            return;
-          }
-
-          let html = '<ul class="list-group">';
-          requests.forEach(req => {
-            html += `
+      let html = '<ul class="list-group">';
+      requests.forEach(req => {
+        html += `
               <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
                 <span>${req.username} sana arkadaşlık isteği gönderdi</span>
                 <button class="btn btn-sm btn-primary" data-friend="${req.username}">
                   Kabul Et
                 </button>
               </li>`;
-          });
-          html += '</ul>';
-          friendRequestsContainer.innerHTML = html;
+      });
+      html += '</ul>';
+      friendRequestsContainer.innerHTML = html;
 
-          // Kabul Et butonları
-          const acceptButtons = friendRequestsContainer.querySelectorAll('button[data-friend]');
-          acceptButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-              const friendname = btn.getAttribute('data-friend');
-              // console.log('İstek friendname:', friendname);
-              acceptFriendRequest(username, friendname, apiBaseUrl, accessToken)
-                .then(result => {
-                  // console.log('İstek kabul sonucu:', result);
-                  if (result.success) {
-                    notifyFriendRequestAccepted(); // 
-                    // İstek kabul edildiyse DOM'dan kaldır
-                    btn.parentElement.remove();
-                  } else {
-                    notifyRequestAcceptanceFailure();//
-                  }
-
-                  function notifyRequestAcceptanceFailure() {
-                    // Bildirim gösterme örneği
-                    const notification = document.createElement('div');
-                    notification.className = 'alert alert-danger';
-                    notification.textContent = `Arkadaşlık isteği kabul edilemedi: ${result.message || 'Bilinmeyen hata'}`;
-                    document.body.appendChild(notification);
-                    setTimeout(() => notification.remove(), 3000);
-                  }
-
-                  function notifyFriendRequestAccepted() {
-                    // Bildirim gösterme örneği
-                    const notification = document.createElement('div');
-                    notification.className = 'alert alert-success';
-                    notification.textContent = `${friendname} arkadaşlık isteğinizi kabul etti.`;
-                    document.body.appendChild(notification);
-                    setTimeout(() => notification.remove(), 3000);
-                  }
-                })
-                .catch(err => console.error('İstek kabul hatası:', err));
-            });
-          });
-        })
-        .catch(err => {
-          console.error('listFriendRequests hata:', err);
-          friendRequestsContainer.innerHTML = `<p class="text-danger">Arkadaşlık istekleri yüklenirken hata oluştu.</p>`;
+      // Kabul Et butonlarına tıklanma olaylarını ekle
+      const acceptButtons = friendRequestsContainer.querySelectorAll('button[data-friend]');
+      acceptButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const friendname = btn.getAttribute('data-friend');
+          acceptFriendRequest(username, friendname, apiBaseUrl, accessToken)
+            .then(result => {
+              if (result.success) {
+                notifyFriendRequestAccepted(friendname);
+                btn.parentElement.remove(); // Kabul edilen isteği DOM'dan kaldır
+              } else {
+                notifyRequestAcceptanceFailure(result.message || 'Bilinmeyen hata');
+              }
+            })
+            .catch(err => console.error('İstek kabul hatası:', err));
         });
-    }
+      });
+    })
+    .catch(err => {
+      console.error('listFriendRequests hata:', err);
+      friendRequestsContainer.innerHTML = `<p class="text-danger">Arkadaşlık istekleri yüklenirken hata oluştu.</p>`;
+    });
+}
 
-    function acceptFriendRequest(username, friendname, apiBaseUrl, accessToken) {
-      return fetch(`${apiBaseUrl}/friend/accept_friend_request/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Accept-Language': 'tr',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ username, friendname })
-      })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`Arkadaşlık isteği kabul edilirken hata: ${res.status}`);
-          }
-          return res.json();
-        });
-    }
+function acceptFriendRequest(username, friendname, apiBaseUrl, accessToken) {
+  return fetch(`${apiBaseUrl}/friend/accept_friend_request/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Language': 'tr',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ username, friendname })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Arkadaşlık isteği kabul edilirken hata: ${res.status}`);
+      }
+      return res.json();
+    });
+}
+
+function notifyFriendRequestAccepted(friendname) {
+  showToast(`${friendname} arkadaşlık isteğinizi kabul etti.`, 'success');
+}
+
+function notifyRequestAcceptanceFailure(message) {
+  showToast(`Arkadaşlık isteği kabul edilemedi: ${message}`, 'danger');
+}
 
 /* ======================[*] Arkadaş Listesini Göster & Kaldır [*]====================== */
 function showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken) {
@@ -676,12 +659,60 @@ function showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken) {
 
 /* ======================[*] Hata Mesajı Gösterme Fonksiyonu [*]====================== */
 function showErrorMessage(message) {
-  const errorDiv = document.createElement("div");
-  errorDiv.className = "error-message alert alert-danger";
-  errorDiv.textContent = message;
-  document.body.appendChild(errorDiv);
-  setTimeout(() => errorDiv.remove(), 3000);
+  showToast(message, 'danger');
 }
 
 /* ======================[*] Router SPA Kullanıyorsanız Bu Satırı Yoruma Alın [*]====================== */
 // document.addEventListener('DOMContentLoaded', initProfile);
+
+/* ======================[*] Toast Bildirimleri [*]====================== */
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast align-items-center text-bg-${type} border-0 position-fixed top-0 start-50 translate-middle-x mt-3`;
+  toast.role = 'alert';
+  toast.ariaLive = 'assertive';
+  toast.ariaAtomic = 'true';
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+
+  toastContainer.appendChild(toast);
+  const bsToast = new bootstrap.Toast(toast, { delay: 1000 });
+  bsToast.show();
+
+  toast.addEventListener('hidden.bs.toast', () => {
+    toast.remove();
+  });
+}
+
+/* ======================[*] Bildirimleri Güncelleme [*]====================== */
+function updateNotifications(notifications) {
+  const notificationBadge = document.getElementById('notificationBadge');
+  const requestsMenu = document.getElementById('requestsMenu');
+
+  // Bildirim sayısını güncelle
+  if (notifications.total > 0) {
+    notificationBadge.textContent = notifications.total;
+    notificationBadge.style.display = 'inline';
+  } else {
+    notificationBadge.style.display = 'none';
+  }
+
+  // Gelen istek sayısını güncelle
+  if (notifications.requests > 0) {
+    requestsMenu.querySelector('.badge').textContent = notifications.requests;
+  } else {
+    requestsMenu.querySelector('.badge').style.display = 'none';
+  }
+}
+
+// Örnek kullanım:
+// updateNotifications({ total: 0, requests: 0 });
