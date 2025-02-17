@@ -372,6 +372,11 @@ export function initProfile(params = {}) {
           });
       });
     }
+    window.joinGame = function(url) {
+      setState('detail_url', url);
+      history.pushState(null, null, '/GamePage');
+      router();
+    };
     const recentActivitiesList = document.getElementById('recentActivitiesList');
     /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
     fetch(`${apiBaseUrl}/game/playing-matches/`, { // bura henüz çalışmıyor

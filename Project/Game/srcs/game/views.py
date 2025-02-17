@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from .models import Match
+from .models import Match, Tournament
 
 @csrf_exempt
 def random_match_view(request):
@@ -82,7 +82,7 @@ def playing_matches_view(request):
 				"match_id": match.id,
 				"player1": match.player1,
 				"player2": match.player2,
-				"timestamp": match.updated_at,  # Ensure timestamp is included
+				"timestamp": match.updated_at,
 				"detail_url": f"game/room_{match.id}/" if match.match_type == 'M' else f"bot/room_{match.id}/"
 			}
 			for match in playing_matches

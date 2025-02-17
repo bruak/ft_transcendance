@@ -47,7 +47,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = self.room_name
-
+        
         if self.room_name not in self.room_data:
             self.room_data[self.room_name] = {
                 "host": None,
@@ -75,14 +75,14 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
             room_info = self.room_data[self.room_name]
             
             if room_info["host"] == self.channel_name:
-                room_info["host"] = None
+                room_info["host"] = 'disconnected'
             elif room_info["guest"] == self.channel_name:
-                room_info["guest"] = None
+                room_info["guest"] = 'disconnected'
                 self.game_loop_running = False
             elif self.channel_name in room_info["spectators"]:
                 room_info["spectators"].remove(self.channel_name)
 
-            if not room_info["host"] and not room_info["guest"] and not room_info["spectators"]:
+            if  room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"]:
                 del self.room_data[self.room_name]
 
     async def receive(self, text_data=None, bytes_data=None):
@@ -126,13 +126,11 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         ball['x'] += ball['vx'] * self.ball_speed
         ball['y'] += ball['vy'] * self.ball_speed
 
-        # Bounce off walls
         if abs(ball['y']) > 3.5:
             ball['vy'] *= -1
         if abs(ball['x']) > 7:
             ball['vx'] *= -1
 
-        # Paddle collisions
         paddle1 = self.game_state['players']['player1']
         paddle2 = self.game_state['players']['player2']
         if ball['x'] <= -6 and paddle1['position'] - 1 <= ball['y'] <= paddle1['position'] + 1 and ball['vx'] < 0:
@@ -140,7 +138,6 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         if ball['x'] >= 6 and paddle2['position'] - 1 <= ball['y'] <= paddle2['position'] + 1 and ball['vx'] > 0:
             ball['vx'] *= -1
 
-        # Scoring
         if ball['x'] < -6.7:
             self.game_state['players']['player2']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
@@ -205,7 +202,7 @@ class PongBotConsumer(BasePongConsumer):
             )
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
-            asyncio.create_task(self.bot_loop())  # Bot hareketlerini kontrol eden döngü
+            asyncio.create_task(self.bot_loop())
         else:
             room_info["spectators"].append(self.channel_name)
             self.player_id = 'spectator'
@@ -222,10 +219,10 @@ class PongBotConsumer(BasePongConsumer):
             ball = self.game_state['ball']
             bot_position = self.game_state['players'][bot_id]['position']
 
-            error_chance = random.random()  # 0 ile 1 arasında rastgele bir sayı
+            error_chance = random.random()
             if ball['x'] > 0 and ball['vx'] > 0:
                 if error_chance < 0.15:
-                    if ball['y'] > bot_position + 0.4:  # Tolerans ekleyerek yumuşak hareket
+                    if ball['y'] > bot_position + 0.4:
                         self.game_state['players'][bot_id]['move_up'] = False
                         self.game_state['players'][bot_id]['move_down'] = True
                     elif ball['y'] < bot_position - 0.4:
