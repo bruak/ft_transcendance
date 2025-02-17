@@ -33,7 +33,7 @@ def handle_delete(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	target_url = request.path
 	try:
-		headers = request.headers
+		headers = {"Accept-Language": request.headers.get("Accept-Language", "tr"), "Authorization" : request.headers.get("Authorization", None)} 
 		# DELETE isteği gönderiyoruz
 		response = requests.delete(target_url, headers=headers)
 		
