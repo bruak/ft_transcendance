@@ -65,7 +65,9 @@ export function initProfile(params = {}) {
         updateProfileUI(user);
 
         // Bildirimleri güncelle
-        updateNotifications(user.notifications);
+        if (user.notifications)
+          updateNotifications(user.notifications);
+        // notifications.total > 0, notifications.requests > 0
 
         // Başkasının profiliyse düzenleme aksiyonlarını/btn'leri gizleyin
         if (!isOwnProfile) {
@@ -123,6 +125,13 @@ export function initProfile(params = {}) {
     }
 
     /* ---------------- 4) Arkadaş Arama & Ekleme ---------------- */
+    /* Arkadaş arama inputu ve sonuçları
+      Arkadaş Aramada Parçalı (Partial) Aramaya Uygun Olmayan Endpoint
+
+      handleFriendSearch fonksiyonu, arama çubuğuna yazılan değeri “/user/getuser/${searchValue}” şeklinde bir GET isteği ile sorguluyor.
+      Bu endpoint gerçekten kullanıcıları “partial” şekilde (örneğin “ali” yazınca “alican”, “aliyasar” vs.) dönecek mi, yoksa tam eşleşme mi arıyor? Kod mantığı, 3 karakterden sonra arama yaparak “Sonuç bulunamadı” diyebiliyor. Eğer sunucu tarafında tam kullanıcı adına göre dönen bir endpoint varsa, aramada sadece tek kullanıcıyı bulabilir.
+      “partial search” yapmıyorsa, kullanıcı “ali” yazdığında ama sunucuda “alican” varsa bile sonuç alamayabilirsiniz. Bu kod ile “like query” türü bir endpoint olmadığı sürece “Sonuç bulunamadı” dönecektir.
+    */
     const friendSearchInput = document.getElementById('friendSearchInput');
     if (friendSearchInput) {
       friendSearchInput.addEventListener('input', debounce(handleFriendSearch, 500));
@@ -225,17 +234,11 @@ export function initProfile(params = {}) {
     if (showRequestsBtn) {
       showRequestsBtn.addEventListener('click', () => {
         const modal = document.getElementById('requestsModal');
-        modal.removeAttribute('inert');
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
 
         modal.addEventListener('hidden.bs.modal', () => {
-          modal.setAttribute('inert', '');
-          document.body.classList.remove('modal-open');
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove();
-          }
+          // document.getElementById('friendRequestsContainer').innerHTML = '';
         });
 
         showFriendRequestsSection(userToLoad, apiBaseUrl, accessToken);
@@ -247,17 +250,11 @@ export function initProfile(params = {}) {
     if (showFriendsBtn) {
       showFriendsBtn.addEventListener('click', () => {
         const modal = document.getElementById('friendsModal');
-        modal.removeAttribute('inert');
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
 
         modal.addEventListener('hidden.bs.modal', () => {
-          modal.setAttribute('inert', '');
-          document.body.classList.remove('modal-open');
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove();
-          }
+        //   // document.getElementById('friendsList').innerHTML = '';
         });
 
         showFriendsSection(userToLoad, currentUser, apiBaseUrl, accessToken);
@@ -332,12 +329,10 @@ export function initProfile(params = {}) {
           }
         const modal = document.getElementById('gameOptionsModal');
         modal.classList.add('animate__animated', 'animate__fadeInDown');
-        modal.removeAttribute('inert');
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
 
         modal.addEventListener('hidden.bs.modal', () => {
-          modal.setAttribute('inert', '');
           modal.classList.remove('animate__animated', 'animate__fadeInDown');
         });
       });
@@ -423,7 +418,7 @@ export function initProfile(params = {}) {
 /* ======================[*] Profili Güncelleme UI [*]====================== */
 export function updateProfileUI(user) {
   const userData = user.data;
-  if (!userData) {
+  if (!userData || typeof userData !== 'object') {
     console.error("Beklenen formatta user datası yok:", user);
     return;
   }

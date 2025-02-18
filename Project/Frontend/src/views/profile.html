@@ -22,7 +22,7 @@
                         </li>
                         <!-- Arkadaş Arama Alanı -->
                         <li class="nav-item mt-2 mb-2 position-relative">
-                            <input autocomplete="off" autofocus class="form-control search-input" name="query"
+                            <input autocomplete="off" class="form-control search-input" name="query"
                                 placeholder="Ara..." spellcheck="false" dir="auto" id="friendSearchInput">
                             <ul id="friendSuggestions" class="list-group position-absolute mt-2"
                                 style="width: 250px; z-index: 1000;"></ul>
@@ -53,15 +53,13 @@
                     </ul>
                 </div>
                 <!-- Profil Dropdown -->
-                <div class="dropdown ms-3">
+                <div class="dropdowOnline ms-3">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                         id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img id="profileSmallPhoto" src="" alt="User" class="rounded-circle" width="40" height="40">
                         <span id="navbarUsername" class="ms-2"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Örnek1</a></li>
-                        <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#settingsModal">Settings</a></li>
                         <li>
@@ -89,18 +87,11 @@
                         <p><i class="bi bi-geo-alt"></i> <span id="profileLocationDisplay"></span></p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
-                        <!-- Profili Düzenle Butonu kaldırıldı -->
                         <!-- Arkadaşlar Modalını açar -->
                         <button class="btn friends-card-3d" id="viewFriendsButton" data-bs-toggle="modal" data-bs-target="#friendsModal">
                             <i class="bi bi-people-fill"></i> Dostlar
                         </button>
                         
-
-                        <!-- Gelen İstekler Modalını açar
-                        <button class="btn btn-outline-secondary mt-2" id="showRequestsButton" data-bs-toggle="modal"
-                            data-bs-target="#requestsModal">
-                            <i class="bi bi-person-plus"></i> İstekler
-                        </button> -->
                     </div>
                 </div>
             </article>
@@ -226,11 +217,9 @@
             </ul>
         </section>
 
-        <!-- Profil Düzenleme Modal kaldırıldı -->
 
         <!-- Dostlar (Arkadaşlar) Modal -->
-        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel"
-            style="display: none;" inert>
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true" inert>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -246,8 +235,7 @@
         </div>
 
         <!-- Gelen İstekler Modal -->
-        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel"
-            style="display: none;" inert>
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -262,7 +250,7 @@
 
         <!-- Oyun Seçenekleri Modal -->
         <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1"
-            aria-labelledby="gameOptionsModalLabel" style="display: none;" inert>
+            aria-labelledby="gameOptionsModalLabel" >
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
