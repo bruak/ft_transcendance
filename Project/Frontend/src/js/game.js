@@ -336,4 +336,6 @@ export function initGame() {
       cleanupGame();
   };
 }
+window.cleanup = cleanupGame;
+window.addEventListener('beforeunload', cleanupGame);
 document.addEventListener('DOMContentLoaded', initGame);

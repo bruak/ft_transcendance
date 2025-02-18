@@ -3,12 +3,73 @@ from .models import Users, MailTokens, TwofactorCodes
 from .tokenService import TokenService
 from .serializer import MailTokenSerializer, TwoFactoSerializer
 from .translate_way import get_translated_message
+from .tools import image_to_url
+from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import os
+from datetime import timedelta
+from django.utils import timezone
+import uuid
+
 
 class AdminRequest(View):
+	# Admin Update
+	@csrf_exempt
+	def admin_user_update(request, username):
+		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != "POST":
+			return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+		try:
+			user = Users.objects.get(username=username)
+		
+			userDB_response = requests.get(f"http://project-users-1:8000/adminuser/{user.username}/", headers=request.headers)
+			if userDB_response.status_code != 200:
+				return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+			
+			data = request.POST
+			avatar = request.FILES.get('avatar', None)
+			new_password = data.get('password', None)
+			first_name = data.get('first_name', userDB_response.json().get('message').get('first_name'))
+			last_name = data.get('last_name', userDB_response.json().get('message').get('last_name'))
+			
+			if new_password:
+				user.password = make_password(new_password)
+
+			if avatar:
+				if avatar and os.path.exists(f"/app/{userDB_response.json().get('message').get('avatar')}"):
+					os.remove(f"/app/{userDB_response.json().get('message').get('avatar')}")
+				new_avatar = image_to_url(avatar, user.username)
+			else:
+				new_avatar = userDB_response.json().get('message').get('avatar')
+
+			user.save()
+
+			headers = {"Accept-Language": user_language, "Authorization" : f"Bearer {user.access_token}"}
+			user_data = {
+				"username": user.username,
+				"password": user.password,
+				"avatar": new_avatar,
+				"first_name": first_name,
+				"last_name": last_name,
+			}
+
+			user_response = requests.post(f"http://project-users-1:8000/put/{user.username}/", json=user_data, headers=headers )
+
+			if user_response.status_code != 200:
+				return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=500)
+
+			return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
+		
+		except Users.DoesNotExist:
+			return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+		
+		except Exception as e:
+			return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
+
+
+
 	# Admin'mi Diye Kontrol
 	def validate_admin(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -44,15 +105,15 @@ class AdminRequest(View):
 			user = Users.objects.get(username=username)
 			
 			userDB_response = requests.get(f"http://project-users-1:8000/adminuser/{user.username}/", headers=headers)
+			print(userDB_response.status_code)
 			avatar_path = f"/app/{userDB_response.json().get('message').get('avatar')}"
-
 			# Kullanıcının avatarını ve diğer verilerini silme işlemi
 			if avatar_path != '/media/avatars/default.jpg' and avatar_path:
 				if os.path.exists(avatar_path):
 					os.remove(avatar_path)
 
 			user_response = requests.delete(f"http://project-users-1:8000/delete/{user.username}/", headers=request.headers)
-
+			print(user_response.status_code)
 			if user_response.status_code != 200:
 				return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language)}, status=500)
 			user.delete()
@@ -79,7 +140,7 @@ class AdminRequest(View):
 			return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
-
+		
 	# Tüm Mail Token List (Admin İçin) (Admin Kontrolu Edilicek) 
 	def MailTokenlist(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -89,14 +150,60 @@ class AdminRequest(View):
 			mail_tokens = MailTokens.objects.all()
 			serializer = MailTokenSerializer(mail_tokens, many=True)
 			return JsonResponse({'message': serializer.data}, status=200)
-			
-		except Exception as e:
+		except Exception:
 			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", user_language)}, status=500)
+	
+	@csrf_exempt
+	def ChangeMailTokenStatus(request, username, token):
+		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != "POST":
+			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+		
+		try:
+			user = Users.objects.get(username=username)
+			user.is_active = False
+			
+			if not MailTokens.objects.filter(user=user, token=token).exists():
+				return JsonResponse({"error": get_translated_message("MAIL_TOKEN_NOT_FOUND", user_language)}, status=404)
+			
+			MailToken = MailTokens.objects.get(user=user, token=token)
+			
+			
+			
+			token = str(uuid.uuid4())
+			NewToken = MailTokens.objects.create(
+                user=user,
+                token=token,
+                type="verify",
+                expiration =  timezone.now() + timedelta(minutes=(60 * 24))
+            )
+			
+			payload = {
+				"email": user.email,
+				"token": NewToken.token,
+				"username": user.username,
+			}
+			
+			response = requests.post("http://project-mail-1:8000/api/verify/", json=payload)
+			user.save()
+			MailToken.delete()
+			if response.status_code != 200:
+				return JsonResponse({"error": get_translated_message("MAIL_SEND_ERROR", user_language)}, status=500)
+			
+			return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
+		
+		except Users.DoesNotExist:
+			return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+		except MailTokens.DoesNotExist:
+			return JsonResponse({"error": get_translated_message("MAIL_TOKEN_NOT_FOUND", user_language)}, status=404)
+		except requests.RequestException:
+			return JsonResponse({"error": get_translated_message("MAIL_SERVICE_ERROR", user_language)}, status=500)
+		except Exception as e:
+			return JsonResponse({"error": get_translated_message("UNEXPECTED_ERROR", user_language)}, status=500)
 
 	# Tüm TwoFactor List (Admin İçin) (Admin Kontrolu Edilicek)
 	def twoFactorList(request):
 		user_language = request.headers.get("Accept-Language", "tr")
-			
 		if request.method != "GET":
 			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
@@ -104,6 +211,6 @@ class AdminRequest(View):
 			serializer = TwoFactoSerializer(twofactor, many=True)
 			return JsonResponse({'message': serializer.data}, status=200)
 			
-		except Exception as e:
+		except Exception:
 			# Hata durumunda hata mesajı döndür
 			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", user_language)}, status=500)

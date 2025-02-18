@@ -123,8 +123,9 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
-        if (window.location.pathname !== '/GamePage' && typeof cleanup === 'function') {
-            cleanup();
+        if (typeof window.cleanup === 'function') {
+            window.cleanup();
+            delete window.cleanup;
         }
         router(); // Sayfayı güncelle
     }
@@ -132,7 +133,13 @@ document.addEventListener('click', (event) => {
 
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
-window.addEventListener('popstate', router);
+window.addEventListener('popstate' , () => {
+    if (typeof window.cleanup === 'function') {
+        window.cleanup();
+        delete window.cleanup;
+    }
+    router();
+});
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {

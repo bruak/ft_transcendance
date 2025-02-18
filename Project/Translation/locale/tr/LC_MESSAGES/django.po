@@ -234,3 +234,6 @@ msgstr "Kullanıcı silinirken bir hata oluştu."
 
 msgid "Access token does not belong to this user"
 msgstr "Erişim belirteci bu kullanıcıya ait değil"
+
+msgid "Error changing mail token status"
+msgstr "E-posta jetonu değiştirme hatası"

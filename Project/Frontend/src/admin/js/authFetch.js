@@ -97,9 +97,9 @@ export async function fetchMailTokens() {
 				<td>${formatDate(mail.expiration)}</td>
 				<td>${mail.status}</td>
 				<td>
-					<button class="btn btn-info btn-sm  view-user" data-username="${mail.username}")"> <i class="bi bi-info-circle"></i> </button>
-					<button class="btn btn-warning btn-sm update-user"  data-username="${mail.username}")"> <i class="bi bi-pencil"></i> </button>
-					<button class="btn btn-danger btn-sm delete-user" data-username="${mail.username}")"> <i class="bi bi-trash"></i> </button>
+					<button class="btn btn-info btn-sm  view-mail" data-username="${mail.username}")"> <i class="bi bi-info-circle"></i> </button>
+					<button class="btn btn-warning btn-sm update-mail"  data-username="${mail.username}")"> <i class="bi bi-pencil"></i> </button>
+					<button class="btn btn-danger btn-sm delete-mail" data-username="${mail.username}")"> <i class="bi bi-trash"></i> </button>
 				</td>
 			`;
 			tableBody.appendChild(row);

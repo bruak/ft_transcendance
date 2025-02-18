@@ -137,9 +137,9 @@ services:
     ports:
       - 8080:443
     volumes:
+      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
       - ./Frontend:/run/nginx/html
-
 
   game:
     build:

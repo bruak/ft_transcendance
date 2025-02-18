@@ -31,9 +31,15 @@ intra_patterns = [
 admin_patterns = [
     path('validate_admin/', AdminRequest.validate_admin, name="admin"),
     path('delete/<str:username>/', AdminRequest.user_delete, name="delete"),
-    path('listtwofactor/', AdminRequest.twoFactorList, name="twofactorlist"),
     path('listusers/<str:username>/', AdminRequest.listUsers, name="listUsers"),
+    path('adminput/<str:username>/', AdminRequest.admin_user_update, name="adminupdate"),
+    
+    #mail 
     path('listmail/', AdminRequest.MailTokenlist, name="mailtokenlist"),
+    path('change-mail-status/<str:username>/<str:token>/', AdminRequest.ChangeMailTokenStatus, name="change-mail-status"),
+
+    #twofactor tokens
+    path('listtwofactor/', AdminRequest.twoFactorList, name="twofactorlist"),
 ]
 
 # Miscellaneous URLs

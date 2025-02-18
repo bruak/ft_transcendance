@@ -12,3 +12,61 @@
 		<!-- Friends will be listed here -->
 	</tbody>
 </table>
+
+<!-- İNFO -->
+<div class="modal fade" id="FriendInfoModal" tabindex="-1" aria-labelledby="FriendInfoModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="FriendInfoModalLabel">Arkadaşlık Detayları</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+		</div>
+		<div class="modal-body">
+			  <p><strong>Kullanıcı Adı:</strong> <span id="username"></span></p>
+			  <p><strong>Arkadaş Adı:</strong> <span id="friendname"></span></p>
+			  <p><strong>Durum:</strong> <span id="status"></span></p>
+			  <p><strong>Oluşturulma Tarihi:</strong> <span id="created"></span></p>
+			  <p><strong>Güncellenme Tarihi:</strong> <span id="update"></span></p>
+			</div>
+		  </div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+  
+<!-- UPDATE -->
+<div class="modal fade" id="FriendUpdateModal" tabindex="-1" aria-labelledby="FriendUpdateModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="FriendUpdateModalLabel">Arkadaşlık Durumu Güncelle</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+		</div>
+		<div class="modal-body">
+		  <form id="friendUpdateForm">
+			<div class="mb-3">
+			  <label for="updateStatus" class="form-label">Yeni Durum</label>
+			  <select id="updateStatus" class="form-select">
+				<option value="pending">Pending</option>
+				<option value="accepted">Accepted</option>
+				<option value="rejected">Rejected</option>
+				<option value="blocked">Blocked</option>
+				<option value="removed">Removed</option>
+			  </select>
+			</div>
+			<!-- Güncellenecek kaydın username ve friendname bilgilerini saklamak için gizli alanlar -->
+			<input type="hidden" id="updateUsername" value="">
+			<input type="hidden" id="updateFriendname" value="">
+			<button type="submit" class="btn btn-primary">Güncelle</button>
+		  </form>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+  

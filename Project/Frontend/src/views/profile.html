@@ -159,19 +159,47 @@
 
             <!-- Turnuva Seçenekleri -->
             <div id="tournamentOptions" class="game-options">
-                <p>Katılımcı sayısını seçin:</p>
-                <select class="form-control mb-3">
-                    <option>4 Oyuncu</option>
-                    <option>8 Oyuncu</option>
-                    <option>16 Oyuncu</option>
-                    <option>32 Oyuncu</option>
-                </select>
-                <hr>
-                <p>Turnuva Kur / Katıl:</p>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" style="margin-right: 30px;" placeholder="Oda Kodu">
-                    <button class="btn btn-outline-success">Katıl</button>
-                    <button class="btn btn-success">Oda Kur</button>
+                <div class="create-tournament-section">
+                    <h5 class="mb-3">Yeni Turnuva Oluştur</h5>
+                    <div class="form-group mb-3">
+                        <label>Turnuva Adı:</label>
+                        <input type="text" class="form-control" id="tournamentName" placeholder="Turnuva adını girin">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Katılımcı Sayısı:</label>
+                        <select class="form-control" id="playerCount">
+                            <option value="4">4 Oyuncu</option>
+                            <option value="8">8 Oyuncu</option>
+                            <option value="16">16 Oyuncu</option>
+                            <option value="32">32 Oyuncu</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Başlangıç Tarihi:</label>
+                        <input type="datetime-local" class="form-control" id="startDate">
+                    </div>
+                    <button id="createTournamentBtn" class="btn btn-success w-100">Turnuva Oluştur</button>
+                </div>
+            
+                <hr class="my-4">
+            
+                <!-- Mevcut Turnuvalara Katılma Bölümü -->
+                <div class="join-tournament-section">
+                    <h5 class="mb-3">Turnuvaya Katıl</h5>
+                    <div class="form-group mb-3">
+                        <input type="text" class="form-control" id="tournamentCode" placeholder="Turnuva Kodu">
+                    </div>
+                    <button id="joinTournamentBtn" class="btn btn-outline-success w-100">Turnuvaya Katıl</button>
+                </div>
+            
+                <hr class="my-4">
+            
+                <!-- Aktif Turnuvalar Listesi -->
+                <div class="active-tournaments-section">
+                    <h5 class="mb-3">Aktif Turnuvalar</h5>
+                    <div class="list-group" id="activeTournamentsList">
+                        <!-- Turnuvalar dinamik olarak buraya eklenecek -->
+                    </div>
                 </div>
             </div>
 

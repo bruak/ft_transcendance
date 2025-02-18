@@ -137,7 +137,6 @@ class UserRequest(View):
                 return JsonResponse({'error': get_translated_message("MAIL_ALREADY_EXISTS", user_language)}, status=409)
 
             avatar_url = image_to_url(avatar_file, username)
-            print(f"asd: {avatar_url}")
 
             hashed_password = make_password(password)
 
@@ -153,7 +152,7 @@ class UserRequest(View):
                     user=user,
                     token=token,
                     type="verify",
-                    expiration=  timezone.now() + timedelta(minutes=(60 * 24))
+                    expiration =  timezone.now() + timedelta(minutes=(60 * 24))
             )
 
             headers = {"Accept-Language": "application/json"}

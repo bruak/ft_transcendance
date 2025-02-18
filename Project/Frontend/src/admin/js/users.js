@@ -8,7 +8,7 @@ export async function viewUserInfo(username) {
 		const host = window.location.host;
 		const apiBaseUrl = `https://${host}/api/`;
 
-		const response = await fetch(`${apiBaseUrl}user/list/${username}/`,
+		const response = await fetch(`${apiBaseUrl}user/adminuser/${username}/`,
 		{
 			method: 'GET',
 			headers: {
@@ -49,9 +49,9 @@ export async function updateUser(username) {
 	  const accessToken = localStorage.getItem("accessToken");
 	  const host = window.location.host;
 	  const apiBaseUrl = `https://${host}/api/`;
-  
+
 	  // API'den mevcut kullanıcıyı al
-	  const response = await fetch(`${apiBaseUrl}user/getuser/${username}/`, {
+	  const response = await fetch(`${apiBaseUrl}user/adminuser/${username}/`, {
 		method: 'GET',
 		headers: {
 		  'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export async function updateUser(username) {
 		}
   
 		// PUT isteği gönder
-		const updateResponse = await fetch(`${apiBaseUrl}auth/put/${username}/`, {
+		const updateResponse = await fetch(`${apiBaseUrl}auth/adminput/${username}/`, {
 		  method: 'POST',
 		  headers: {
 			'Authorization': `Bearer ${accessToken}`,

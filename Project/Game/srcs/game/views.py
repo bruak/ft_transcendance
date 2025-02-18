@@ -13,29 +13,27 @@ def random_match_view(request):
 	try:
 		data = JSONParser().parse(request)
 		username = data.get('username')
-		match = Match.objects.filter(match_type='M',player2__isnull=True)
-		if match.filter(player1=username, status='canceled').exists():
-			match = match.filter(player1=username, status='canceled').first()
-			match.status = 'waiting'
-			match.updated_at = timezone.now()
-			match.save()
-			return JsonResponse({"match_id": match.id, "detail_url": f"game/room_{match.id}/"}, status=200)
-		elif match.filter(player1=username, status='waiting').exists():
-			match = match.filter(player1=username, status='waiting').first()
-			return JsonResponse({"match_id": match.id, "detail_url": f"game/room_{match.id}/"}, status=200)
-		elif match.filter(status='waiting').exists():
-			match = match.filter(status='waiting').first()
-			match.player2 = username
-			match.status = 'playing'
-			match.updated_at = timezone.now()
-			match.save()
-			return JsonResponse({"match_id": match.id, "detail_url": f"game/room_{match.id}/"}, status=200)
-		else:
-			new_match = Match.objects.create(match_type='M',
-				player1 = username , 
-				status='waiting')
-			return JsonResponse({"match_id": new_match.id, "detail_url": f"game/room_{new_match.id}/"}, status=200)
+		if not username:
+			return JsonResponse({"error": "Username is required"}, status=400)
+		match_query = Match.objects.filter(match_type='M',player2__isnull=True)
 
+		waiting_match = match_query.filter(player1=username, status='waiting').first()
+		if waiting_match:
+			return JsonResponse({"match_id": waiting_match.id, "detail_url": f"game/room_{waiting_match.id}/" }, status=200)
+
+		available_match = match_query.filter(status='waiting').first()
+		if available_match:
+			available_match.player2 = username
+			available_match.status = 'playing'
+			available_match.updated_at = timezone.now()
+			available_match.save()
+			return JsonResponse({
+				"match_id": available_match.id,
+				"detail_url": f"game/room_{available_match.id}/"
+			}, status=200)
+
+		new_match = Match.objects.create(match_type='M', player1=username, status='waiting')
+		return JsonResponse({"match_id": new_match.id, "detail_url": f"game/room_{new_match.id}/" }, status=200)
 	except Exception as e:
 		return JsonResponse({"error ": str(e)}, status=500)
 
@@ -46,29 +44,13 @@ def bot_mach_view(request):
 	try:
 		data = JSONParser().parse(request)
 		username = data.get('username')
-		match = Match.objects.filter(match_type='S',player2__isnull=True)
-		if match.filter(player1=username, status='canceled').exists():
-			match = match.filter(player1=username, status='canceled').first()
-			match.status = 'waiting'
-			match.updated_at = timezone.now()
-			match.save()
-			return JsonResponse({"match_id": match.id, "detail_url": f"bot/room_{match.id}/"}, status=200)
-		elif match.filter(player1=username, status='waiting').exists():
-			match = match.filter(player1=username, status='waiting').first()
-			return JsonResponse({"match_id": match.id, "detail_url": f"bot/room_{match.id}/"}, status=200)
-		elif match.filter(status='waiting').exists():
-			match = match.filter(status='waiting').first()
-			match.player2 = username
-			match.status = 'playing'
-			match.updated_at = timezone.now()
-			match.save()
-			return JsonResponse({"match_id": match.id, "detail_url": f"bot/room_{match.id}/"}, status=200)
-		else:
-			new_match = Match.objects.create(match_type='S',
-				player1 = username ,
-				player2 = 'bot',
-				status='waiting')
-			return JsonResponse({"match_id": new_match.id, "detail_url": f"bot/room_{new_match.id}/"}, status=200)
+		if not username:
+			return JsonResponse({"error": "Username is required"}, status=400)
+		new_match = Match.objects.create(match_type='S',
+			player1 = username ,
+			player2 = 'bot',
+			status='waiting')
+		return JsonResponse({"match_id": new_match.id, "detail_url": f"bot/room_{new_match.id}/"}, status=200)
 	except Exception as e:
 		return JsonResponse({"error ": str(e)}, status=500)
 
@@ -90,3 +72,4 @@ def playing_matches_view(request):
 		return JsonResponse({"playing_matches": matches_list}, status=200)
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
+

@@ -96,15 +96,3 @@ class UserRequest(View):
 		except Exception as e:
 			return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500) # değişcek (neden -burak)
 
-	@csrf_exempt
-	def user_list(request):
-		user_language = request.headers.get("Accept-Language", "tr")
-		if request.method != "GET":
-			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
-		try:
-			obj = User.objects.all()
-			serializer = UserSerializer(obj, many=True)
-			return JsonResponse({'message': serializer.data}, safe=False, status=200)
-		except Exception as e:
-			return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
-

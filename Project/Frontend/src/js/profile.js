@@ -146,7 +146,7 @@ export function initProfile(params = {}) {
         suggestionsList.innerHTML = '<li class="list-group-item">Yükleniyor...</li>';
         suggestionsList.style.display = 'block';
 
-        fetch(`${apiBaseUrl}/user/getuser/${searchValue}`, {
+        fetch(`${apiBaseUrl}/user/search/${searchValue}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -279,6 +279,20 @@ export function initProfile(params = {}) {
         modalContent.innerHTML = '';
         modalContent.appendChild(optionContent);
 
+        const tournamentMatchBtn = optionContent.querySelector('#createTournamentBtn');
+        console.log("createTournamentBtn",tournamentMatchBtn);
+        if (tournamentMatchBtn){
+          tournamentMatchBtn.addEventListener('click', () => {
+
+            const tournamentData = {
+              name: document.getElementById('tournamentName').value,
+              player_count: document.getElementById('playerCount').value,
+              start_date: document.getElementById('startDate').value,
+              created_by: localStorage.getItem('username')
+            };
+              // En son Buraya Baktin
+          });
+        }
         const randomMatchBtn = optionContent.querySelector('.btn-outline-info');
         if (randomMatchBtn && randomMatchBtn.textContent.includes('Rastgele Maç')) {
             randomMatchBtn.addEventListener('click', () => {
@@ -292,20 +306,18 @@ export function initProfile(params = {}) {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Gelen veriyi global state'e atabilir vs.
                     console.log('Rastgele maç:', data.data.detail_url);
                     setState('detail_url', data.data.detail_url);
                     console.log(getState('detail_url'));
-                    // SPA yönlendirmesi
                     history.pushState(null, null, '/GamePage');
                     router();
                 })
                 .catch(err => console.error('Rastgele maç istek hatası:', err));
             });
           }
-          const deneme = optionContent.querySelector('.btn-success');
-          if (deneme && deneme.textContent.includes('Başlat')) {
-            deneme.addEventListener('click', () => {
+          const BotMatchBtn = optionContent.querySelector('.btn-success');
+          if (BotMatchBtn && BotMatchBtn.textContent.includes('Başlat')) {
+            BotMatchBtn.addEventListener('click', () => {
               fetch(`${apiBaseUrl}/game/bot-match/`, {
                   method: 'POST',
                   headers: {
@@ -316,17 +328,17 @@ export function initProfile(params = {}) {
               })
               .then(response => response.json())
               .then(data => {
-                  // Gelen veriyi global state'e atabilir vs.
                   console.log('Rastgele maç:', data.data.detail_url);
                   setState('detail_url', data.data.detail_url);
                   console.log(getState('detail_url'));
-                  // SPA yönlendirmesi
                   history.pushState(null, null, '/GamePage');
                   router();
               })
               .catch(err => console.error('Rastgele maç istek hatası:', err));
           });
           }
+
+
         const modal = document.getElementById('gameOptionsModal');
         modal.classList.add('animate__animated', 'animate__fadeInDown');
         const bootstrapModal = new bootstrap.Modal(modal);

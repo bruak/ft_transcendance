@@ -148,4 +148,4 @@ class AuthRequest(View):
             return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
         if user.access_token != access_token:
             return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
-        return JsonResponse({'valid': True}, status = 200)
+        return JsonResponse({'valid': True, 'username' : username}, status = 200)

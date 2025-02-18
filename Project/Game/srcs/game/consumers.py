@@ -18,17 +18,22 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         self.groups = []
         self.game_loop_running = False
         self.speed_timer = 0
+        self.player_id = None  # Önemli: oyuncu id'sini başlatıyoruz.
+
+    async def update_match_status(self, new_status):
+        self.match.status = new_status
+        self.match.updated_at = timezone.now()
+        await sync_to_async(self.match.save)()
+
 
     async def save_match_data(self, winner):
-        match_id = int(self.room_name.split("_")[1])
         score = f"{self.game_state['players']['player1']['score']}:{self.game_state['players']['player2']['score']}"
-        
-        await sync_to_async(Match.objects.filter(id=match_id).update)(
-            status="finished",
-            score=score,
-            winner=winner,
-            updated_at=timezone.now(),
-        )
+        self.match.status = "finished"
+        self.match.score = score
+        self.match.winner = winner
+        self.match.updated_at = timezone.now()
+        await sync_to_async(self.match.save)()
+
 
     def create_initial_game_state(self):
         return {
@@ -47,7 +52,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = self.room_name
-        
+
         if self.room_name not in self.room_data:
             self.room_data[self.room_name] = {
                 "host": None,
@@ -58,7 +63,9 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 
         room_info = self.room_data[self.room_name]
         self.game_state = room_info["game_state"]
-
+        
+        match_id = int(self.room_name.split("_")[1])
+        self.match = await sync_to_async(Match.objects.get)(id=match_id)
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
@@ -70,19 +77,24 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        
+
         if self.room_name in self.room_data:
             room_info = self.room_data[self.room_name]
-            
+
             if room_info["host"] == self.channel_name:
                 room_info["host"] = 'disconnected'
             elif room_info["guest"] == self.channel_name:
                 room_info["guest"] = 'disconnected'
-                self.game_loop_running = False
             elif self.channel_name in room_info["spectators"]:
                 room_info["spectators"].remove(self.channel_name)
 
-            if  room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"]:
+            if self.player_id in ['player1', 'player2']:
+                self.game_loop_running = False
+                self.match.status = "canceled"
+                self.match.updated_at = timezone.now()
+                await sync_to_async(self.match.save)()
+
+            if room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"]:
                 del self.room_data[self.room_name]
 
     async def receive(self, text_data=None, bytes_data=None):
@@ -135,9 +147,10 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         paddle2 = self.game_state['players']['player2']
         if ball['x'] <= -6 and paddle1['position'] - 1 <= ball['y'] <= paddle1['position'] + 1 and ball['vx'] < 0:
             ball['vx'] *= -1
+            self.ball_speed *= 1.04
         if ball['x'] >= 6 and paddle2['position'] - 1 <= ball['y'] <= paddle2['position'] + 1 and ball['vx'] > 0:
             ball['vx'] *= -1
-
+            self.ball_speed *= 1.04
         if ball['x'] < -6.7:
             self.game_state['players']['player2']['score'] += 1
             ball['x'], ball['y'] = 0.0, 0.0
@@ -153,31 +166,24 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         while self.game_loop_running:
             self.update_paddle_positions()
             self.update_ball_position()
-            
-            self.speed_timer += 1 / 60
-            if self.speed_timer >= 10:
-                self.ball_speed *= 1.05
-                self.speed_timer = 0
             if p2['score'] >= 5 or p1['score'] >= 5:
                 winner = "player1" if p1['score'] > p2['score'] else "player2"
                 await self.save_match_data(winner)
                 self.game_loop_running = False
+
             await self.broadcast_game_state()
             await asyncio.sleep(1 / 60)
 
 class PongConsumer(BasePongConsumer):
     async def handle_player_connection(self, room_info):
-        if not room_info["host"]:
+        if self.scope['user'].username == self.match.player1:
+            print(f"Player 1 connected{self.match.player1}")
             room_info["host"] = self.channel_name
             self.player_id = 'player1'
-        elif not room_info["guest"]:
+        elif self.scope['user'].username == self.match.player2:
             room_info["guest"] = self.channel_name
             self.player_id = 'player2'
-            match_id = int(self.room_name.split("_")[1])
-            await sync_to_async(Match.objects.filter(id=match_id).update)(
-                status="playing",
-                updated_at=timezone.now(),
-            )
+            await self.update_match_status("playing")
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
         else:
@@ -192,14 +198,10 @@ class PongConsumer(BasePongConsumer):
 
 class PongBotConsumer(BasePongConsumer):
     async def handle_player_connection(self, room_info):
-        if not room_info["host"]:
+        if self.scope['user'].username == self.match.player1:
             room_info["host"] = self.channel_name
             self.player_id = 'player1'
-            match_id = int(self.room_name.split("_")[1])
-            await sync_to_async(Match.objects.filter(id=match_id).update)(
-                status="playing",
-                updated_at=timezone.now(),
-            )
+            await self.update_match_status("playing")
             self.game_loop_running = True
             asyncio.create_task(self.start_game_loop())
             asyncio.create_task(self.bot_loop())

@@ -7,7 +7,7 @@ class MailTokenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MailTokens
-        fields = ['username', 'email', 'type', 'expiration', 'status']  
+        fields = ['username', 'email', 'token', 'type', 'expiration', 'status', 'created_at', 'updated_at']  
 
 
 class TwoFactoSerializer(serializers.ModelSerializer):
@@ -16,4 +16,4 @@ class TwoFactoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TwofactorCodes
-        fields = ['username', 'email', 'expiration', 'status']  
+        fields = ['username', 'email', 'code', 'expiration', 'status', 'created_at', 'updated_at']
