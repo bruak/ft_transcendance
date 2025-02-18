@@ -1,24 +1,28 @@
 /* ======================[*] Önbellek Yapısı [*]====================== */
 const cache = new Map();
-
 async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
-    const now = Date.now();
-    if (cache.has(url)) {
-        const { timestamp, content } = cache.get(url);
-        if (now - timestamp < cacheTime) {
-            return content;
+    try {
+        const now = Date.now();
+        if (cache.has(url)) {
+            const { timestamp, content } = cache.get(url);
+            if (now - timestamp < cacheTime) {
+                return content;
+            }
         }
-    }
-    
-    const response = await fetch(url);
-    if (response.ok) {
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP Hatası: ${response.status}`);
+        
         const content = await response.text();
         cache.set(url, { timestamp: now, content });
         return content;
-    } else {
-        throw new Error("Sayfa yüklenemedi");
+    } catch (error) {
+        console.error("fetchWithCache Hata:", error);
+        showErrorMessage("Veri yüklenirken hata oluştu.");
+        return ""; // Hata durumunda boş string dönelim.
     }
 }
+
 
 /* ======================[*] Global State Yönetimi [*]====================== */
 const globalState = new Proxy(
@@ -38,11 +42,11 @@ const globalState = new Proxy(
     }
 );
 
-function setState(key, value) {
+export function setState(key, value) {
     globalState[key] = value;
 }
 
-function getState(key) {
+export function getState(key) {
     return globalState[key];
 }
 
@@ -66,14 +70,14 @@ const routes = {
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
+
 export async function router() {
     const path = window.location.pathname;
     let route = routes[path] || null;
     let params = {};
 
     // Dinamik rota kontrolü
-    if (!route)
-    {
+    if (!route) {
         for (const [key, value] of Object.entries(routes)) {
             const paramNames = [];
             const regexPath = key.replace(/:\w+/g, (match) => {
@@ -91,17 +95,13 @@ export async function router() {
                 break;
             }
         }
-        console.log('Params:', params); // params konsole yazdır
     }
-
 
     if (!route) {
-        document.querySelector('#app').innerHTML = `<h1>Sayfa bulunamadı.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa bulunamadı.</h1>';
         return;
     }
-
-
-    document.querySelector('#app').innerHTML = `<h1>Loading...</h1>`; // Loading durumu
+    document.querySelector('#app').innerHTML = '<h1>Loading...</h1>'; // Loading durumu
 
     try {
         const content = await fetchWithCache(route.html);
@@ -112,7 +112,7 @@ export async function router() {
     } catch (err) {
         console.error('Sayfa yüklenirken hata oluştu:', err);
         showErrorMessage("Bir hata oluştu, lütfen tekrar deneyin.");
-        document.querySelector('#app').innerHTML = `<h1>Sayfa yüklenirken bir hata oluştu.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa yüklenirken bir hata oluştu.</h1>';
     }
 }
 
@@ -123,6 +123,9 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
+        if (window.location.pathname !== '/GamePage' && typeof cleanup === 'function') {
+            cleanup();
+        }
         router(); // Sayfayı güncelle
     }
 });
@@ -133,14 +136,14 @@ window.addEventListener('popstate', router);
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
-    console.log("Kullanıcı bilgisi güncellendi:", event.detail);
+    // console.log("Kullanıcı bilgisi güncellendi:", event.detail);
     import("./profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
 });
 
 /* ======================[*] Kullanıcı Yetkilendirmesi Kontrolü [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     if (!event.detail.token) {
-        console.log("Kullanıcı oturum açmamış!");
+        // console.log("Kullanıcı oturum açmamış!");
         history.pushState(null, null, "/");
         router();
     }
@@ -151,4 +154,3 @@ document.addEventListener("stateChange:user", (event) => {
 //     history.pushState(null, null, "/");
 //     router();
 // }
-

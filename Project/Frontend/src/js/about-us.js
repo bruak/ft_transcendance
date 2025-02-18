@@ -9,14 +9,6 @@ export function initAbout() {
         homeLink.href = username;
     }
 
-    /* ======================[*] Form İşleme [*]====================== */
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            alert('Mesajınız gönderildi!');
-        });
-    }
 
     /* ======================[*] Kartları Fade-in Animasyonu ile Göster [*]====================== */
     const cards = document.querySelectorAll('.card');

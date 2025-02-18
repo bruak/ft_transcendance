@@ -9,8 +9,8 @@ urlpatterns = [
 	path('postjson/', UserRequest.user_createJSON, name='user-createJSON'),
     path('search/<str:query>/', UserRequest.search, name='user-search'),
     # Admin
-    path('list/<str:username>/', UserAdminRequest.adminlist(), name="adminlist"),
-    path('adminuser/<str:username>/', UserAdminRequest.user_get(), name="adminuser"),
-    path('delete/<str:username>/', UserAdminRequest.user_delete(), name="delete"),
+    path('list/<str:username>/', UserAdminRequest.adminlist, name="adminlist"),
+    path('adminuser/<str:username>/', UserAdminRequest.user_get, name="adminuser"),
+    path('delete/<str:username>/', UserAdminRequest.user_delete, name="delete"),
 
 ]
