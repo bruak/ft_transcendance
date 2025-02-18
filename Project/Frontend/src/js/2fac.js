@@ -57,6 +57,7 @@ export function init2fac() {
         // Store tokens and redirect to profile
         localStorage.setItem('accessToken', data.data.message.access_token.token);
         localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
+        localStorage.setItem('language', 'tr')
         const accessToken = data.data.message.access_token.token;
         const refreshToken = data.data.message.refresh_token.token;
         console.log("Access Token:", accessToken);
@@ -82,7 +83,7 @@ export function init2fac() {
 
         // Handle successful response (e.g., redirect to the protected resource)
         console.log('Verification successful:', data);
-        window.location.href = "/profile";
+        window.location.href = `/${username}`;
       } catch (error) {
         handleError(error); // Call a separate function to handle errors
       }

@@ -1,0 +1,79 @@
+<h4>Mail Token List</h4>
+<table class="table table-bordered table-striped">
+	<thead>
+	  <tr>
+		<th>Username</th>
+		<th>Email</th>
+		<th>Type</th>
+		<th>Expiration</th>
+		<th>Status</th>
+		<th></th>
+	  </tr>
+	</thead>
+	<tbody id="MailTableBody">
+	  <!-- Kullanıcı bilgileri buraya JavaScript ile eklenecek -->
+	</tbody>
+  </table>
+
+<!-- Kullanıcı Bilgi Modalı -->
+<div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="userInfoModalLabel">Kullanıcı Bilgileri</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="d-flex align-items-start">
+					<!-- Avatar -->
+					<img id="userAvatar" src="" alt="Avatar" class="rounded-circle me-3" style="width: 100px; height: 100px;">
+					
+					<!-- Kullanıcı Bilgileri -->
+					<div>
+						<p><strong>Ad Soyad:</strong> <span id="userFullName"></span></p>
+						<p><strong>Kullanıcı Adı:</strong> <span id="userUsername"></span></p>
+						<p><strong>E-posta:</strong> <span id="userEmail"></span></p>
+						<p><strong>Create Date:</strong> <span id="userCreated"></span></p>
+						<p><strong>Update Date:</strong> <span id="userUpdated"></span></p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Update User Modal -->
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="updateUserModalLabel">Kullanıcı Bilgilerini Güncelle</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+		  <form id="updateUserForm">
+			<div class="mb-3">
+			  <label for="updateFirstName" class="form-label">Ad</label>
+			  <input type="text" class="form-control" id="updateFirstName" required>
+			</div>
+			<div class="mb-3">
+			  <label for="updateLastName" class="form-label">Soyad</label>
+			  <input type="text" class="form-control" id="updateLastName" required>
+			</div>
+			<div class="mb-3">
+				<label for="updateAvatar" class="form-label">Avatar <span>(Sadece avatar değiştirmek için dosya seçin)</span></label>
+				<input type="file" class="form-control" id="updateAvatar">
+			</div>
+			<button type="submit" class="btn btn-primary">Güncelle</button>
+		  </form>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+		</div>
+	  </div>
+	</div>
+</div>

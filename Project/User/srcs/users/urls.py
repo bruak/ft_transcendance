@@ -1,12 +1,16 @@
 from django.urls import path
-from .views import user_list, user_create, user_update, login, callback, user_get, user_createJSON
+from .views import UserRequest
+from .adminViews import UserAdminRequest
 
 urlpatterns = [
-	path('login/', login, name='login'),
-	path('callback/', callback, name='callback'),
-	path('put/<str:username>/', user_update, name='user-update'),
-	path('getuser/<str:username>/', user_get, name='user_get'),
-	path('get/', user_list, name='user-list'),
-	path('post/', user_create, name='user-create'),
-	path('postjson/', user_createJSON, name='user-createJSON'),
+	path('put/<str:username>/', UserRequest.user_update, name='user-update'),
+	path('getuser/<str:username>/', UserRequest.user_get, name='user_get'),
+	path('get/', UserRequest.user_list, name='user-list'),
+	path('postjson/', UserRequest.user_createJSON, name='user-createJSON'),
+    path('search/<str:query>/', UserRequest.search, name='user-search'),
+    # Admin
+    path('list/<str:username>/', UserAdminRequest.adminlist(), name="adminlist"),
+    path('adminuser/<str:username>/', UserAdminRequest.user_get(), name="adminuser"),
+    path('delete/<str:username>/', UserAdminRequest.user_delete(), name="delete"),
+
 ]

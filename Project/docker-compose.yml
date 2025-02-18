@@ -137,77 +137,9 @@ services:
     ports:
       - 8080:443
     volumes:
+      - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
       - ./Frontend:/run/nginx/html
-      - ./User/srcs/staticfiles:/run/nginx/html/static_user
-      - ./Friend/srcs/staticfiles:/run/nginx/html/static_friend
-      - ./Mail/srcs/staticfiles:/run/nginx/html/static_mail
-      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
 
-
-# MONITORING START HERE
-# ITS HAS TO DOIN FINE TUNE
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./Monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  #   networks:
-  #     - webnet
-
-  # grafana:
-  #   image: grafana/grafana
-  #   container_name: grafana
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - webnet
-
-  # postgres_exporter_dbs:
-  #   image: prometheuscommunity/postgres-exporter
-  #   container_name: postgres_exporter_dbs
-  #   ports:
-  #     - "9188:9187"
-  #   networks:
-  #     - webnet
-  #   volumes:
-  #     - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     POSTGRES_USER: some_user
-  #     POSTGRES_PASSWORD: abc123
-  #     POSTGRES_HOST: user_db
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_DB: users
-
-  # node_exporter:
-  #   image: prom/node-exporter
-  #   container_name: node_exporter
-  #   ports:
-  #     - "9100:9100"
-  #   networks:
-  #     - webnet
-  #   command:
-  #     - '--collector.hwmon'
-
-  # postgres_exporter:
-  #   image: prometheuscommunity/postgres-exporter
-  #   container_name: postgres_exporter
-  #   ports:
-  #     - "9187:9187"
-  #   volumes:
-  #     - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
-  #     - ./Monitoring/postgres_exporter/postgres_exporter.yml/:/etc/postgres-exporter/postgres_exporter.yml
-  #   networks:
-  #     - webnet
-  #   env_file:
-  #     - .env
-
-# MONITORING END HERE
 
   game:
     build:
@@ -277,7 +209,7 @@ services:
 
   translation:
     build:
-      context: ./Translation 
+      context: ./Translation
     volumes:
       - ./Translation/srcs:/app
       - ./Translation/locale:/app/locale
@@ -293,7 +225,7 @@ services:
       - DB_HOST=translation_db
       - POSTGRES_DB=translation
       - LANG=C.UTF-8
- 
+
   translation_db:
     image: postgres:13
     container_name: translation_db
@@ -305,3 +237,68 @@ services:
       - 5432
     environment:
       - POSTGRES_DB=translation
+    
+# MONITORING START HERE
+# ITS HAS TO DOIN FINE TUNE
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./Monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - webnet
+
+  # grafana:
+  #   image: grafana/grafanaj
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - webnet
+
+  # postgres_exporter_dbs:
+  #   image: prometheuscommunity/postgres-exporter
+  #   container_name: postgres_exporter_dbs
+  #   ports:
+  #     - "9188:9187"
+  #   networks:
+  #     - webnet
+  #   volumes:
+  #     - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_USER: some_user
+  #     POSTGRES_PASSWORD: abc123
+  #     POSTGRES_HOST: user_db
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_DB: users
+
+  # node_exporter:
+  #   image: prom/node-exporter
+  #   container_name: node_exporter
+  #   ports:
+  #     - "9100:9100"
+  #   networks:
+  #     - webnet
+  #   command:
+  #     - '--collector.hwmon'
+
+  # postgres_exporter:
+  #   image: prometheuscommunity/postgres-exporter
+  #   container_name: postgres_exporter
+  #   ports:
+  #     - "9187:9187"
+  #   volumes:
+  #     - ./Monitoring/postgres_exporter/queries.yml:/etc/postgres-exporter/queries.yml
+  #     - ./Monitoring/postgres_exporter/postgres_exporter.yml/:/etc/postgres-exporter/postgres_exporter.yml
+  #   networks:
+  #     - webnet
+  #   env_file:
+  #     - .env
+
+# MONITORING END HERE

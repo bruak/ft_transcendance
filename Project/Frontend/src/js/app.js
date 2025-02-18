@@ -58,26 +58,48 @@ function showErrorMessage(message) {
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
     '/': { html: './views/log-reg.html', init: () => import("./log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/profile': { html: './views/profile.html', init: () => import("./profile.js").then(({ initProfile }) => initProfile()) },
+    '/:username': { html: './views/profile.html', init: (params) => import("./profile.js").then(({ initProfile }) => initProfile(params)) },
     '/about': { html: './views/about-us.html', init: () => import("./about-us.js").then(({ initAbout }) => initAbout()) },
-    '/profile/:id': { html: './views/profile.html', init: () => import("./profile.js").then(({ initProfile }) => initProfile()) },
     '/2fac': { html: './views/2factor.html', init: () => import("./2fac.js").then(({ init2fac }) => init2fac()) },
     '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
+    '/a': { html: './admin/index.html', init: () => import("./../admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
-async function router() {
+export async function router() {
     const path = window.location.pathname;
-    let route = routes[path] || routes['/'];
+    let route = routes[path] || null;
+    let params = {};
 
     // Dinamik rota kontrolü
-    for (const [key, value] of Object.entries(routes)) {
-        const regex = new RegExp(`^${key.replace(/:\w+/g, '\\w+')}$`);
-        if (regex.test(path)) {
-            route = value;
-            break;
+    if (!route)
+    {
+        for (const [key, value] of Object.entries(routes)) {
+            const paramNames = [];
+            const regexPath = key.replace(/:\w+/g, (match) => {
+                paramNames.push(match.substring(1));
+                return '([^/]+)';
+            });
+            const regex = new RegExp(`^${regexPath}$`);
+            const match = path.match(regex);
+            if (match) {
+                route = value;
+                params = paramNames.reduce((acc, paramName, index) => {
+                    acc[paramName] = match[index + 1];
+                    return acc;
+                }, {});
+                break;
+            }
         }
+        console.log('Params:', params); // params konsole yazdır
     }
+
+
+    if (!route) {
+        document.querySelector('#app').innerHTML = `<h1>Sayfa bulunamadı.</h1>`;
+        return;
+    }
+
 
     document.querySelector('#app').innerHTML = `<h1>Loading...</h1>`; // Loading durumu
 
@@ -85,7 +107,7 @@ async function router() {
         const content = await fetchWithCache(route.html);
         document.querySelector('#app').innerHTML = content;
         if (route.init) {
-            route.init();
+            route.init(params);
         }
     } catch (err) {
         console.error('Sayfa yüklenirken hata oluştu:', err);

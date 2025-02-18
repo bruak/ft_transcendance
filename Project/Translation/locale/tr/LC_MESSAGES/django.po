@@ -201,3 +201,36 @@ msgstr "Doğrulama kodu"
 
 msgid "Email sent successfully."
 msgstr "E-posta başarıyla gönderildi."
+
+msgid "Password can not be empty."
+msgstr "Şifre boş olamaz."
+
+msgid "Avatar can not be empty."
+msgstr "Avatar boş olamaz."
+
+msgid "First name can not be empty."
+msgstr "Ad boş olamaz."
+
+msgid "Last name can not be empty."
+msgstr "Soyad boş olamaz."
+
+msgid "Missing parameters."
+msgstr "Eksik parametreler."
+
+msgid "Friendship not found."
+msgstr "Arkadaşlık bulunamadı."
+
+msgid "Friend removed successfully."
+msgstr "Arkadaş başarıyla kaldırıldı."
+
+msgid "You cannot remove this friend."
+msgstr "Bu arkadaşı kaldıramazsınız."
+
+msgid "Only DELETE requests are allowed."
+msgstr "Sadece DELETE isteği kabul edilmektedir."
+
+msgid "Error deleting user."
+msgstr "Kullanıcı silinirken bir hata oluştu."
+
+msgid "Access token does not belong to this user"
+msgstr "Erişim belirteci bu kullanıcıya ait değil"

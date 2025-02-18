@@ -6,6 +6,7 @@ class Friends(models.Model):
         ("accepted", "Accepted"),  # Kabul edilen arkadaşlık
         ("rejected", "Rejected"),  # Reddedilen istek
         ("blocked", "Blocked"),  # Engellenen kullanıcı
+        ("removed", "Removed"),  # Silinen arkadaşlık
     ]
 
     username = models.CharField(max_length=150)  # Kullanıcı adı
