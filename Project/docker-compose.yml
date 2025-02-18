@@ -137,12 +137,8 @@ services:
     ports:
       - 8080:443
     volumes:
-      - ./Frontend:/run/nginx/html
-      - ./User/srcs/staticfiles:/run/nginx/html/static_user
-      - ./Friend/srcs/staticfiles:/run/nginx/html/static_friend
-      - ./Mail/srcs/staticfiles:/run/nginx/html/static_mail
-      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
+      - ./Frontend:/run/nginx/html
 
 
   game:
