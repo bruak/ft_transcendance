@@ -7,11 +7,9 @@ from .models import Friends
 from rest_framework import status
 import requests
 from .serializers import FriendsSerializer
-from rest_framework.decorators import api_view
 from .translate_way import get_translated_message
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
-
 
 # Arkaşlık İsteği Gönderme (Accses Token)
 class FriendRequestView(View):
