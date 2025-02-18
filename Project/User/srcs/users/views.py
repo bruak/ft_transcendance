@@ -1,17 +1,12 @@
-from django.shortcuts import redirect
 from django.views import View
 import requests
 from django.db import models
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
-from .serializers import UserSerializer, AdminSerializer
-from .tools import username_check, image_to_url, image_intra_create
+from .serializers import UserSerializer
 from rest_framework.parsers import JSONParser
-from django.core.exceptions import ValidationError
 from .translate_way import get_translated_message
-from django.contrib.auth.hashers import make_password
-
 
 class UserRequest(View):
 	@csrf_exempt

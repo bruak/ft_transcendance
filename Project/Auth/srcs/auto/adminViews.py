@@ -80,7 +80,6 @@ class AdminRequest(View):
 		except Exception as e:
 			return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500)
 
-
 	# Tüm Mail Token List (Admin İçin) (Admin Kontrolu Edilicek) 
 	def MailTokenlist(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -93,7 +92,6 @@ class AdminRequest(View):
 			
 		except Exception as e:
 			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", user_language)}, status=500)
-
 
 	# Tüm TwoFactor List (Admin İçin) (Admin Kontrolu Edilicek)
 	def twoFactorList(request):

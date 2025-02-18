@@ -25,8 +25,13 @@ class MiscRequest(View):
         except Users.DoesNotExist:
             return JsonResponse({"valid": False}, status=404)
 
-	# Get User (accsesToken -> UserName)
     def validate_get_username(request):
+        """
+        @brief Validate access token and return the user's username.
+    
+        @param request: HTTP request containing the Authorization header.
+        @return: JSON response with the username if valid, otherwise an error message.
+        """
         user_language = request.headers.get("Accept-Language", "tr")
         if request.method != "GET":
             return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)},status=405)
