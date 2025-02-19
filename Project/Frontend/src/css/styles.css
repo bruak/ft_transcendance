@@ -1,13 +1,13 @@
 :root {
-  --color-bg: #1c1c1c;
-  --color-bg-dark: #222539;
-  --color-primary: #4ca1af;
-  --color-primary-hover: #5fb9d8;
-  --color-secondary: #f39c12;
-  --color-text: #ddd;
-  --color-text-light: #fff;
-  --color-border: #1a1a2e;
-  --color-shadow: rgba(0, 0, 0, 0.5);
+    --color-bg: #1c1c1c;
+    --color-bg-dark: #222539;
+    --color-primary: #4ca1af;
+    --color-primary-hover: #5fb9d8;
+    --color-secondary: #f39c12;
+    --color-text: #ddd;
+    --color-text-light: #fff;
+    --color-border: #1a1a2e;
+    --color-shadow: rgba(0, 0, 0, 0.5);
 }
 
 /* Genel Stil */
@@ -19,17 +19,26 @@ body {
     background-size: cover;
     color: var(--color-text);
 }
-.hidden { display: none !important; }
-.selected { border: 2px solid #007bff; }
+
+.hidden {
+    display: none !important;
+}
+
+.selected {
+    border: 2px solid #007bff;
+}
+
 /* Profile Sayfası Stilleri */
-.profile-page h1, .profile-page h2 {
+.profile-page h1,
+.profile-page h2 {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--color-primary);
     text-shadow: 1px 1px #000;
 }
 
 .profile-page h1 {
-    font-size: 2rem; /* Responsive font size */
+    font-size: 2rem;
+    /* Responsive font size */
 }
 
 @media (min-width: 768px) {
@@ -38,8 +47,10 @@ body {
     }
 }
 
-.profile-page h2, .profile-page h3 {
-    font-size: 1.5rem; /* Responsive font size */
+.profile-page h2,
+.profile-page h3 {
+    font-size: 1.5rem;
+    /* Responsive font size */
     color: var(--color-primary);
     margin-bottom: 20px;
     text-align: center;
@@ -47,13 +58,16 @@ body {
 }
 
 @media (min-width: 768px) {
-    .profile-page h2, .profile-page h3 {
+
+    .profile-page h2,
+    .profile-page h3 {
         font-size: 2rem;
     }
 }
 
 .profile-page h3 {
-    font-size: 1.25rem; /* Responsive font size */
+    font-size: 1.25rem;
+    /* Responsive font size */
     color: cadetblue;
 }
 
@@ -64,7 +78,8 @@ body {
 }
 
 .profile-page p {
-    font-size: 1rem; /* Responsive font size */
+    font-size: 1rem;
+    /* Responsive font size */
     color: #ddd;
 }
 
@@ -84,74 +99,6 @@ body {
 
 .profile-page .card:hover {
     transform: scale(1.05);
-}
-
-.profile-page .sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
-
-.profile-page .sidenav a {
-    padding: 10px 20px;
-    font-size: 18px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.profile-page .sidenav a:hover {
-    color: #f1f1f1;
-}
-
-.profile-page .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-}
-
-.profile-page .menu-icon {
-    font-size: 30px;
-    cursor: pointer;
-    margin: 10px;
-    color: #4ca1af;
-}
-
-.profile-page footer {
-    background-color: #1a1a2e;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-    font-size: 0.9rem;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* İnce çizgi */
-}
-
-.profile-page footer .social-icons {
-    margin-top: 10px;
-}
-
-.profile-page footer .social-icons a {
-    color: white;
-    margin: 0 10px;
-    font-size: 1.2rem;
-    transition: color 0.3s;
-}
-
-.profile-page footer .social-icons a:hover {
-    color: var(--color-primary);
 }
 
 .profile-page img {
@@ -186,69 +133,17 @@ body {
     background-color: #2c3e50;
 }
 
-.profile-page .overlay {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    background-color: rgba(0,0,0, 0.9);
-    overflow-x: hidden;
-    transition: 0.5s;
-}
-
-.profile-page .overlay-content {
-    position: relative;
-    top: 25%;
-    width: 100%;
-    text-align: center;
-    margin-top: 30px;
-}
-
-.profile-page .overlay a {
-    padding: 8px;
-    text-decoration: none;
-    font-size: 36px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.profile-page .overlay a:hover, .profile-page .overlay a:focus {
-    color: #f1f1f1;
-}
-
-.profile-page .overlay .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 45px;
-    font-size: 60px;
-}
-
-@media screen and (max-height: 450px) {
-    .profile-page .overlay a {font-size: 20px}
-    .profile-page .overlay .closebtn {
-        font-size: 40px;
-        top: 15px;
-        right: 35px;
-    }
-}
-
-.profile-page .carousel-item img {
-    height: 400px;
-    object-fit: cover;
-}
-
 .profile-page .modal-content {
     background-color: var(--color-bg-dark);
     color: var(--color-text);
     border: 1px solid var(--color-primary-hover);
 }
 
-.profile-page .modal-header, .profile-page .modal-footer {
+.profile-page .modal-header,
+.profile-page .modal-footer {
     border-bottom: 1px solid #1a1a2e;
-    border-color: rgba(255, 255, 255, 0.1); /* Daha ince ve soft border rengi */
+    border-color: rgba(255, 255, 255, 0.1);
+    /* Daha ince ve soft border rengi */
 }
 
 .profile-page .modal-header .btn-close {
@@ -256,7 +151,8 @@ body {
     transition: filter 0.3s, transform 0.3s;
 }
 
-.profile-page .modal-header .btn-close:hover, .profile-page .modal-header .btn-close:focus {
+.profile-page .modal-header .btn-close:hover,
+.profile-page .modal-header .btn-close:focus {
     filter: invert(0.7);
     transform: scale(1.1);
 }
@@ -266,20 +162,153 @@ body {
     transition: color 0.3s;
 }
 
-.profile-page .modal-title:hover, .profile-page .modal-title:focus {
+.profile-page .modal-title:hover,
+.profile-page .modal-title:focus {
     color: var(--color-primary);
 }
 
+/* SON EKLENEN Profile Page Styles */
+.profile-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+}
+
+.profile-page .card.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 161, 175, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.profile-page .card.glass-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(76, 161, 175, 0.2);
+}
+
+.profile-page #profileImageDisplay {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 4px solid rgba(76, 161, 175, 0.5);
+    box-shadow: 0 0 20px rgba(76, 161, 175, 0.3);
+    transition: all 0.3s ease;
+}
+
+.profile-page #profileImageDisplay:hover {
+    transform: scale(1.05);
+    border-color: var(--color-primary);
+}
+
+.profile-page section h2 {
+    color: var(--color-primary);
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(76, 161, 175, 0.3);
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.profile-page section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+.profile-page .toast {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 161, 175, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-page .modal-content {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 161, 175, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
 .profile-page .form-control {
-    background-color: #e3e0e0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(76, 161, 175, 0.2);
+    color: var(--color-text-light);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.profile-page .form-control:focus {
+    background: rgba(76, 161, 175, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px rgba(76, 161, 175, 0.2);
+}
+
+.profile-page .btn {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.profile-page .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 161, 175, 0.3);
+}
+
+.profile-page .footer {
+    background: rgba(6, 6, 192, 0.95);
+    backdrop-filter: blur(10px);
+    color: var(--color-text-light);
+    border-top: 1px solid rgba(76, 161, 175, 0.2);
+}
+
+.profile-page footer {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(76, 161, 175, 0.2);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.profile-page footer p {
+    color: var(--color-text-light);
+    font-size: 1rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.profile-page footer p::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+.profile-page footer p i {
+    color: var(--color-primary);
+    margin-right: 8px;
+    animation: pulse 2s infinite;
 }
 
 /* Arkadaş Ara Stilleri */
 .profile-page .search-user {
     left: auto;
-    max-width: 300px; /* Boyutu daha da küçültüldü */
+    max-width: 300px;
+    /* Boyutu daha da küçültüldü */
     margin: 0 auto;
-
 }
 
 .profile-page .search-user .form-control {
@@ -288,6 +317,7 @@ body {
     background-color: #222;
     color: #fff;
 }
+
 .profile-page .search-user .btn-outline-primary {
     border: 1px solid #4ca1af;
     color: #4ca1af;
@@ -298,6 +328,7 @@ body {
     background-color: #4ca1af;
     color: #fff;
 }
+
 .profile-page .search-user .btn-outline-secondary {
     border: 1px solid #4ca1af;
     color: #4ca1af;
@@ -318,7 +349,8 @@ body {
     background-color: #1c1c1c;
     border: 1px solid #4ca1af;
     border-radius: 5px;
-    display: none; /* Başlangıçta gizli */
+    display: none;
+    /* Başlangıçta gizli */
 }
 
 .profile-page #friendSuggestions .list-group-item {
@@ -328,12 +360,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer; /* Tıklanabilir hissi */
+    cursor: pointer;
+    /* Tıklanabilir hissi */
     transition: background-color 0.3s;
 }
 
 .profile-page #friendSuggestions .list-group-item:hover {
-    background-color: rgba(95, 185, 216, 0.2); /* Saydam hover rengi */
+    background-color: rgba(95, 185, 216, 0.2);
+    /* Saydam hover rengi */
 }
 
 .profile-page #friendSuggestions .list-group-item .btn {
@@ -375,11 +409,9 @@ body {
     color: #fff;
 }
 
-/* ...existing code... */
-
 .search-input {
     -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     --event-default: #c0c0c0;
     --event-pedago: #ED8179;
     --event-meet: #00babc;
@@ -392,30 +424,42 @@ body {
     --event-dark-speed-working: rgb(42, 187, 119);
     unicode-bidi: isolate;
     box-sizing: border-box;
-    color: #fff; /* Change text color to white */
+    color: #fff;
+    /* Change text color to white */
     font: inherit;
     margin: 0;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
     vertical-align: initial !important;
-    border: 1px solid #4ca1af; /* Add border */
-    height: 40px; /* Adjust height */
-    width: 2000px; /* Adjust width to fit within navbar */
-    background-color: #333; /* Change background color */
+    border: 1px solid #4ca1af;
+    /* Add border */
+    height: 40px;
+    /* Adjust height */
+    width: 2000px;
+    /* Adjust width to fit within navbar */
+    background-color: #333;
+    /* Change background color */
     margin-left: 15px;
     position: relative;
-    padding: 5px 10px; /* Add padding */
-    border-radius: 5px; /* Add border radius */
-    max-width: 300px; /* Daha kontrollü genişlik */
-    background-color: var(--color-bg-dark); /* Arka plan rengi */
-    color: var(--color-text-light); /* Yazı rengi */
+    padding: 5px 10px;
+    /* Add padding */
+    border-radius: 5px;
+    /* Add border radius */
+    max-width: 300px;
+    /* Daha kontrollü genişlik */
+    background-color: var(--color-bg-dark);
+    /* Arka plan rengi */
+    color: var(--color-text-light);
+    /* Yazı rengi */
     transition: background-color 0.3s, color 0.3s;
 }
 
 .search-input::placeholder {
-    color: #bbb; /* Placeholder text color */
-    opacity: 1; /* Ensure placeholder text is visible */
+    color: #bbb;
+    /* Placeholder text color */
+    opacity: 1;
+    /* Ensure placeholder text is visible */
 }
 
 .search-input:focus {
@@ -423,8 +467,6 @@ body {
     color: var(--color-text);
     outline: none;
 }
-
-/* ...existing code... */
 
 .profile-page .recent-activity-item {
     display: flex;
@@ -462,21 +504,29 @@ body {
 .profile-page .game-option-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    background-color: var(--color-bg-dark); /* Daha açık bir ton */
-    border: 1px solid var(--color-primary-hover); /* Kenar çizgisi daha ince ve transparan */
-    border-radius: 200px; /* Daha yumuşak köşeler */
+    background-color: var(--color-bg-dark);
+    /* Daha açık bir ton */
+    border: 1px solid var(--color-primary-hover);
+    /* Kenar çizgisi daha ince ve transparan */
+    border-radius: 200px;
+    /* Daha yumuşak köşeler */
     padding: 25px 20px;
     text-align: center;
-    color: #e0e0e0; /* Daha açık yazı rengi */
-    margin-bottom: 20px; /* Kartların arasına boşluk ekleyin */
-    box-shadow: 0 4px 10px var(--color-shadow); /* Hafif gölgelendirme */
+    color: #e0e0e0;
+    /* Daha açık yazı rengi */
+    margin-bottom: 20px;
+    /* Kartların arasına boşluk ekleyin */
+    box-shadow: 0 4px 10px var(--color-shadow);
+    /* Hafif gölgelendirme */
 }
 
 .profile-page .game-option-card h3 {
     font-size: 1.8rem;
-    color: var(--color-primary-hover); /* Daha canlı mavi tonu */
+    color: var(--color-primary-hover);
+    /* Daha canlı mavi tonu */
     margin-bottom: 10px;
-    letter-spacing: 1px; /* Harf aralığı */
+    letter-spacing: 1px;
+    /* Harf aralığı */
 }
 
 .profile-page .game-option-card h3 i {
@@ -487,7 +537,8 @@ body {
     font-size: 1rem;
     color: #c2c2c2;
     margin-bottom: 20px;
-    line-height: 1.6; /* Satır arası boşluk */
+    line-height: 1.6;
+    /* Satır arası boşluk */
 }
 
 .profile-page .game-option-card .btn {
@@ -503,17 +554,21 @@ body {
 
 .profile-page .game-option-card .btn:hover {
     background-color: var(--color-primary-hover);
-    transform: translateY(-3px); /* Hover efekti için hafif yukarı kaldırma */
+    transform: translateY(-3px);
+    /* Hover efekti için hafif yukarı kaldırma */
     color: var(--color-text-light);
 }
 
 .profile-page .game-option-card:hover {
-    transform: scale(1.05); /* Daha hafif bir büyüme efekti */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7), 0 0 10px var(--color-primary-hover); /* Gölgeyi yumuşatma ve parlama */
+    transform: scale(1.05);
+    /* Daha hafif bir büyüme efekti */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7), 0 0 10px var(--color-primary-hover);
+    /* Gölgeyi yumuşatma ve parlama */
 }
 
 .profile-page .game-option-card.selected {
-    border: 2px solid var(--color-secondary); /* Daha sıcak bir turuncu tonu */
+    border: 2px solid var(--color-secondary);
+    /* Daha sıcak bir turuncu tonu */
     box-shadow: 0 12px 25px var(--color-shadow);
 }
 
@@ -524,17 +579,13 @@ body {
     border: 1px solid var(--color-primary-hover);
 }
 
-.modal-header, .modal-footer {
-    border-color: rgba(92, 182, 229, 0.3);
-    border-color: rgba(255, 255, 255, 0.1); /* Daha ince ve soft border rengi */
-}
-
 .modal-title {
     color: var(--color-primary-hover);
     transition: color 0.3s;
 }
 
-.modal-title:hover, .modal-title:focus {
+.modal-title:hover,
+.modal-title:focus {
     color: var(--color-primary);
 }
 
@@ -567,15 +618,16 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
 }
-
-
 
 .friends-card-3d {
     background: #4ca1af;
@@ -596,6 +648,113 @@ body {
     transform: translateY(-2px);
 }
 
+/* Navbar Ana Stiller ve Responsive */
+.profile-page .navbar .nav-icons-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-page .navbar .search-container {
+    max-width: 300px;
+    width: 100%;
+    margin: 0 1rem;
+}
+
+.profile-page .navbar .search-input {
+    width: 100%;
+    margin: 0;
+}
+
+.profile-page .navbar .notification-dropdown,
+.profile-page .navbar .profile-dropdown {
+    position: relative;
+}
+
+.profile-page .navbar .notification-dropdown .dropdown-menu,
+.profile-page .navbar .profile-dropdown .dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto;
+}
+
+@media (max-width: 991px) {
+    .profile-page .navbar .navbar-collapse {
+        background: rgba(26, 26, 46, 0.95);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .profile-page .navbar .d-flex.flex-column.flex-lg-row {
+        gap: 1rem;
+    }
+
+    .profile-page .navbar .search-container {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .profile-page .navbar .nav-icons-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.5rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0.5rem;
+    }
+
+    .profile-page .navbar .notification-dropdown,
+    .profile-page .navbar .profile-dropdown {
+        margin: 0;
+    }
+
+    .profile-page .navbar .dropdown-menu {
+        position: absolute !important;
+        width: auto;
+        min-width: 200px;
+        right: 0;
+        left: auto;
+        margin-top: 0.5rem;
+    }
+
+    .profile-page .navbar .profile-dropdown .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+}
+
+/* Navbar Responsive Düzenlemeler */
+@media (max-width: 991px) {
+    .profile-page .navbar .navbar-collapse {
+        background: rgba(26, 26, 46, 0.95);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .profile-page .navbar .search-container {
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+
+    .profile-page .navbar .nav-icons-container {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .profile-page .navbar .notification-dropdown,
+    .profile-page .navbar .profile-dropdown {
+        margin: 0.5rem 0;
+    }
+
+    .profile-page .navbar .dropdown-menu {
+        position: static !important;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
 
 
 /* =================== Log-Reg Sayfası Tasarımı =================== */
@@ -672,8 +831,10 @@ body {
 }
 
 .log-reg-page .button-group button {
-    padding: 8px 14px; /* Yüksekliği azaltıldı */
-    font-size: 14px; /* Buton yazı fontu küçültüldü */
+    padding: 8px 14px;
+    /* Yüksekliği azaltıldı */
+    font-size: 14px;
+    /* Buton yazı fontu küçültüldü */
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -885,13 +1046,6 @@ body {
 
 
 /* About-Us Sayfası Stilleri */
-.about-us-page body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #00041a;
-}
-
 .about-us-page header {
     background-color: #1a1a2e;
     color: white;
@@ -911,7 +1065,8 @@ body {
     margin: 10px 0 0;
 }
 
-.about-us-page h1, .about-us-page h2 {
+.about-us-page h1,
+.about-us-page h2 {
     font-family: 'Arial', sans-serif;
     margin-bottom: 20px;
 }
@@ -1008,7 +1163,8 @@ body {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* İnce çizgi */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* İnce çizgi */
 }
 
 .about-us-page footer .social-icons {
@@ -1026,114 +1182,145 @@ body {
     color: var(--color-primary);
 }
 
+/* SON EKLENEN About-Us Sayfası Stilleri */
+.about-us-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: var(--color-text-light);
+    min-height: 100vh;
+}
 
-/* Kaydırmalı geçiş */
+.about-us-page .glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 161, 175, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
 
-.about-us-page .card-img-top.position-relative {
+.about-us-page header {
+    padding: 4rem 0;
+    text-align: center;
     position: relative;
-    width: 100%;
+    overflow: hidden;
+    margin-bottom: 3rem;
 }
 
-.about-us-page .image {
-    display: block;
-    width: 100%;
-    height: auto;
+.about-us-page header h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0;
+    color: var(--color-primary);
+    text-shadow: 0 0 15px rgba(76, 161, 175, 0.5);
 }
 
-.about-us-page .overlay {
+.about-us-page header .lead {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.about-us-page section {
+    padding: 2rem 0;
+}
+
+.about-us-page h2 {
+    color: var(--color-primary);
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(76, 161, 175, 0.3);
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.about-us-page h2::after {
+    content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #008CBA;
-    overflow: hidden;
-    width: 0;
-    height: 100%;
-    transition: .5s ease;
-}
-
-.about-us-page .card-img-top.position-relative:hover .overlay {
-    width: 100%;
-}
-
-.about-us-page .overlay .text {
-    color: white;
-    font-size: 20px;
-    position: absolute;
-    top: 30%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
 }
 
-.about-us-page .overlay a {
-    color: white;
-    font-size: 20px;
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
+.about-us-page .team-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-/* Navbar Stilleri */
-.navbar {
-    background-color: #1a1a2e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+.about-us-page .team-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(76, 161, 175, 0.2);
 }
 
-.navbar a {
-    color: #ddd;
-    text-decoration: none;
-    transition: color 0.3s;
+.about-us-page .team-card .card-img-top {
+    height: 250px;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: all 0.3s ease;
 }
 
-.navbar a:hover {
-    color: #4ca1af;
+.about-us-page .team-card:hover .card-img-top {
+    filter: grayscale(0%);
 }
 
-.navbar .nav-link.active {
-    background-color: #4ca1af;
-    color: #fff;
-}
-
-.navbar .dropdown-menu {
-    background-color: #1a1a2e;
+.about-us-page .btn-primary {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-hover));
     border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1050; /* Z-index değeri artırıldı */
+    border-radius: 25px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
 }
 
-.navbar .dropdown-item {
-    color: #ddd;
-    transition: background-color 0.3s, color 0.3s;
+.about-us-page .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 161, 175, 0.3);
 }
 
-.navbar .dropdown-item:hover {
-    background-color: #4ca1af;
-    color: #fff;
+.about-us-page footer {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    text-align: center;
 }
 
-.navbar .dropdown-divider {
-    border-top: 1px solid #4ca1af;
+.about-us-page footer p {
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: 1px;
 }
 
-.navbar-dark .navbar-nav .nav-link {
-  transition: color 0.3s, border-bottom 0.3s;
+.about-us-page footer i {
+    color: var(--color-primary);
+    margin-right: 8px;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover, 
-.navbar-dark .navbar-nav .nav-link:focus {
-  color: var(--color-primary);
-  text-decoration: underline; /* veya border-bottom eklenebilir */
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .about-us-page header h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-us-page header .lead {
+        font-size: 1.2rem;
+    }
+
+    .about-us-page h2 {
+        font-size: 2rem;
+    }
+
+    .about-us-page .team-card {
+        margin-bottom: 2rem;
+    }
 }
 
 /* Game Sayfası Stilleri */
-.game-page {
-    background-color: #00041a;
-    color: #ddd;
-}
-
 .game-page .navbar {
     background-color: #1a1a2e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
@@ -1155,76 +1342,34 @@ body {
     margin: 20px auto;
     background-color: #000;
 }
+
 .game-page .game-canvas {
     width: 800px;
     height: 600px;
     display: block;
 }
 
-.game-page .btn {
-    border-radius: 8px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.game-page .btn-primary {
-    background-color: #4ca1af;
-    border: none;
-}
-
-.game-page .btn-primary:hover {
-    background-color: #2c3e50;
-}
-
-.game-page .btn-secondary {
-    background-color: #f39c12;
-    border: none;
-}
-
-.game-page .btn-secondary:hover {
-    background-color: #e67e22;
-}
-
-.game-page .btn-success {
-    background-color: #27ae60;
-    border: none;
-}
-
-.game-page .btn-success:hover {
-    background-color: #2ecc71;
-}
-
-.game-page .btn-warning {
-    background-color: bisque;
-    color: #000;
-    border: none;
-}
-
-.game-page .btn-warning:hover {
-    background-color: #e3c9a8;
-}
-
 .dropdown .dropdown-toggle img {
-  width: 35px;
-  height: 35px;
-  margin-right: 10px;
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
 }
 
 .dropdown .dropdown-toggle::after {
-  display: none;
+    display: none;
 }
 
 .dropdown .dropdown-toggle span {
-  color: var(--color-text-light);
+    color: var(--color-text-light);
 }
 
 .form-label {
     font-weight: bold;
     color: var(--color-primary);
-
-    margin-bottom: 10px; /* Dikey boşluk artırıldı */
+    margin-bottom: 10px;
+    /* Dikey boşluk artırıldı */
 }
 
-/* ...existing code... */
 .profile-page .btn i {
     margin-right: 5px;
 }
@@ -1233,12 +1378,142 @@ body {
     margin-right: 5px;
 }
 
-/* ...existing code... */
 .glass-effect {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
-/* ...existing code... */
 
+/* Game Sayfası Yeni Stilleri */
+.game-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.game-page .navbar {
+    background-color: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(76, 161, 175, 0.1);
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.game-page .navbar-brand {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(76, 161, 175, 0.5);
+}
+
+.game-page .game-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.game-page .game-area {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(76, 161, 175, 0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.game-page #scoreboard {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26, 26, 46, 0.9);
+    color: var(--color-primary);
+    padding: 0.5rem 2rem;
+    border-radius: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: 1px solid var(--color-primary);
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(76, 161, 175, 0.5);
+}
+
+.game-page .controls-info {
+    position: absolute;
+    bottom: 1rem;
+    background: rgba(26, 26, 46, 0.9);
+    color: var(--color-text);
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--color-primary);
+}
+
+.game-page footer {
+    background-color: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    color: var(--color-text);
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid rgba(76, 161, 175, 0.1);
+}
+
+/* Responsive Tasarım */
+@media (max-width: 1200px) {
+    .game-page .game-area {
+        width: 90vw !important;
+        height: calc(90vw * 0.75) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-page .game-area {
+        width: 95vw !important;
+        height: calc(95vw * 0.75) !important;
+    }
+
+    .game-page #scoreboard {
+        font-size: 1.2rem;
+        padding: 0.3rem 1.5rem;
+    }
+
+    .game-page .controls-info {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+}
+
+@media (max-height: 600px) {
+    .game-page .game-container {
+        padding: 1rem;
+    }
+}
+
+/* Loading Spinner */
+.game-page .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--color-bg-dark);
+    border-top: 5px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
 

@@ -1,72 +1,101 @@
 <div class="profile-page">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark glass-effect"
-        style="position: sticky; top: 0; z-index: 999;">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;">
         <div class="container">
-            <div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- Örnek rotalar -->
-                        <li class="nav-item mt-2">
-                            <a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
-                        </li>
-                        <li class="nav-item mt-2">
-                            <a class="nav-link" href="/GamePage" data-link>Game</a>
-                        </li>
-                        <li class="nav-item mt-2 mb-2">
-                            <a class="nav-link" href="/about" data-link>About</a>
-                        </li>
-                        <!-- Arkadaş Arama Alanı -->
-                        <li class="nav-item mt-2 mb-2 position-relative">
-                            <input autocomplete="off" class="form-control search-input" name="query"
-                                placeholder="Ara..." spellcheck="false" dir="auto" id="friendSearchInput">
+            <a class="navbar-brand" href="/" data-link>
+                <i class="bi bi-joystick"></i> Pong Game
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/username" data-link>
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/GamePage" data-link>
+                            <i class="bi bi-controller"></i> Game
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about" data-link>
+                            <i class="bi bi-info-circle"></i> About
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center">
+                    <!-- Search Bar -->
+                    <div class="search-container mb-2 mb-lg-0">
+                        <div class="position-relative w-100">
+                            <input type="search" class="form-control search-input" placeholder="Search friends..."
+                                id="friendSearchInput" autocomplete="off">
                             <ul id="friendSuggestions" class="list-group position-absolute mt-2"
-                                style="width: 250px; z-index: 1000;"></ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Profil Küçük Resmi - Dropdown -->
-            <div class="d-flex align-items-center position-relative">
-                <!-- Bildirim Çanı -->
-                <div class="dropdown ms-3 position-relative">
-                    <a href="#" class="nav-link text-white" id="notificationBell" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
-                        <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            0
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationBell">
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" id="requestsMenu">
-                                <i class="bi bi-person-plus me-2"></i> Gelen İstekler
-                                <span class="badge bg-primary ms-auto">2</span>
+                                style="width: 100%; z-index: 1000;">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Right Side Icons -->
+                    <div class="nav-icons-container">
+                        <!-- Notification Bell -->
+                        <div class="dropdown notification-dropdown">
+                            <a href="#" class="nav-link text-white position-relative p-2" id="notificationBell"
+                                data-bs-toggle="dropdown">
+                                <i class="bi bi-bell-fill"></i>
+                                <span id="notificationBadge"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    0
+                                </span>
                             </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle me-2"></i> Daha Fazla Bildirim</a></li>
-                    </ul>
-                </div>
-                <!-- Profil Dropdown -->
-                <div class="dropdowOnline ms-3">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                        id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img id="profileSmallPhoto" src="" alt="User" class="rounded-circle" width="40" height="40">
-                        <span id="navbarUsername" class="ms-2"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                data-bs-target="#settingsModal">Settings</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#signout">Sign out</a></li>
-                    </ul>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" id="requestsMenu">
+                                        <i class="bi bi-person-plus-fill me-2"></i> Friend Requests
+                                        <span class="badge bg-primary ms-auto">0</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-bell-fill me-2"></i> All Notifications
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown profile-dropdown">
+                            <a href="#"
+                                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2"
+                                id="navbarDropdown" data-bs-toggle="dropdown">
+                                <img id="profileSmallPhoto" src="" alt="Profile" class="rounded-circle me-2" width="32"
+                                    height="32">
+                                <span id="navbarUsername" class="d-none d-md-inline"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#settingsModal">
+                                        <i class="bi bi-gear-fill me-2"></i> Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#signout">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Sign out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,10 +117,11 @@
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
                         <!-- Arkadaşlar Modalını açar -->
-                        <button class="btn friends-card-3d" id="viewFriendsButton" data-bs-toggle="modal" data-bs-target="#friendsModal">
+                        <button class="btn friends-card-3d" id="viewFriendsButton" data-bs-toggle="modal"
+                            data-bs-target="#friendsModal">
                             <i class="bi bi-people-fill"></i> Dostlar
                         </button>
-                        
+
                     </div>
                 </div>
             </article>
@@ -184,9 +214,9 @@
                     </div>
                     <button id="createTournamentBtn" class="btn btn-success w-100">Turnuva Oluştur</button>
                 </div>
-            
+
                 <hr class="my-4">
-            
+
                 <!-- Mevcut Turnuvalara Katılma Bölümü -->
                 <div class="join-tournament-section">
                     <h5 class="mb-3">Turnuvaya Katıl</h5>
@@ -195,9 +225,9 @@
                     </div>
                     <button id="joinTournamentBtn" class="btn btn-outline-success w-100">Turnuvaya Katıl</button>
                 </div>
-            
+
                 <hr class="my-4">
-            
+
                 <!-- Aktif Turnuvalar Listesi -->
                 <div class="active-tournaments-section">
                     <h5 class="mb-3">Aktif Turnuvalar</h5>
@@ -213,7 +243,7 @@
                 <p>Oyun Türü:</p>
                 <div class="btn-group" role="group">
                     <button class="btn btn-outline-info" data-bs-dismiss="modal">Rastgele Maç</button>
-                    <button class="btn btn-outline-info" >Arkadaşlarla Oyna</button>
+                    <button class="btn btn-outline-info">Arkadaşlarla Oyna</button>
                 </div>
 
                 <hr>
@@ -251,12 +281,12 @@
 
 
         <!-- Dostlar (Arkadaşlar) Modal -->
-        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true" inert>
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="friendsModalLabel">Arkadaşlarınız</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                     </div>
                     <div class="modal-body">
                         <!-- Arkadaş listesi profil.js içinde listFriendsSection fonksiyonuyla doldurulur -->
@@ -265,6 +295,8 @@
                 </div>
             </div>
         </div>
+
+
 
         <!-- Gelen İstekler Modal -->
         <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel">
@@ -282,7 +314,7 @@
 
         <!-- Oyun Seçenekleri Modal -->
         <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1"
-            aria-labelledby="gameOptionsModalLabel" >
+            aria-labelledby="gameOptionsModalLabel">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -339,12 +371,11 @@
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="bg-dark text-white text-center py-3 mt-5">
-            <p>&copy; 2025 Tüm hakları saklı değildir.</p>
-        </footer>
         <div class="toast-container" id="toastContainer"></div>
     </main>
-</div>
 
+    <!-- Footer -->
+    <footer class="glass-effect text-center">
+        <p><i class="bi bi-code-slash"></i> 2025 Tüm hakları saklı değildir.</p>
+    </footer>
+</div>
