@@ -1,5 +1,5 @@
 import { loadNavbar } from "./tools.js"
-
+import {router} from "../../js/app.js"
 
 export async function initializeTopNavbar() {
 	await loadNavbar("top-navbar", "/admin/top-navbar.html");
@@ -31,6 +31,14 @@ function initializeSearchForm() {
 			
 			singout();
 		});
+
+	document.getElementById('myaccount').addEventListener('click', function(event) {
+		event.preventDefault();
+	  	const username = localStorage.getItem('username')
+		history.pushState(null, null, `/${username}`)
+		router()
+	});
+		  
 	}
 }
 
@@ -254,7 +262,8 @@ async function singout() {
 		if (!response.ok) {
 			throw new Error(`API Error: ${response.status}`);
 		}
-		window.location.href = "/"
+		history.pushState(null,null,`/`);
+		router();
 	} catch (error) {
 		console.error('Error fetching users:', error);
 	}

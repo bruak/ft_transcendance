@@ -1,5 +1,5 @@
 import { viewUserInfo, updateUser, deleteUser, fetchUsers } from "./users.js";
-import { fetchTwoFactor, fetchMailTokens } from "./authFetch.js";
+import { fetchTwoFactor, fetchMailTokens, infoMail, deleteMail } from "./authFetch.js";
 import { fetchFriend, viewFriendInfo, updateFriend, deleteFriend } from "./friends.js"
 import { loadNavbar } from "./tools.js"
 
@@ -95,6 +95,18 @@ export async function initializeSideNavbar() {
 			const username = event.target.closest('.friend-delete').dataset.username;
 			const friendname = event.target.closest('.friend-delete').dataset.friendname;
 			deleteFriend(username, friendname)
+		}
+
+		if (event.target.closest('.view-mail')) {
+			const username = event.target.closest('.view-mail').dataset.username;
+			const token = event.target.closest('.view-mail').dataset.token;
+			infoMail(username, token)
+		}
+
+		if (event.target.closest('.delete-mail')) {
+			const username = event.target.closest('.delete-mail').dataset.username;
+			const token = event.target.closest('.delete-mail').dataset.token;
+			deleteMail(username, token)
 		}
 
   });

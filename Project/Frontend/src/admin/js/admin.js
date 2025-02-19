@@ -1,6 +1,6 @@
 import { initializeSideNavbar } from "./sideNavbar.js";
 import { initializeTopNavbar } from "./topNavbar.js";
-
+import { router } from "../../js/app.js";
 document.addEventListener('DOMContentLoaded', () => {
 	initAdmin();
 });
@@ -23,9 +23,10 @@ async function Rol() {
 
 	if (!response.ok) {
 		if (localStorage.getItem("accessToken") && localStorage.getItem('username'))
-			window.location.href = `/${localStorage.getItem('username')}`;
+			history.pushState(null,null,`/${localStorage.getItem('username')}`);
 		else
-			window.location.href = "/";
+			history.pushState(null,null,`/`);
+		router();
 	}
 	const responseJson = await response.json(); // API'den dönen yanıt
 	const RoleGuard = responseJson.data;

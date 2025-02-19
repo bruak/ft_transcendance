@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Match, Tournament
 
+
 @csrf_exempt
 def random_match_view(request):
 	if request.method != 'POST':
@@ -69,7 +70,50 @@ def playing_matches_view(request):
 			}
 			for match in playing_matches
 		]
-		return JsonResponse({"playing_matches": matches_list}, status=200)
+		return JsonResponse({"message": matches_list}, status=200)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def create_tournament_view(request):
+	if request.method != 'POST':
+		return JsonResponse({"error": "Only POST requests are allowed."}, status=405)
+	try:
+		data = JSONParser().parse(request)
+		name = data.get('name')
+		start_date = data.get('start_date')
+		end_date = data.get('end_date')
+		if not all([name, start_date, end_date]):
+			return JsonResponse({"error": "Missing required fields."}, status=400)
+		tournament = Tournament.objects.create(
+			name=name,
+			start_date=start_date,
+			end_date=end_date,
+			status='upcoming'
+		)
+		return JsonResponse({
+			"tournament_id": tournament.id,
+			"detail_url": f"/tournament/{tournament.id}/"
+		}, status=201)
+	except Exception as e:
+		return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def list_tournaments_view(request):
+	try:
+		tournaments = Tournament.objects.all()
+		tournaments_list = [
+			{
+				"tournament_id": tournament.id,
+				"name": tournament.name,
+				"start_date": tournament.start_date,
+				"end_date": tournament.end_date,
+				"status": tournament.status,
+				"detail_url": f"/tournament/{tournament.id}/"
+			}
+			for tournament in tournaments
+		]
+		return JsonResponse({"message": tournaments_list}, status=200)
 	except Exception as e:
 		return JsonResponse({"error": str(e)}, status=500)
 

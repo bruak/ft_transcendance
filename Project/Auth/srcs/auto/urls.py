@@ -19,6 +19,8 @@ auth_patterns = [
     path('verify-account/<str:verify_token>/', AuthRequest.verifyAccount),
     path('validate-token/', AuthRequest.validate_token, name='validate_token'),
     path('retry-verification-account/', AuthRequest.retry_verification_account, name='retry_verification_account'),
+    path('forget_password/<str:username>/', AuthRequest.forget_password, name="forget_password"),
+    path('reset_password/<str:username>/', AuthRequest.reset_password, name="reset_password")
 ]
 
 # Intra-related URLs
@@ -36,7 +38,8 @@ admin_patterns = [
     
     #mail 
     path('listmail/', AdminRequest.MailTokenlist, name="mailtokenlist"),
-    path('change-mail-status/<str:username>/<str:token>/', AdminRequest.ChangeMailTokenStatus, name="change-mail-status"),
+    path('mailDelete/<str:username>/<str:token>/', AdminRequest.mailDelete, name="mailDelete"),
+    path('mailinfo/<str:username>/<str:token>/', AdminRequest.Mailinfo, name="infoMai"),
 
     #twofactor tokens
     path('listtwofactor/', AdminRequest.twoFactorList, name="twofactorlist"),

@@ -134,6 +134,9 @@ services:
       - friend
       - mail
       - auth
+      - game
+    env_file:
+      - .env
     ports:
       - 8080:443
     volumes:

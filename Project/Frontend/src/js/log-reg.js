@@ -396,7 +396,8 @@ export function initLogReg() {
             localStorage.setItem('username', username)
             localStorage.setItem('language', 'tr');
             console.log(access_token.token)
-            window.location.href = `/${username}`;
+            history.pushState(null, null, `/${username}`)
+		    router()
     
     
         } catch (error) {

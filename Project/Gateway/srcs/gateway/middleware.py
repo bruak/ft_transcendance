@@ -17,6 +17,8 @@ EXCLUDED_PATHS = [
     "verify-account",
     "intra",
     "callback",
+    "forget_password",
+    "reset_password",
     "api",  # değişicek
 ]
 

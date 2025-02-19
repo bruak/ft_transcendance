@@ -4,7 +4,7 @@ all: up
 
 up:
 	@echo "Başlatılıyor..."
-	docker compose -f $(COMPOSE_DIR)/docker-compose.yml up --build
+	docker compose -f $(COMPOSE_DIR)/docker-compose.yml up -d --build
 
 start:
 	@echo "Başlatılıyor..."

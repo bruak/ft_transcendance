@@ -154,9 +154,9 @@ class AdminRequest(View):
 			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", user_language)}, status=500)
 	
 	@csrf_exempt
-	def ChangeMailTokenStatus(request, username, token):
+	def mailDelete(request, username, token):
 		user_language = request.headers.get("Accept-Language", "tr")
-		if request.method != "POST":
+		if request.method != "DELETE":
 			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
 		
 		try:
@@ -170,17 +170,18 @@ class AdminRequest(View):
 			
 			
 			
-			token = str(uuid.uuid4())
+			NewToken = str(uuid.uuid4())
 			NewToken = MailTokens.objects.create(
                 user=user,
                 token=token,
                 type="verify",
                 expiration =  timezone.now() + timedelta(minutes=(60 * 24))
             )
-			
+			ip = os.getenv("DOMAIN")
+			mail_url = f"{ip}/api/auth/verify-account/{NewToken.token}/"
 			payload = {
 				"email": user.email,
-				"token": NewToken.token,
+				"token": mail_url,
 				"username": user.username,
 			}
 			
@@ -201,6 +202,22 @@ class AdminRequest(View):
 		except Exception as e:
 			return JsonResponse({"error": get_translated_message("UNEXPECTED_ERROR", user_language)}, status=500)
 
+	def Mailinfo(request, username, token):
+		language = request.headers.get("Accept-Language", "tr")
+		if request.method != "GET":
+			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", language)}, status=405)
+		try:
+			user = Users.objects.get(username=username)
+
+			response = MailTokens.objects.get(user=user, token=token)
+			serilazier = MailTokenSerializer(response)
+			return JsonResponse({'message': serilazier.data}, status=200)
+		except MailTokens.DoesNotExist:
+			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", language)}, status=500)
+		except Exception as e:
+			print(str(e))
+			return JsonResponse({'error': str(e)}, status=500)
+	
 	# Tüm TwoFactor List (Admin İçin) (Admin Kontrolu Edilicek)
 	def twoFactorList(request):
 		user_language = request.headers.get("Accept-Language", "tr")

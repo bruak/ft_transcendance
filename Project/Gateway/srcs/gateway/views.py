@@ -57,7 +57,7 @@ def handle_get(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	target_url = request.path
 	try:
-		headers = request.headers
+		headers = {"Accept-Language": request.headers.get("Accept-Language", "tr"), "Authorization" : request.headers.get("Authorization", None)} 
 		response = requests.get(target_url, headers=headers)
 		if response.status_code not in (200, 201):
 			return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code, 'data': response.json()}, status=response.status_code)

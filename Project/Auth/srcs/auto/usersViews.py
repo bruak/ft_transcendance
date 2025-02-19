@@ -164,8 +164,8 @@ class UserRequest(View):
                 "avatar": avatar_url,
                 "password": hashed_password,
             }
-
-            mail_url = f"https://localhost:8080/api/auth/verify-account/{token}/"
+            ip = os.getenv("DOMAIN")
+            mail_url = f"{ip}/api/auth/verify-account/{token}/"
             mail_data = {
                 "token": mail_url,
                 "username" : username,

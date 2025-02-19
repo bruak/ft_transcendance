@@ -22,11 +22,13 @@ class Tournament(models.Model):
     def __str__(self):
         return self.name
 
+
 class Match(models.Model):
     MATCH_TYPE_CHOICES = (
         ('S', 'Single'),
         ('L', 'Local'),
         ('M', 'Multi'),
+        ('T', 'Tournament'),
     )
     MATCH_STATUS_CHOICES = (
         ('waiting', 'Waiting'),

@@ -262,6 +262,39 @@ export function initProfile(params = {}) {
     }
 
     /* ---------------- 7) Oyun Seçenekleri & Diğer İşlemler ---------------- */
+    function loadActiveToutnaments(optionContent) {
+      fetch(`${apiBaseUrl}/game/active-tournaments/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Accept-Language': 'tr',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          const tournaments = data.data;
+          const activeTournamentsList = optionContent.querySelector('#activeTournamentsList');
+          if (activeTournamentsList) {
+            if (tournaments && tournaments.length > 0) {
+              activeTournamentsList.innerHTML = tournaments.map(tournament => {
+                return `<li class="list-group-item bg-dark text-white">
+                            <i class="bi bi-trophy icon"></i>
+                            ${tournament.name}
+                            <span class="badge">${tournament.start_date}</span>
+                        </li>`;
+              }).join('');
+            } else {
+              activeTournamentsList.innerHTML = '<li class="list-group-item bg-dark text-white">Henüz turnuva yok.</li>';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Aktif turnuvalar yüklenirken hata oluştu:', error);
+          showErrorMessage("Aktif turnuvalar yüklenirken bir hata oluştu.");
+        });
+    }
     const gameOptionButtons = document.querySelectorAll('.game-option-button');
     gameOptionButtons.forEach(btn => {
       btn.addEventListener('click', function () {
@@ -278,19 +311,31 @@ export function initProfile(params = {}) {
         const modalContent = document.getElementById('modalContent');
         modalContent.innerHTML = '';
         modalContent.appendChild(optionContent);
-
+        loadActiveToutnaments(optionContent);
         const tournamentMatchBtn = optionContent.querySelector('#createTournamentBtn');
-        console.log("createTournamentBtn",tournamentMatchBtn);
         if (tournamentMatchBtn){
           tournamentMatchBtn.addEventListener('click', () => {
-
             const tournamentData = {
-              name: document.getElementById('tournamentName').value,
-              player_count: document.getElementById('playerCount').value,
-              start_date: document.getElementById('startDate').value,
+              name: optionContent.querySelector('#tournamentName').value,
+              player_count: optionContent.querySelector('#playerCount').value,
+              start_date: optionContent.querySelector('#startDate').value,
+              end_date: optionContent.querySelector('#endDate').value,
               created_by: localStorage.getItem('username')
             };
-              // En son Buraya Baktin
+            const mybody = JSON.stringify(tournamentData)
+            fetch(`${apiBaseUrl}/game/create-tournament/`,{
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessToken}`
+              },
+              body: mybody
+            })
+            .then(response => response.json())
+            .then(data => {
+              loadActiveToutnaments(optionContent);
+            }).catch(err => console.error('Turnuva oluşturulurken hata:', err));
+            console.log('Turnuva oluşturuluyor:', tournamentData);
           });
         }
         const randomMatchBtn = optionContent.querySelector('.btn-outline-info');
@@ -387,20 +432,19 @@ export function initProfile(params = {}) {
     const recentActivitiesList = document.getElementById('recentActivitiesList');
     /* ======================[*] Son Etkinlikleri Yükleme [*]====================== */
     fetch(`${apiBaseUrl}/game/playing-matches/`, { // bura henüz çalışmıyor
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Accept-Language': 'tr',
           'Authorization': `Bearer ${accessToken}`
-        },
-      body: JSON.stringify({ username: userToLoad })
+        }
     })
     .then(response => response.json())
     .then(activities => {
       if (recentActivitiesList) {
-          if (activities.data.playing_matches && activities.data.playing_matches.length > 0) {
-              recentActivitiesList.innerHTML = activities.data.playing_matches.map(activity => {
+          if (activities.data && activities.data.length > 0) {
+              recentActivitiesList.innerHTML = activities.data.map(activity => {
                   return `<li class="list-group-item recent-activity-item ongoing">
                               <i class="bi bi-controller icon"></i>
                               ${activity.player1} vs ${activity.player2}
