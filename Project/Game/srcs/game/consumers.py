@@ -5,7 +5,7 @@ from asgiref.sync import sync_to_async
 from django.utils import timezone
 from abc import ABC, abstractmethod
 import random
-from game.models import Match
+from game.models import Match, Tournament
 from time import time
 
 class BasePongConsumer(AsyncWebsocketConsumer, ABC):
@@ -33,7 +33,32 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
         self.match.winner = winner
         self.match.updated_at = timezone.now()
         await sync_to_async(self.match.save)()
+        if self.match.match_type == 'T':
+            await self.handle_tournament_progression(winner)
 
+    async def handle_tournament_progression(self):
+        tournament = self.match.tournament
+        current_round_matches = await sync_to_async(list)(Match.objects.filter(tournament=tournament, status='finished'))
+        
+        all_matches_finished = all(match.status == 'finished' for match in current_round_matches)
+        
+        if all_matches_finished:
+            winners = [match.winner for match in current_round_matches]
+            
+            next_round_matches = []
+            for i in range(0, len(winners), 2):
+                match = await sync_to_async(Match.objects.create)(
+                    tournament=tournament,
+                    match_type='T',
+                    player1=winners[i],
+                    player2=winners[i+1] if i+1 < len(winners) else None,
+                    status='waiting'
+                )
+                next_round_matches.append(match)
+            
+            if len(winners) == 1:
+                tournament.status = 'finished'
+                await sync_to_async(tournament.save)()
 
     def create_initial_game_state(self):
         return {
@@ -185,6 +210,7 @@ class PongConsumer(BasePongConsumer):
             self.player_id = 'player2'
             await self.update_match_status("playing")
             self.game_loop_running = True
+            await self.send(json.dumps({ 'type': 'start' }))
             asyncio.create_task(self.start_game_loop())
         else:
             room_info["spectators"].append(self.channel_name)
@@ -203,6 +229,7 @@ class PongBotConsumer(BasePongConsumer):
             self.player_id = 'player1'
             await self.update_match_status("playing")
             self.game_loop_running = True
+            await self.send(json.dumps({ 'type': 'start' }))
             asyncio.create_task(self.start_game_loop())
             asyncio.create_task(self.bot_loop())
         else:

@@ -1,5 +1,12 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
 import { getState } from './app.js';
+
+function hideSpinner() {
+    const spinner = document.querySelector('.loading-spinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
 document.addEventListener('DOMContentLoaded', () => {
     initGame();
 });
@@ -307,6 +314,11 @@ export function initGame() {
         };
         gameState.socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
+            if (data.type === 'start')
+            {
+                console.log('Game started');
+                hideSpinner();
+            }
             if (data.type === 'init' || data.type === 'game_state') {
                 const state = data.state;
                 if (data.player_id) {
@@ -443,3 +455,4 @@ window.addEventListener('resize', throttle(() => {
         }
     }
 }, 100)); // 100ms throttle
+

@@ -55,3 +55,12 @@ class Match(models.Model):
 
     def __str__(self):
         return f"{self.player1}'s game ({self.get_match_type_display()})"
+
+
+class Participant(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='participants')
+    username = models.CharField(max_length=50)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username} in {self.tournament.name}"
