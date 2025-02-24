@@ -248,6 +248,20 @@ async function apiJoinTournament(tournamentId)
     return response.json();
 }
 
+async function apiStartTournament(tournamentId)
+{
+  const response = await fetch(`${apiBaseUrl}/game/tournament/${tournamentId}/start/`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Accept-Language': 'tr',
+        'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ username: localStorage.getItem('username') })
+  });
+}
+
 /* --------------------------------------------------------------------------
    2) initProfile: Sayfa ilk yüklendiğinde çağrılır.
    Aşamaları daha küçük fonksiyonlara böldük.
@@ -860,7 +874,7 @@ function cleanupProfile() {
 async function setupActiveTournamentsAccordion() {
   const accordion = document.getElementById('activeTournamentsAccordion');
   if (!accordion) return;
-
+  const currentUser = localStorage.getItem('username') || null;
   try {
     const data = await apiGetActiveTournaments();
     const tournaments = data.data;
@@ -901,7 +915,9 @@ async function setupActiveTournamentsAccordion() {
         ? `<button class="btn btn-primary join-tournament" data-tournament-id="${tournament.tournament_id}">
                                     <i class="bi bi-door-open"></i> Turnuvaya Katıl
                                  </button>`
-        : '<span class="badge bg-secondary">Turnuva Dolu</span>'}
+        : currentUser != tournament.creator ? '<span class="badge bg-secondary">Turnuva Dolu</span>' : `<button class="btn btn-primary start-tournament" data-tournament-id="${tournament.tournament_id}">
+                                    <i class="bi bi-door-open"></i> Turnuvayi Baslat
+                                 </button>` }
                         </div>
                         <div class="tournament-bracket-container">
                             <div class="bracket-loading d-none">Yükleniyor...</div>
@@ -931,6 +947,22 @@ async function setupActiveTournamentsAccordion() {
       });
     });
 
+    accordion.querySelectorAll('.start-tournament').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const tournamentId = e.target.dataset.tournamentId;
+        try {
+          // TODO: Backend'de tournament/join endpoint'i implement edilince eklenecek
+          await apiStartTournament(tournamentId);
+          showToast('Turnuvaya katılma isteğiniz alındı!', 'success');
+          // Akordiyon içeriğini yenile
+        } catch (error) {
+          console.error('Turnuvaya katılırken hata:', error);
+          showToast('Turnuvaya katılırken bir hata oluştu', 'danger');
+        }
+      });
+    });
+
+  
   } catch (error) {
     console.error('Aktif turnuvalar yüklenirken hata:', error);
     accordion.innerHTML = `
