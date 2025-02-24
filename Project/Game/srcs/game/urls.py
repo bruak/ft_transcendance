@@ -10,6 +10,6 @@ urlpatterns = [
 	path('create-tournament/', GameView.create_tournament_view, name='create_tournament'),
 	path('active-tournaments/', GameView.list_tournaments_view, name='list_tournaments'),
 	path('tournament/<int:tournament_id>/join/', GameView.join_tournament_view, name='join_tournament'),
-    path('tournament/<int:tournament_id>/start/', GameView.start_tournament_view, name='start_tournament'),
+	path('tournament/<int:tournament_id>/start/', GameView.start_tournament_view, name='start_tournament'),
 	path('tournament/<int:tournament_id>/playing/', GameView.playing_tournament_views, name='playing_tournament'),
 ]

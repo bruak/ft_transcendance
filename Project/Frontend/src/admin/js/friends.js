@@ -95,6 +95,7 @@ export async function updateFriend(username, frinedname) {
 		  headers: {
 			'Authorization': `Bearer ${accessToken}`,
 			'Content-Type': 'application/json',
+			'Accept-Language': 'tr',
 		  },
 		  body: JSON.stringify(requestData)
 		});

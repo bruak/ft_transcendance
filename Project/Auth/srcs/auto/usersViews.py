@@ -165,7 +165,7 @@ class UserRequest(View):
                 "password": hashed_password,
             }
             ip = os.getenv("DOMAIN")
-            mail_url = f"{ip}/api/auth/verify-account/{token}/"
+            mail_url = f"{ip}/verify-email/{token}"
             mail_data = {
                 "token": mail_url,
                 "username" : username,

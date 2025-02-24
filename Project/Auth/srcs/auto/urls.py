@@ -13,14 +13,15 @@ user_patterns = [
     path('put/', UserRequest.user_update, name='user-update'),
 ]
 
-# Authentication-related URLs
+# Authentication-related URLs validate_mail_token
 auth_patterns = [
     path('twofactor/', AuthRequest.twofactor, name='twofactor'),
     path('verify-account/<str:verify_token>/', AuthRequest.verifyAccount),
     path('validate-token/', AuthRequest.validate_token, name='validate_token'),
     path('retry-verification-account/', AuthRequest.retry_verification_account, name='retry_verification_account'),
     path('forget_password/<str:username>/', AuthRequest.forget_password, name="forget_password"),
-    path('reset_password/<str:username>/', AuthRequest.reset_password, name="reset_password")
+    path('reset_password/<str:token>/', AuthRequest.reset_password, name="reset_password"),
+    path('validate_mail_token/<str:type>/<str:token>/', AuthRequest.validate_mail_token, name="validate_mail_token")
 ]
 
 # Intra-related URLs

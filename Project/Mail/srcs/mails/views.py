@@ -19,7 +19,7 @@ class MailRequest(View):
 			print(11)
 			# Şifre sıfırlama bağlantısı oluştur
 			domain = os.getenv('DOMAIN')
-			reset_link = f"{domain}/api/auth/reset-password/{token}/"
+			reset_link = f"{domain}/forget-password/{token}"
 			# Mail gönder
 			send_mail(
 				subject=get_translated_message("PASSWORD_RESET_REQUEST", user_language),

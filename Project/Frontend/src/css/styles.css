@@ -757,6 +757,107 @@ body {
 }
 
 
+/* Turnuva Stilleri */
+
+.profile-page .tournament-bracket-container {
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.profile-page .tournament-bracket {
+    min-width: 800px;
+    /* Mobilde yatay kaydırma için minimum genişlik */
+    position: relative;
+}
+
+.profile-page .bracket-rounds {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.profile-page .bracket-round {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-page .bracket-match {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile-page .bracket-match::after {
+    content: '';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    width: 2rem;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* .profile-page .bracket-match:last-child::after {
+    display: none;
+} */
+
+.profile-page .bracket-player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.profile-page .bracket-player.winner {
+    background: rgba(40, 167, 69, 0.2);
+    border-left: 3px solid #28a745;
+}
+
+.profile-page .bracket-player.loser {
+    opacity: 0.6;
+}
+
+.profile-page .bracket-score {
+    font-weight: bold;
+    min-width: 30px;
+    text-align: right;
+}
+
+.profile-page .bracket-round-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #adb5bd;
+}
+
+/* Mobil için özel stiller */
+@media (max-width: 768px) {
+    .profile-page .tournament-bracket-container {
+        margin: 0 -15px;
+        /* Tam genişlik için negatif margin */
+    }
+
+    .profile-page .tournament-bracket {
+        padding: 0 15px;
+    }
+
+    .profile-page .bracket-match {
+        min-height: 60px;
+        font-size: 0.9rem;
+    }
+}
+
+
+
 /* =================== Log-Reg Sayfası Tasarımı =================== */
 
 .log-reg-page {

@@ -16,6 +16,9 @@ class Tournament(models.Model):
         choices=TOURNAMENT_STATUS_CHOICES, 
         default='upcoming'
     )
+    current_players = models.IntegerField(default=0)
+    player_limit = models.IntegerField(default=8)
+    creator = models.CharField(max_length=50,null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

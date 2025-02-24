@@ -233,6 +233,21 @@ async function apiSignOut() {
   return response;
 }
 
+async function apiJoinTournament(tournamentId)
+{
+    const response = await fetch(`${apiBaseUrl}/game/tournament/${tournamentId}/join/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Accept-Language': 'tr',
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ username: localStorage.getItem('username') }) 
+    });
+    return response.json();
+}
+
 /* --------------------------------------------------------------------------
    2) initProfile: Sayfa ilk yüklendiğinde çağrılır.
    Aşamaları daha küçük fonksiyonlara böldük.
@@ -244,11 +259,11 @@ export async function initProfile(params = {}) {
 
     // Adım 2: Kim hangi profili görüntüleyecek?
     const routeUser = params.username || null;
-	console.log("routeUser: ", routeUser);
+    console.log("routeUser: ", routeUser);
     const currentUser = localStorage.getItem('username') || null;
-	console.log("currentUser: ", currentUser);
+    console.log("currentUser: ", currentUser);
     const userToLoad = routeUser || currentUser;
-	console.log("userToLoad: ", userToLoad);
+    console.log("userToLoad: ", userToLoad);
     if (!userToLoad) {
       console.error('No username found to load profile.');
       return;
@@ -273,6 +288,9 @@ export async function initProfile(params = {}) {
     // Adım 8: Oyun seçenekleri
     setupGameOptions();
 
+    // Aktif turnuvaları yükle ve akordiyon oluştur
+    await setupActiveTournamentsAccordion();
+
     // Adım 9: Çıkış yapma
     setupSignOutLink();
 
@@ -280,7 +298,7 @@ export async function initProfile(params = {}) {
     await loadRecentActivities();
 
     // Opsiyonel: Bir cleanup fonksiyonu tanımlayıp window'a atayabilirsin
-    window.cleanupProfile = cleanupProfile; 
+    window.cleanupProfile = cleanupProfile;
   } catch (error) {
     console.error('initProfile hata:', error);
     showErrorMessage("Profil yüklenirken bir hata oluştu.");
@@ -294,7 +312,7 @@ export async function initProfile(params = {}) {
 /** Navbar linklerini routeUser'a göre ayarla */
 function setupNavbarLinks() {
   const navbarUsername = localStorage.getItem('username');
-  const homeLink = document.querySelector('.nav-link.active');
+  const homeLink = document.getElementById('home');
   if (homeLink && navbarUsername) {
     homeLink.href = navbarUsername;
   }
@@ -332,7 +350,7 @@ function setupProfileForm(isOwnProfile) {
       try {
         const data = await apiUpdateUserProfile(formData);
         if (data.success) {
-          updateProfileUI(data); 
+          updateProfileUI(data);
         } else {
           console.error('Profil güncellenemedi:', data.message || 'Bilinmeyen hata.');
         }
@@ -572,7 +590,7 @@ function setupGameOptions() {
       } else if (optionId === 'aiOptions') {
         setupBotMatch(optionContent);
       }
-      
+
       const modal = document.getElementById('gameOptionsModal');
       modal.classList.add('animate__animated', 'animate__fadeInDown');
       const bootstrapModal = new bootstrap.Modal(modal);
@@ -621,6 +639,7 @@ function setupTournamentCreation(optionContent) {
       player_count: optionContent.querySelector('#playerCount').value,
       start_date: optionContent.querySelector('#startDate').value,
       end_date: optionContent.querySelector('#endDate').value,
+      username: localStorage.getItem('username'),
       created_by: localStorage.getItem('username')
     };
     try {
@@ -723,7 +742,7 @@ async function loadRecentActivities() {
 }
 
 /** Tek tıklamayla maçı izlemek için global fonksiyon (HTML içindeki onclick="joinGame(...)") */
-window.joinGame = function(url) {
+window.joinGame = function (url) {
   setState('detail_url', url);
   history.pushState(null, null, '/GamePage');
   router();
@@ -819,7 +838,7 @@ function showToast(message, type = 'success') {
 /** Basit debounce fonksiyonu */
 function debounce(func, delay) {
   let timer;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timer);
     timer = setTimeout(() => func.apply(this, args), delay);
   };
@@ -835,4 +854,89 @@ function cleanupProfile() {
   // Modal kapatma, setInterval temizleme, vb.
   // Bu fonksiyonu app.js içinde bir rota değişimi esnasında çağırabilirsin.
   console.log("Profile cleanup yapıldı (örnek).");
+}
+
+/** Aktif turnuvaları akordiyon olarak göster */
+async function setupActiveTournamentsAccordion() {
+  const accordion = document.getElementById('activeTournamentsAccordion');
+  if (!accordion) return;
+
+  try {
+    const data = await apiGetActiveTournaments();
+    const tournaments = data.data;
+
+    if (!tournaments || tournaments.length === 0) {
+      accordion.innerHTML = '<div class="p-3 text-center">Şu anda aktif turnuva bulunmuyor.</div>';
+      return;
+    }
+
+    accordion.innerHTML = tournaments.map((tournament, index) => `
+            <div class="accordion-item bg-transparent" data-tournament-id="${tournament.tournament_id}">
+                <h4 class="accordion-header">
+                    <button class="accordion-button ${index === 0 ? '' : 'collapsed'} bg-dark text-white" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#tournament${index}">
+                        <i class="bi bi-trophy-fill me-2"></i>
+                        ${tournament.name}
+                        <span class="badge bg-primary ms-2">${tournament.player_count} Oyuncu</span> 
+                    </button>
+                </h4>
+                <div id="tournament${index}" 
+                     class="accordion-collapse collapse ${index === 0 ? 'show' : ''}"
+                     data-bs-parent="#activeTournamentsAccordion">
+                    <div class="accordion-body bg-dark text-white">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><i class="bi bi-calendar-event"></i> Başlangıç: ${new Date(tournament.start_date).toLocaleDateString()}</p>
+                                <p><i class="bi bi-calendar-check"></i> Bitiş: ${new Date(tournament.end_date).toLocaleDateString()}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="bi bi-person-circle"></i> Oluşturan: ${tournament.creator}</p>
+                                <p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.player1}/${tournament.player2}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            ${tournament.current_players < tournament.player_count
+        ? `<button class="btn btn-primary join-tournament" data-tournament-id="${tournament.tournament_id}">
+                                    <i class="bi bi-door-open"></i> Turnuvaya Katıl
+                                 </button>`
+        : '<span class="badge bg-secondary">Turnuva Dolu</span>'}
+                        </div>
+                        <div class="tournament-bracket-container">
+                            <div class="bracket-loading d-none">Yükleniyor...</div>
+                            <div class="tournament-bracket">
+                                <div class="bracket-rounds"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    // Katılma butonları için event listener'lar
+    accordion.querySelectorAll('.join-tournament').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const tournamentId = e.target.dataset.tournamentId;
+        try {
+          // TODO: Backend'de tournament/join endpoint'i implement edilince eklenecek
+          await apiJoinTournament(tournamentId);
+          showToast('Turnuvaya katılma isteğiniz alındı!', 'success');
+          // Akordiyon içeriğini yenile
+          await setupActiveTournamentsAccordion();
+        } catch (error) {
+          console.error('Turnuvaya katılırken hata:', error);
+          showToast('Turnuvaya katılırken bir hata oluştu', 'danger');
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error('Aktif turnuvalar yüklenirken hata:', error);
+    accordion.innerHTML = `
+            <div class="alert alert-danger m-3" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> Turnuvalar yüklenirken bir hata oluştu.
+            </div>
+        `;
+  }
 }

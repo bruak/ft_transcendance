@@ -423,6 +423,19 @@ export function initLogReg() {
             `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`
         );
     }
+
+
+    /* ======================[*] Şifremi Unuttum! [*]====================== */
+
+    const forgotpswd = document.querySelector('#forgot-password a');
+
+    forgotpswd.addEventListener('click', (event) => {
+        event.preventDefault();
+        history.pushState(null, null, "/recover-password");
+        router();
+    });
+
+    /* ======================[*] Pop-up'tan Veri Alma [*]====================== */
     
     // Pop-up'tan veri almak için kullanılan fonksiyon
     async function getPopupData(popup) {

@@ -85,19 +85,19 @@ class GameView(View):
 			name = data.get('name')
 			start_date = data.get('start_date')
 			end_date = data.get('end_date')
-			if not all([name, start_date, end_date]):
+			username = data.get('username')
+			player_limit = data.get('player_count')
+			if not all([name, start_date, end_date, username, player_limit]):
 				return JsonResponse({"error": "Missing required fields."}, status=400)
-			if start_date >= end_date:
-				return JsonResponse({"error": "End date must be greater than start date."}, status=400)
-			if timezone.now() >= start_date:
-				return JsonResponse({"error": "Start date must be greater than current date."}, status=400)
 			if Tournament.objects.filter(name=name,status='upcoming').exists():
 				return JsonResponse({"error": "Tournament with this name already exists."}, status=400)
 			tournament = Tournament.objects.create(
 				name=name,
 				start_date=start_date,
 				end_date=end_date,
-				status='upcoming'
+				status='upcoming',
+				creator=username,
+				player_limit=player_limit
 			)
 			return JsonResponse({
 				"tournament_id": tournament.id,
@@ -115,16 +115,16 @@ class GameView(View):
 			username = data.get('username')
 			if not username:
 				return JsonResponse({"error": "Username is required"}, status=400)
-			
+
 			tournament = Tournament.objects.get(id=tournament_id)
 			if tournament.status != 'upcoming':
 				return JsonResponse({"error": "Tournament is not open for joining."}, status=400)
-			
-			# Check if the user is already a participant
 			if Participant.objects.filter(tournament=tournament, username=username).exists():
 				return JsonResponse({"error": "User is already a participant."}, status=400)
-			
+
 			Participant.objects.create(tournament=tournament, username=username)
+			tournament.current_players += 1
+			tournament.save()
 			return JsonResponse({"message": "Joined tournament successfully."}, status=200)
 		except Tournament.DoesNotExist:
 			return JsonResponse({"error": "Tournament not found."}, status=404)
@@ -143,20 +143,13 @@ class GameView(View):
 			participants = list(tournament.participants.all())
 			participant_count = len(participants)
 			
-			# Check if the number of participants is a power of 2 and at least 4
-			if participant_count < 4 or (participant_count & (participant_count - 1)) != 0:
+			if participant_count < 4 or (participant_count & (participant_count - 1)) != 0 or participant_count != tournament.player_limit:
 				return JsonResponse({"error": "Number of participants must be a power of 2 and at least 4."}, status=400)
-			
-			# Shuffle participants to randomize matchups
 			import random
 			random.shuffle(participants)
-			
-			# Create matches
 			with transaction.atomic():
 				tournament.status = 'ongoing'
 				tournament.save()
-				
-				# Create first round matches
 				matches = []
 				for i in range(0, participant_count, 2):
 					match = Match.objects.create(
@@ -167,12 +160,8 @@ class GameView(View):
 						status='waiting'
 					)
 					matches.append(match)
-				
-				# Start WebSocket connections for each match
 				for match in matches:
 					room_name = f"tournament_{match.id}"
-					# Burada WebSocket bağlantısını başlatabilirsiniz.
-					# Örneğin, bir WebSocket URL'si oluşturabilir ve bu URL'yi frontend'e iletebilirsiniz.
 					match.detail_url = f"/ws/tournament/{room_name}/"
 					match.save()
 				
@@ -184,6 +173,7 @@ class GameView(View):
 			return JsonResponse({"error": "Tournament not found."}, status=404)
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
+	
 	@csrf_exempt
 	def playing_tournament_views(request, tournament_id):
 		if request.method != 'GET':
@@ -196,7 +186,7 @@ class GameView(View):
 					"match_id": match.id,
 					"player1": match.player1,
 					"player2": match.player2,
-					"timestamp": match.updated_at,
+					"creator": match.tournament.creator,
 					"detail_url": f"/game/room_{match.id}/"
 				}
 				for match in matches
@@ -218,6 +208,9 @@ class GameView(View):
 					"start_date": tournament.start_date,
 					"end_date": tournament.end_date,
 					"status": tournament.status,
+					"creator": tournament.creator,
+					"current_players": tournament.current_players,
+					"player_count": tournament.player_limit,
 				}
 				for tournament in tournaments
 			]

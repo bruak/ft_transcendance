@@ -109,7 +109,6 @@ class AuthRequest(View):
 		if request.method != "GET":
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
-			print(f"verfy_token : {verify_token}") 
 			mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
 			#Token check
 			if timezone.now() > mail_token.expiration:
@@ -151,6 +150,18 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
 		return JsonResponse({'valid': True, 'username' : username}, status = 200)
 
+	def validate_mail_token(request, type, token):
+		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != "GET":
+			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+		try:
+			mail = MailTokens.objects.get(type=type, token=token, status=True)
+			return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
+		except MailTokens.DoesNotExist:
+			return JsonResponse({'error': get_translated_message('NOT_FOUND_USER', user_language)}, status=404)
+		except Exception as e:
+			return JsonResponse({'error', str(e)}, status=500)
+
 	def forget_password(request, username):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "GET":
@@ -176,7 +187,7 @@ class AuthRequest(View):
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)
 	
-	# Delemen'le yapilcak
+	@csrf_exempt
 	def reset_password(request, token):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
@@ -186,9 +197,12 @@ class AuthRequest(View):
 			token = data.get('token')
 			password = data.get('password')
 
-			mail = MailTokens.objects.get(token=token)
+			mail = MailTokens.objects.get(token=token, status=True)
 			user = mail.user
 			user.password = make_password(password)
+			mail.status = False
+			mail.save()
+			user.save()
 			return JsonResponse({'message': get_translated_message('SUCCESSFUL', user_language)}, status=200)
 		except MailTokens.DoesNotExist:
 			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND')}, status=404)

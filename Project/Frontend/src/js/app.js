@@ -61,12 +61,16 @@ function showErrorMessage(message) {
 
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
-    '/': { html: './views/log-reg.html', init: () => import("./log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/:username': { html: './views/profile.html', init: (params) => import("./profile.js").then(({ initProfile }) => initProfile(params)) },
-    '/about': { html: './views/about-us.html', init: () => import("./about-us.js").then(({ initAbout }) => initAbout()) },
-    '/2fac': { html: './views/2factor.html', init: () => import("./2fac.js").then(({ init2fac }) => init2fac()) },
-    '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
-    '/a': { html: './admin/index.html', init: () => import("./../admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
+    '/': { html: './views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
+    '/:username': { html: './views/profile.html', init: (params) => import("/js/profile.js").then(({ initProfile }) => initProfile(params)) },
+    '/about': { html: './views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
+    '/2fac': { html: './views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
+    '/GamePage': { html: './views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },
+    '/a': { html: './admin/index.html', init: () => import("/admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
+    '/forget-password/:token': { html: './views/forgot-password.html', init: (params) => import("./password.js").then(({ initPassword }) => initPassword(params)) },
+    '/verify-email/:token': { html: './views/verify_email.html', init: (params) => import("./verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
+    '/recover-password': { html: './views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
+    
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
