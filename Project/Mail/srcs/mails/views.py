@@ -17,16 +17,16 @@ class MailRequest(View):
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			print(11)
-			# Şifre sıfırlama bağlantısı oluştur
+
 			domain = os.getenv('DOMAIN')
 			reset_link = f"{domain}/forget-password/{token}"
-			# Mail gönder
 			send_mail(
 				subject=get_translated_message("PASSWORD_RESET_REQUEST", user_language),
 				message=get_translated_message("PASSWORD_RESET_LINK", user_language) + " " + reset_link,
 				from_email='lmrnbzkrt0@gmail.com',
 				recipient_list=[email]
 			)
+			print(12)
 			return JsonResponse({'message': get_translated_message("PASSWORD_RESET_SENT", user_language)}, status=200)
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)

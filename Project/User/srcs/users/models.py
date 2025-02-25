@@ -1,5 +1,4 @@
 from django.db import models
-import os
 
 class User(models.Model):
 	id = models.AutoField(primary_key=True)

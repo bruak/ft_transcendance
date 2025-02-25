@@ -6,6 +6,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'avatar']
 
+    def __init__(self, *args, hide_email=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if hide_email:
+            self.fields.pop('email')
+
     def create(self, validated_data):
         # Gelen avatar verisini işliyoruz
         avatar = validated_data.get('avatar')

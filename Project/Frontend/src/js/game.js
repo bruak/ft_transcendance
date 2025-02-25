@@ -1,6 +1,14 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
 import { getState } from './app.js';
 
+
+    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+      homeLink.href = navbarUsername;
+    }
+
 function hideSpinner() {
     const spinner = document.querySelector('.loading-spinner');
     if (spinner) {
@@ -314,12 +322,12 @@ export function initGame() {
         };
         gameState.socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            if (data.type === 'start')
+            console.log(data.type);
+            if (data.type === 'init')
             {
-                console.log('Game started');
                 hideSpinner();
             }
-            if (data.type === 'init' || data.type === 'game_state') {
+            if ( data.type === 'game_state') {
                 const state = data.state;
                 if (data.player_id) {
                     gameState.playerId = data.player_id;
@@ -391,11 +399,11 @@ export function initGame() {
     animate();
 
     // Update home link
-    const username = localStorage.getItem('username');
-    const homeLink = document.querySelector('.nav-link.active');
-    if (homeLink) {
-        homeLink.href = `/${username}`;
-    }
+    // const username = localStorage.getItem('username');
+    // const homeLink = document.querySelector('.nav-link.active');
+    // if (homeLink) {
+    //     homeLink.href = `/${username}`;
+    // }
 
     // Cleanup on route change
     return () => {

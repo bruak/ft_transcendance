@@ -71,4 +71,5 @@ MESSAGES = {
     "USER_DELETE_ERROR": "Error deleting user.",
 	"ACCESS_TOKEN_USER_MISMATCH":"Access token does not belong to this user",
     "MAIL_TOKEN_STATUS_CHANGE_ERROR": "Error changing mail token status",
+	"PASSWORD_RESET_MAIL_ALREADY_SENT": "Password reset mail already sent",
 }

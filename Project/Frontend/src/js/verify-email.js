@@ -2,19 +2,28 @@ import { router } from "./app.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     initVerifyEmail();
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    if (token) {
-        initVerifyEmail({ token });
-    } else {
-        showMessage("Hata: Doğrulama bağlantısında eksik veya geçersiz bir token var.", "error");
-    }
+
 });
 
 export async function initVerifyEmail(params = {}) {
     const token = params.token;
     const host = window.location.host;
     const apiBaseUrl = `https://${host}/api/`;
+
+    const validate_response = await fetch(`${apiBaseUrl}auth/validate_mail_token/verify/${token}/`, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept-Language': 'tr',
+        },
+    })
+
+    if (validate_response.status !== 200) {
+        history.pushState(null, null, "/");
+        router();
+        return;
+    }
+
 
     try {
         const response = await fetch(`${apiBaseUrl}auth/verify-account/${token}/`, {

@@ -237,3 +237,6 @@ msgstr "Erişim belirteci bu kullanıcıya ait değil"
 
 msgid "Error changing mail token status"
 msgstr "E-posta jetonu değiştirme hatası"
+
+msgid "Password reset mail already sent"
+msgstr "Şifre sıfırlama e-postası zaten gönderildi"

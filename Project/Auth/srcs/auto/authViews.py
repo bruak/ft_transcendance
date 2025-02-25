@@ -156,6 +156,7 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			mail = MailTokens.objects.get(type=type, token=token, status=True)
+			print(mail.status)
 			return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
 		except MailTokens.DoesNotExist:
 			return JsonResponse({'error': get_translated_message('NOT_FOUND_USER', user_language)}, status=404)
@@ -169,21 +170,34 @@ class AuthRequest(View):
 		try:
 			user = Users.objects.get(username=username)
 			token = str(uuid.uuid4())
+			# Aktif olan sıfırlama maili varsa hata dönmeden 200 dönerek yeni bir mail göndermicez - hell yeah
+			active_token_exists = MailTokens.objects.filter (
+				user=user,
+				type="forgot-password",
+				expiration__gt=timezone.now(),
+				status=True
+			).exists()
+
+			if active_token_exists:
+				return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
+				
 			MailTokens.objects.create(
 				user=user,
 				token=token,
 				type="forgot-password",
                 expiration =  timezone.now() + timedelta(minutes=(60 * 24))
-
 			)
 			response = requests.get(f"http://mail:8000/api/reset-password/{user.email}/{token}/")
+			
 			if (response.status_code != 200):
-				return JsonResponse({'error': get_translated_message(response.json().get('error'), user_language)}, status=response.status_code)
+				return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language)}, status=response.status_code)
+			
 			return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
+		
 		except requests.exceptions.RequestException as e:
 			return JsonResponse({"error": f"Request failed: {str(e)}"}, status=500)
 		except Users.DoesNotExist:
-			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND')}, status=404)
+			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND', user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)
 	
@@ -196,16 +210,25 @@ class AuthRequest(View):
 			data = JSONParser().parse(request)
 			token = data.get('token')
 			password = data.get('password')
-
+			print(11)
 			mail = MailTokens.objects.get(token=token, status=True)
 			user = mail.user
 			user.password = make_password(password)
 			mail.status = False
+			print(12)
+			headers = {"Accept-Language": user_language}
+			user_password = {
+				"password": user.password
+			}
+			user_response = requests.post(f"http://project-users-1:8000/put/{user.username}/", json=user_password, headers=headers)
+			print(13)
+			if user_response.status_code != 200:
+				return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=user_response.status_code)
 			mail.save()
 			user.save()
 			return JsonResponse({'message': get_translated_message('SUCCESSFUL', user_language)}, status=200)
 		except MailTokens.DoesNotExist:
-			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND')}, status=404)
+			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND', user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)
 		

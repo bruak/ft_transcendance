@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from .serializers import UserSerializer
 from .translate_way import get_translated_message
-import requests
 
 class UserAdminRequest(View):
     # Admin

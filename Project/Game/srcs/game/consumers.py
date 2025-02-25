@@ -210,7 +210,6 @@ class PongConsumer(BasePongConsumer):
 			self.player_id = 'player2'
 			await self.update_match_status("playing")
 			self.game_loop_running = True
-			await self.send(json.dumps({ 'type': 'start' }))
 			asyncio.create_task(self.start_game_loop())
 		else:
 			room_info["spectators"].append(self.channel_name)
@@ -229,7 +228,6 @@ class PongBotConsumer(BasePongConsumer):
 			self.player_id = 'player1'
 			await self.update_match_status("playing")
 			self.game_loop_running = True
-			await self.send(json.dumps({ 'type': 'start' }))
 			asyncio.create_task(self.start_game_loop())
 			asyncio.create_task(self.bot_loop())
 		else:

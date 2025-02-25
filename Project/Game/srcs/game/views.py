@@ -83,18 +83,14 @@ class GameView(View):
 		try:
 			data = JSONParser().parse(request)
 			name = data.get('name')
-			start_date = data.get('start_date')
-			end_date = data.get('end_date')
-			username = data.get('username')
+			username = data.get('created_by')
 			player_limit = data.get('player_count')
-			if not all([name, start_date, end_date, username, player_limit]):
-				return JsonResponse({"error": "Missing required fields."}, status=400)
+			if not all([name, username, player_limit]):
+				return JsonResponse({"error": "Missing required fields."}, status=401)
 			if Tournament.objects.filter(name=name,status='upcoming').exists():
-				return JsonResponse({"error": "Tournament with this name already exists."}, status=400)
+				return JsonResponse({"error": "Tournament with this name already exists."}, status=402)
 			tournament = Tournament.objects.create(
 				name=name,
-				start_date=start_date,
-				end_date=end_date,
 				status='upcoming',
 				creator=username,
 				player_limit=player_limit
@@ -119,6 +115,8 @@ class GameView(View):
 			tournament = Tournament.objects.get(id=tournament_id)
 			if tournament.status != 'upcoming':
 				return JsonResponse({"error": "Tournament is not open for joining."}, status=400)
+			if (tournament.current_players + 1) > tournament.player_limit:
+				return JsonResponse({"error": "Tournament is full."}, status=400)
 			if Participant.objects.filter(tournament=tournament, username=username).exists():
 				return JsonResponse({"error": "User is already a participant."}, status=400)
 
@@ -162,7 +160,7 @@ class GameView(View):
 					matches.append(match)
 				for match in matches:
 					room_name = f"tournament_{match.id}"
-					match.detail_url = f"/ws/tournament/{room_name}/"
+					match.detail_url = f"game/room_{match.id}/"
 					match.save()
 				
 				return JsonResponse({
@@ -187,7 +185,7 @@ class GameView(View):
 					"player1": match.player1,
 					"player2": match.player2,
 					"creator": match.tournament.creator,
-					"detail_url": f"/game/room_{match.id}/"
+					"detail_url": f"game/room_{match.id}/"
 				}
 				for match in matches
 			]
@@ -205,8 +203,6 @@ class GameView(View):
 				{
 					"tournament_id": tournament.id,
 					"name": tournament.name,
-					"start_date": tournament.start_date,
-					"end_date": tournament.end_date,
 					"status": tournament.status,
 					"creator": tournament.creator,
 					"current_players": tournament.current_players,

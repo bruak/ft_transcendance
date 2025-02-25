@@ -202,5 +202,33 @@ NOTE: IF NOT SPECIFIED, DEFAULT LANGUAGE IS tr.
     "message": "MESAJ"
 }
 ```
+## <a name="get-user-profile">></a> 13. **Get User Profile** - `GET https://10.12.14.4:8080/users/getuserprofile/USERNAME/`
 
+request body:
+NONE
+
+**Headers**:
+- `Accept-Language`: `tr`
+OR
+- `Accept-Language`: `en`
+OR
+- `Accept-Language`: `fr`
+
+**Response**: 
+- `Content-Type`: `application/json`
+
+**RETURN EXAMPLE**
+
+```json
+{
+    "message": {
+        "first_name": "Burak",
+        "last_name": "Soykan",
+        "username": "bsoykan",
+        "avatar": "/media/avatars/bsoykan.jpg"
+    }
+}
+
+```	Expiration	Status	
+bsoykan
 ---

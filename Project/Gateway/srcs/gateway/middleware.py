@@ -19,6 +19,8 @@ EXCLUDED_PATHS = [
     "callback",
     "forget_password",
     "reset_password",
+    "userexists",
+    "validate_mail_token",
     "api",  # değişicek
 ]
 
@@ -58,10 +60,10 @@ class ProxyMiddleware:
         if not self.is_excluded_path(path) and not self.validate_token(request, user_language):
             return self.json_response("INVALID_VALIDATE_TOKEN", user_language, 401)
         
-        
         request.path = f"{service_url}/{path}/"
         if self.is_admin_path(request.path) and not self.validate_admin(request):
             return self.json_response("INVALID_VALIDATE_TOKEN", user_language, 401)
+            
         print(f"Updated request path: {request.path}")
 
         return None  # Continue to the view

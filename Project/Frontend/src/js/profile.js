@@ -245,6 +245,9 @@ async function apiJoinTournament(tournamentId)
         },
         body: JSON.stringify({ username: localStorage.getItem('username') }) 
     });
+    if (!response.ok) {
+      throw new Error(`Turnuvaya katılırken bir hata oluştu: ${response.status}`);
+    }
     return response.json();
 }
 
@@ -260,6 +263,10 @@ async function apiStartTournament(tournamentId)
     },
     body: JSON.stringify({ username: localStorage.getItem('username') })
   });
+  if (!response.ok)
+  {
+    throw new Error(`Turnuva başlatılırken bir hata oluştu: ${response.status}`);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -909,14 +916,16 @@ async function setupActiveTournamentsAccordion() {
                                 <p><i class="bi bi-person-circle"></i> Oluşturan: ${tournament.creator}</p>
                                 <p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.player1}/${tournament.player2}</p>
                             </div>
+                            <div class="col-12">
+                            </div>
                         </div>
                         <div class="mt-3 text-center">
                             ${tournament.current_players < tournament.player_count
         ? `<button class="btn btn-primary join-tournament" data-tournament-id="${tournament.tournament_id}">
                                     <i class="bi bi-door-open"></i> Turnuvaya Katıl
                                  </button>`
-        : currentUser != tournament.creator ? '<span class="badge bg-secondary">Turnuva Dolu</span>' : `<button class="btn btn-primary start-tournament" data-tournament-id="${tournament.tournament_id}">
-                                    <i class="bi bi-door-open"></i> Turnuvayi Baslat
+        : currentUser != tournament.creator ? '<span class="badge bg-secondary">Turnuva Dolu</span>' : `<button class="btn btn-success start-tournament" data-tournament-id="${tournament.tournament_id}">
+                                    Turnuvayi Baslat
                                  </button>` }
                         </div>
                         <div class="tournament-bracket-container">

@@ -62,7 +62,7 @@ function showErrorMessage(message) {
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
     '/': { html: './views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/:username': { html: './views/profile.html', init: (params) => import("/js/profile.js").then(({ initProfile }) => initProfile(params)) },
+    '/:username': { html: './views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
     '/about': { html: './views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
     '/2fac': { html: './views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
     '/GamePage': { html: './views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },

@@ -58,7 +58,7 @@ class UserRequest(View):
                 "first_name": first_name,
                 "last_name": last_name,
             }
-
+            
             user_response = requests.post(f"http://project-users-1:8000/put/{user.username}/", json=user_data, headers=headers )
 
             if user_response.status_code != 200:

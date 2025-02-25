@@ -8,8 +8,7 @@ __pycache_*
 *.so
 
 *.mo
-Project/Translation/locale/en/LC_MESSAGES/django.mo
-Project/Translation/locale/tr/LC_MESSAGES/django.po
+*.django.mo
 Project/Auth/srcs/media/*.jpeg
 Project/Auth/srcs/media/*.jpg
 Project/Auth/srcs/media/*.png
