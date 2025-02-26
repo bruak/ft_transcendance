@@ -11,7 +11,6 @@ from .translate_way import get_translated_message
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
-# Arkaşlık İsteği Gönderme (Accses Token)
 class FriendRequestView(View):
 	@csrf_exempt
 	def send_friend_request(request):

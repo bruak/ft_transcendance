@@ -35,7 +35,7 @@
                             <input type="search" class="form-control search-input" placeholder="Search friends..."
                                 id="friendSearchInput" autocomplete="off">
                             <ul id="friendSuggestions" class="list-group position-absolute mt-2"
-                                style="width: 100%; z-index: 1000;">
+                                style="width: 100%; z-index: 1000; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px;">
                             </ul>
                         </div>
                     </div>
@@ -246,7 +246,7 @@
         <!-- Aktif Turnuvalar -->
         <section class="my-5">
             <h2 class="text-center"><i class="bi bi-trophy"></i> Aktif Turnuvalar</h2>
-            <div class="accordion glass-effect" id="activeTournamentsAccordion">
+            <div class="accordion glass-effect position-relative" id="activeTournamentsAccordion" style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;">
             <!-- Turnuvalar dinamik olarak buraya eklenecek -->
             <!-- <div class="text-center p-3">
                 <div class="spinner-border text-light" role="status">
@@ -267,7 +267,7 @@
         <!-- Son Etkinlikler -->
         <section class="my-5">
             <h2 class="text-center">Son Etkinlikler</h2>
-            <ul id="recentActivitiesList" class="list-group"></ul>
+            <ul id="recentActivitiesList" class="list-group position-relative" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"></ul>
             <!-- Dinamik içerik buraya eklenecek -->
             </ul>
         </section>

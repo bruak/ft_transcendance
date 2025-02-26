@@ -314,7 +314,11 @@ export function initGame() {
 
         gameState.socket = new WebSocket(
             'wss://' + window.location.host + '/game/ws/' + roomName +
-            '?token=' + token
+            '?token=' + token, [], {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            } 
         );
 
         gameState.socket.onopen = function () {
@@ -322,7 +326,6 @@ export function initGame() {
         };
         gameState.socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            console.log(data.type);
             if (data.type === 'init')
             {
                 hideSpinner();

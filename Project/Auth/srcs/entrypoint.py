@@ -31,8 +31,7 @@ def main():
             time.sleep(2)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_service.settings")
-    django.setup()  # Django başlatılıyor
-
+    django.setup()
     try:
         call_command("makemigrations")
         call_command("migrate")
@@ -59,10 +58,8 @@ def main():
         host = os.environ.get("APP_HOST", "0.0.0.0")
         port = os.environ.get("APP_PORT", "8000")
 
-        # Projenizdeki asgi uygulamasının yolunu yazın:
         asgi_app_path = "auto_service.asgi:application"
 
-        # daphne'yi çalıştır
         cmd = f"daphne -b {host} -p {port} {asgi_app_path}"
         print(f"Sunucu başlatılıyor: {cmd}")
         os.system(cmd)

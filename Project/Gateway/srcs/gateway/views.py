@@ -4,15 +4,22 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .translate_way import get_translated_message
+import json
+from django.http import JsonResponse
 
 @csrf_exempt
 def handle_post(request):
 	user_language = request.headers.get("Accept-Language", "tr")
 	target_url = request.path  # Path middleware'den gelir
 	if request.content_type == "application/json":
-		payload = JSONParser().parse(request)
+		if not request.body:
+			return JsonResponse({'error': get_translated_message("EMPTY_REQUEST_BODY", user_language)}, status=500)
+		try:
+			payload = JSONParser().parse(request)
+		except JSONDecodeError:
+			return JsonResponse({'error': get_translated_message("INVALID_JSON_REQUEST_BODY", user_language)}, status=500)
 	else:
-		payload = None  # Byte'ı string'e çeviriyoruz
+		payload = None
 	try:
 		headers = request.headers
 		response = requests.post(target_url, json=payload, headers=headers)

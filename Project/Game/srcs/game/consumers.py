@@ -34,10 +34,11 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		self.match.updated_at = timezone.now()
 		await sync_to_async(self.match.save)()
 		if self.match.match_type == 'T':
-			await self.handle_tournament_progression(winner)
+			await self.handle_tournament_progression()
 
 	async def handle_tournament_progression(self):
 		tournament = self.match.tournament
+		print(f"Handling tournament progression for {tournament}")
 		current_round_matches = await sync_to_async(list)(Match.objects.filter(tournament=tournament, status='finished'))
 		
 		all_matches_finished = all(match.status == 'finished' for match in current_round_matches)

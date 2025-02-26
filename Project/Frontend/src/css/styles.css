@@ -119,6 +119,12 @@ body {
     align-items: center;
 }
 
+.profile-page .list-group-item.tournament-match-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
 .profile-page .list-group-item .badge {
     margin-right: 10px;
 }
@@ -758,102 +764,139 @@ body {
 
 
 /* Turnuva Stilleri */
-
-.profile-page .tournament-bracket-container {
-    overflow-x: auto;
-    padding: 20px 0;
+.profile-page .akordiyon .accordion-item {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
 }
 
-.profile-page .tournament-bracket {
-    min-width: 800px;
-    /* Mobilde yatay kaydırma için minimum genişlik */
-    position: relative;
+.profile-page .akordiyon .accordion-button {
+    background: linear-gradient(135deg, #1f1f1f, #292929);
+    color: #f8f9fa;
+    font-weight: 500;
+    padding: 15px;
+    transition: all 0.3s ease;
 }
 
-.profile-page .bracket-rounds {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
+.profile-page .akordiyon .accordion-button:hover {
+    background: linear-gradient(135deg, #292929, #343434);
 }
 
-.profile-page .bracket-round {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+.profile-page .akordiyon .accordion-body {
+    background: #1c1c1e;
+    color: #f8f9fa;
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
 }
 
-.profile-page .bracket-match {
-    background: rgba(255, 255, 255, 0.1);
+.profile-page .akordiyon .badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 12px;
     border-radius: 8px;
-    padding: 10px;
-    position: relative;
-    min-height: 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
-.profile-page .bracket-match::after {
-    content: '';
-    position: absolute;
-    right: -2rem;
-    top: 50%;
-    width: 2rem;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.3);
+.profile-page .akordiyon .btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    transition: 0.3s ease;
 }
 
-/* .profile-page .bracket-match:last-child::after {
-    display: none;
-} */
-
-.profile-page .bracket-player {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    border-radius: 4px;
+.profile-page .akordiyon .btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004494);
 }
 
-.profile-page .bracket-player.winner {
-    background: rgba(40, 167, 69, 0.2);
-    border-left: 3px solid #28a745;
+.profile-page .akordiyon .btn-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    border: none;
+    transition: 0.3s ease;
 }
 
-.profile-page .bracket-player.loser {
-    opacity: 0.6;
+.profile-page .akordiyon .btn-success:hover {
+    background: linear-gradient(135deg, #1e7e34, #155724);
 }
 
-.profile-page .bracket-score {
-    font-weight: bold;
-    min-width: 30px;
-    text-align: right;
+.profile-page .akordiyon .text-center .badge.bg-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #f8f9fa;
 }
 
-.profile-page .bracket-round-title {
-    text-align: center;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #adb5bd;
+.profile-page .akordiyon .accordion-button:focus {
+    box-shadow: none;
 }
 
-/* Mobil için özel stiller */
-@media (max-width: 768px) {
-    .profile-page .tournament-bracket-container {
-        margin: 0 -15px;
-        /* Tam genişlik için negatif margin */
-    }
 
-    .profile-page .tournament-bracket {
-        padding: 0 15px;
-    }
+/* =================== scroll için =================== */
 
-    .profile-page .bracket-match {
-        min-height: 60px;
-        font-size: 0.9rem;
-    }
+#friendSuggestions {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Kaydırma çubuğunun genişliği */
+#friendSuggestions::-webkit-scrollbar {
+    width: 8px;  /* Kaydırma çubuğu genişliği */
+}
+
+/* Kaydırma çubuğunun arka planı */
+#friendSuggestions::-webkit-scrollbar-track {
+    background: #000000; /* Gri arka plan */
+    border-radius: 10px;
+}
+
+/* Kaydırma çubuğunun kaydırılabilir kısmı */
+#friendSuggestions::-webkit-scrollbar-thumb {
+    background: #014fa2; /* Mavi kaydırma çubuğu */
+    border-radius: 10px;
+}
+
+/* Kaydırma çubuğu üzerine gelince rengi değiştirme */
+#friendSuggestions::-webkit-scrollbar-thumb:hover {
+    background: #014fa2; /* Daha koyu mavi */
+}
+
+/* ====================== */
+
+/* Kaydırma çubuğunun genişliği */
+#recentActivitiesList::-webkit-scrollbar, 
+#activeTournamentsAccordion::-webkit-scrollbar, 
+#tournamentMatches::-webkit-scrollbar {
+    width: 8px;  /* İnce scrollbar */
+}
+
+/* Kaydırma çubuğunun arka planı */
+#recentActivitiesList::-webkit-scrollbar-track, 
+#activeTournamentsAccordion::-webkit-scrollbar-track, 
+#tournamentMatches::-webkit-scrollbar-track {
+    background: #000000; /* Siyah arka plan */
+    border-radius: 10px;
+}
+
+/* Kaydırma çubuğunun kaydırılabilir kısmı */
+#recentActivitiesList::-webkit-scrollbar-thumb, 
+#activeTournamentsAccordion::-webkit-scrollbar-thumb, 
+#tournamentMatches::-webkit-scrollbar-thumb {
+    background: #014fa2; /* Mavi scrollbar */
+    border-radius: 10px;
+}
+
+/* Kaydırma çubuğu üzerine gelince renk değiştirme */
+#recentActivitiesList::-webkit-scrollbar-thumb:hover, 
+#activeTournamentsAccordion::-webkit-scrollbar-thumb:hover, 
+#tournamentMatches::-webkit-scrollbar-thumb:hover {
+    background: #95ff00; /* Aynı mavi tonu */
+}
+
+/* Firefox desteği */
+#recentActivitiesList, #activeTournamentsAccordion, #tournamentMatches {
+    scrollbar-width: thin; /* Firefox için ince scrollbar */
+    scrollbar-color: #014fa2 #000000; /* Scroll rengi */
 }
 
 

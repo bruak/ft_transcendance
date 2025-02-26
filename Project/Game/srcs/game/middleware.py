@@ -26,10 +26,11 @@ class GameWSAuthMiddleware:
         # Parse query string or headers to extract token
         query_string = scope.get("query_string", b"").decode()
         query_params = urllib.parse.parse_qs(query_string)
+        token = query_params.get("token", [None])[0] 
+        print(token)
         token = None
 
-        headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
-        token = headers.get("authorization")
+
         if not token:
             token_list = query_params.get("token")
             if token_list:

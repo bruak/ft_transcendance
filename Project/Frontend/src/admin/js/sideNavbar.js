@@ -3,11 +3,8 @@ import { fetchTwoFactor, fetchMailTokens, infoMail, deleteMail } from "./authFet
 import { fetchFriend, viewFriendInfo, updateFriend, deleteFriend } from "./friends.js"
 import { loadNavbar } from "./tools.js"
 
-
-
 export async function initializeSideNavbar() {
 	await loadNavbar("side-navbar", "/admin/side-navbar.html");
-
 
 	// Auth Mail Tokens
 	const authUser = document.getElementById('authMail')
@@ -35,15 +32,6 @@ export async function initializeSideNavbar() {
 			event.preventDefault();
 			await loadNavbar('main-content', "/admin/users.html");
 			fetchUsers();
-		});
-	}
-
-	// Dashboard sayfası
-	const dashboard = document.getElementById('dashboard');
-	if (dashboard) {
-		dashboard.addEventListener('click', async (event) => {
-			event.preventDefault();
-			await loadNavbar('main-content', "/admin/dashboard.html");
 		});
 	}
 

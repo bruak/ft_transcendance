@@ -10,8 +10,8 @@ import requests
 class IntraRequest(View):
     # İntra Login
     def intra_login(request):
-        UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-        redirect_uri = "https://10.12.16.2:8080/api/auth/callback/"  # Callback URL
+        UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
+        redirect_uri = "https://10.12.14.4:8080/api/auth/callback/"  # Callback URL
         auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
         return JsonResponse({'url': auth_url}, status=200)
 
@@ -21,9 +21,9 @@ class IntraRequest(View):
         if not code:
             return JsonResponse({"error": get_translated_message("AUTH_CODE_NOT_FOUND_CALLBACK", user_language)}, status=400)
 
-        UID = "u-s4t2ud-d6fc5ab81237161a534008480af5e5e57c39deef93e97fd49b9af9e1fa666caf"
-        SECRET = "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"
-        redirect_uri = "https://10.12.16.2:8080/api/auth/callback/"  # Callback URL
+        UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
+        SECRET = "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"
+        redirect_uri = "https://10.12.14.4:8080/api/auth/callback/"  # Callback URL
         token_url = "https://api.intra.42.fr/oauth/token"
         data = {
             'grant_type': 'authorization_code',

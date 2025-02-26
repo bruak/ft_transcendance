@@ -212,11 +212,11 @@ export function updateProfileUI(user) {
 	  container.innerHTML = '<div class="p-3 text-center">Şu anda aktif turnuva bulunmuyor.</div>';
 	  return;
 	}
-  
+
 	container.innerHTML = tournaments.map((tournament, index) => `
-	  <div class="accordion-item bg-transparent" data-tournament-id="${tournament.tournament_id}">
+	  <div class=" akordiyon accordion-item bg-transparent" data-tournament-id="${tournament.tournament_id}">
 		<h4 class="accordion-header">
-		  <button class="accordion-button ${index === 0 ? '' : 'collapsed'} bg-dark text-white" 
+		  <button class="accordion-button collapsed bg-dark text-white" 
 				  type="button" 
 				  data-bs-toggle="collapse" 
 				  data-bs-target="#tournament${index}">
@@ -226,7 +226,7 @@ export function updateProfileUI(user) {
 		  </button>
 		</h4>
 		<div id="tournament${index}" 
-			 class="accordion-collapse collapse ${index === 0 ? 'show' : ''}"
+			 class="accordion-collapse collapse"
 			 data-bs-parent="#${container.id}">
 		  <div class="accordion-body bg-dark text-white">
 			<div class="row">
@@ -253,12 +253,6 @@ export function updateProfileUI(user) {
 						</button>`)
 			  }
 			</div>
-			<div class="tournament-bracket-container">
-			  <div class="bracket-loading d-none">Yükleniyor...</div>
-			  <div class="tournament-bracket">
-				<div class="bracket-rounds"></div>
-			  </div>
-			</div>
 		  </div>
 		</div>
 	  </div>
@@ -278,7 +272,7 @@ export function updateProfileUI(user) {
 	container.innerHTML = activities.map(activity => {
 	  const timeStr = new Date(activity.timestamp).toLocaleString();
 	  return `
-		<li class="list-group-item recent-activity-item ongoing">
+		<li class="list-group-item recent-activity-item ongoing text-white">
 		  <i class="bi bi-controller icon"></i>
 		  ${activity.player1} vs ${activity.player2}
 		  <span class="badge">${timeStr}</span>
@@ -288,23 +282,52 @@ export function updateProfileUI(user) {
   }
   
 
-  export function renderTournamentList(ListContainer, Matches) 
-  {
-	if (!Matches || Matches.length === 0) 
-	{
-	  ListContainer.innerHTML = '<li class="list-group-item bg-dark text-white">Henüz turnuva bulunmuyor.</li>';
-	  return;
+  /**
+  * Turnuva maçlarını liste olarak DOM'a basan fonksiyon
+  * Turnuva içindeki eşleşmeleri ve maça katılım butonlarını gösterir
+  * @param {HTMLElement} ListContainer - Turnuva listesinin ekleneceği konteyner element
+  * @param {Array} Matches - [{player1: string, player2: string, detail_url: string},...] formatında maç listesi
+  */
+  export function renderTournamentList(ListContainer, Matches) {
+	if (!Matches || Matches.length === 0) {
+		ListContainer.innerHTML = '<li class="list-group-item bg-dark text-white">Henüz turnuva bulunmuyor.</li>';
+		return;
 	}
-	console.log(Matches);
-	console.log(ListContainer);
-	const Deneme = ListContainer.querySelector('.Base-list');
-	Deneme.innerHTML = Matches.map(match => {
-	  return `
-		<li class="list-group-item recent-activity-item ongoing">
-		  <i class="bi bi-controller icon"></i>
-		  ${match.player1} vs ${match.player2}
-		  <button class="btn btn-primary btn-sm float-end" data-detailurl="${match.detail_url}">İzle</button>
+	ListContainer.innerHTML = Matches.map(match => {
+		return `
+		<li class="list-group-item tournament-match-item">
+			<div class="match-players">
+				<i class="bi bi-trophy-fill text-warning me-2"></i>
+				<strong>${match.player1}</strong>
+				<span class="vs-text mx-2">VS</span>
+				<strong>${match.player2}</strong>
+			</div>
+			<div class="match-actions ms-auto">
+				<button class="btn btn-sm btn-success play-match" data-detailurl="${match.detail_url}">
+					<i class="bi bi-controller"></i> Maça Git
+				</button>
+			</div>
 		</li>`;
 	}).join('');
+}
 
-  }
+
+/*
+`
+        <li class="list-group-item tournament-match-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="match-players">
+              <i class="bi bi-trophy-fill text-warning me-2"></i>
+              <strong>${match.player1}</strong>
+              <span class="vs-text mx-2">VS</span>
+              <strong>${match.player2}</strong>
+            </div>
+            <div class="match-actions">
+              <button class="btn btn-sm btn-success play-match" data-detailurl="${match.detail_url}">
+                <i class="bi bi-controller"></i> Maça Git
+              </button>
+            </div>
+          </div>
+        </li>`
+
+		*/

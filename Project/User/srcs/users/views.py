@@ -85,7 +85,7 @@ class UserRequest(View):
             return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
         try:
             if not query:
-                return JsonResponse({"message": "Arama için 'query' parametresi gereklidir."}, status=400)
+                return JsonResponse({"message": get_translated_message("NEED_QUERY_FOR_SEARCH", user_language)}, status=400)
             users = User.objects.filter(
                 models.Q(username__icontains=query) |
                 models.Q(email__icontains=query) |

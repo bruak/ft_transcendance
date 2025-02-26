@@ -7,15 +7,12 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from rest_framework.parsers import JSONParser
 import uuid
 import requests
 
-
-
 class AuthRequest(View):
-	#Kullanıcı Çıkış (Accses Token)
 	@csrf_exempt
 	def singout(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -35,7 +32,6 @@ class AuthRequest(View):
 		except Exception as e:
 			return (JsonResponse({'error': get_translated_message("USER_SIGNOUT_PROBLEM", user_language)}, status=500))
 
-	# Kullanıcı Two Factor Doğrulama 
 	@csrf_exempt
 	def twofactor(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -75,7 +71,6 @@ class AuthRequest(View):
 		twofactor.save()
 		return JsonResponse({'message': token})
 
-	# Test Edilcek -> Ihtiyaç Doğrultusuna göre düzenlencek
 	@csrf_exempt
 	def retry_verification_account(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -110,7 +105,6 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			mail_token = MailTokens.objects.get(token=verify_token, type="verify", status=True)
-			#Token check
 			if timezone.now() > mail_token.expiration:
 				mail_token.status = False
 				mail_token.save()
@@ -131,7 +125,6 @@ class AuthRequest(View):
 		except Exception as e:
 			return JsonResponse({'error': get_translated_message("TOKEN_NOT_FOUND", user_language)}, status=403)
 
-	# Kullanıcı Accsess Token Doğrulama
 	@csrf_exempt
 	def validate_token(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -165,12 +158,14 @@ class AuthRequest(View):
 
 	def forget_password(request, username):
 		user_language = request.headers.get("Accept-Language", "tr")
+
 		if request.method != "GET":
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+
 		try:
 			user = Users.objects.get(username=username)
 			token = str(uuid.uuid4())
-			# Aktif olan sıfırlama maili varsa hata dönmeden 200 dönerek yeni bir mail göndermicez - hell yeah
+
 			active_token_exists = MailTokens.objects.filter (
 				user=user,
 				type="forgot-password",
@@ -193,7 +188,7 @@ class AuthRequest(View):
 				return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language)}, status=response.status_code)
 			
 			return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
-		
+
 		except requests.exceptions.RequestException as e:
 			return JsonResponse({"error": f"Request failed: {str(e)}"}, status=500)
 		except Users.DoesNotExist:
@@ -231,6 +226,3 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND', user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)
-		
-		
-	

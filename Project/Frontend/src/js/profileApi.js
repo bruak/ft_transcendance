@@ -157,6 +157,7 @@ export async function apiListFriends(username) {
       'Authorization': `Bearer ${accessToken}`
     }
   });
+  console.log("response.status :", response.status);
   if (!response.ok) {
     throw new Error(`Arkadaş listesi alınırken hata: ${response.status}`);
   }

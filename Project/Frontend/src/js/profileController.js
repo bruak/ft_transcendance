@@ -274,11 +274,9 @@ import {
 		  const friendname = btn.getAttribute("data-friend");
 		  try {
 			const result = await apiAcceptFriendRequest(username, friendname);
-			if (result.success) {
-			  showToast(`${friendname} arkadaşlık isteğinizi kabul etti.`, "success");
+			if (result) {
+			  showToast(`${friendname} için arkadaşlık isteğini kabul ettiniz.`, "success");
 			  btn.parentElement.remove();
-			} else {
-			  showToast(`Arkadaşlık isteği kabul edilemedi: ${result.message}`, "danger");
 			}
 		  } catch (err) {
 			console.error("İstek kabul hatası:", err);
@@ -486,8 +484,26 @@ import {
 		});
 	  });
 	  const tournamentsId = tournaments.map(tournament => tournament.tournament_id);
-	  const TournamentsMatch = await apiGetTournamentsMatch(tournamentsId[1]);
-		renderTournamentList(accordion, TournamentsMatch.data);
+	  const tournamentsMatches = await Promise.all(tournamentsId.map(id => apiGetTournamentsMatch(id)));
+  
+	  const baseLists = accordion.querySelectorAll(".Base-list");
+	  baseLists.forEach((ListMatch, index) => {
+		const match = tournamentsMatches[index];
+		if (match && match.data && match.data.length > 0) {
+		  renderTournamentList(ListMatch, match.data);
+		  // Add event listeners for the play match buttons
+		  const playMatchButtons = ListMatch.querySelectorAll(".play-match");
+		  playMatchButtons.forEach(button => {
+			button.addEventListener("click", () => {
+			  const detailUrl = button.getAttribute("data-detailurl");
+			  joinGame(detailUrl);
+			});
+		  });
+		} else {
+		  console.warn(`No data found for tournament match: ${match}`);
+		}
+	  });
+	  
 	} catch (error) {
 	  console.error("Aktif turnuvalar yüklenirken hata:", error);
 	  accordion.innerHTML = `
@@ -557,4 +573,3 @@ import {
 	// setInterval veya setTimeout temizliği
 	console.log("Profile cleanup yapıldı (örnek).");
   }
-  

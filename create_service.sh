@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Kullanım doğrulama
 if [ "$#" -ne 1 ]; then
     echo "Kullanım: $0 <dizin_yolu>"
     exit 1
@@ -18,7 +17,6 @@ SETTINGS="${SERVICE_DIR}/srcs/${LOWSERVICE}_service/settings.py"
 NEW_CONTENT="DATABASES = {\n    'default': {\n        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),\n        'NAME': os.environ.get('POSTGRES_DB', 'db.sqlite3'),\n        'USER': os.environ.get('POSTGRES_USER', 'myuser'),\n        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'mypass'),\n        'HOST': os.environ.get('DB_HOST', 'localhost'),\n        'PORT': os.environ.get('DB_PORT', '5432'),\n    }"
 
 
-# Kullanılmayan bir port bulma fonksiyonu
 find_free_port() {
     local port=$PORT_BASE
     for ((i=0; i<MAX_ATTEMPTS; i++)); do
@@ -31,12 +29,11 @@ find_free_port() {
     echo "Hata: Kullanılabilir port bulunamadı." >&2
     exit 1
 }
-# Kullanılmayan port seçimi
+
 FREE_PORT=$(find_free_port)
 echo "Kullanılabilir port: $FREE_PORT"
 if [ -f "Project/Django/Dockerfile" ] && [ ! -d "Project/${SERVICE}" ]; then
 
-# docker-compose.yml dosyasına hizmeti ekleme
 if ! grep -q "$LOWSERVICE:" "$COMPOSE" 2>/dev/null; then
   
 cat << EOF >> $COMPOSE
@@ -72,7 +69,6 @@ cat << EOF >> $COMPOSE
 EOF
 fi
   APP="    '$LOWSERVICE',"
-# Django projesi ve dizin yapısını oluşturma
     mkdir -p "${SERVICE_DIR}/srcs"
     django-admin startproject ${LOWSERVICE}_service "${SERVICE_DIR}/srcs"
     django-admin startapp $LOWSERVICE
