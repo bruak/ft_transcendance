@@ -1,12 +1,12 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
-import { getState } from './app.js';
+import { getState, router } from './app.js';
 
 
     // Navbar'daki Home linkinin href özelliğini username olarak ayarla
     const navbarUsername = localStorage.getItem('username');
     const homeLink = document.getElementById('home');
     if (homeLink && navbarUsername) {
-      homeLink.href = navbarUsername;
+      homeLink.href = "profile/" + navbarUsername;
     }
 
 function hideSpinner() {
@@ -71,6 +71,10 @@ function cleanupGame() {
     if (gameState.handleKeydown) {
         document.removeEventListener('keydown', gameState.handleKeydown);
     }
+    if (gameState.handleKeyup) {
+        document.removeEventListener('keyup', gameState.handleKeyup);
+    }
+
 
     // Dispose THREE.js objects
     disposeObject(gameState.paddle1);
@@ -134,14 +138,14 @@ function cleanupGame() {
 export function initGame() {
     // Cleanup existing game if any
     cleanupGame();
-
+    // showGameOverScreen(); 
     const canvas = document.getElementById('gameCanvas');
     const gameContainer = document.getElementById('game-container');
     if (!canvas || !gameContainer) return;
 
     // Canvas boyutlarını ayarlayan fonksiyon
     function updateCanvasSize() {
-        const containerWidth = gameContainer.clientWidth;
+        const containerWidth = gameContainer.clientWidth; 
         const containerHeight = gameContainer.clientHeight;
 
         // En-boy oranını koru (4:3)
@@ -326,10 +330,6 @@ export function initGame() {
         };
         gameState.socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            if (data.type === 'init')
-            {
-                hideSpinner();
-            }
             if ( data.type === 'game_state') {
                 const state = data.state;
                 if (data.player_id) {
@@ -339,10 +339,21 @@ export function initGame() {
                 gameState.paddle1.position.z = state.players.player1.position;
                 gameState.paddle2.position.z = state.players.player2.position;
                 gameState.ball.position.set(state.ball.x, 1.5, state.ball.y);
-
+                
                 const scoreboard = document.getElementById('scoreboard');
                 if (scoreboard) {
                     scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+                }
+            }
+            else if (data.type === 'game_status') {
+                console.log('Game status:', data.status);
+                if (data.status === 'start')
+                {
+                    hideSpinner();
+                }
+                else if (data.status === 'game_over') {
+                    cleanupGame();
+                    showGameOverScreen();
                 }
             }
         };
@@ -401,12 +412,6 @@ export function initGame() {
     }
     animate();
 
-    // Update home link
-    // const username = localStorage.getItem('username');
-    // const homeLink = document.querySelector('.nav-link.active');
-    // if (homeLink) {
-    //     homeLink.href = `/${username}`;
-    // }
 
     // Cleanup on route change
     return () => {
@@ -467,3 +472,64 @@ window.addEventListener('resize', throttle(() => {
     }
 }, 100)); // 100ms throttle
 
+
+//"Game Over" overlay oluşturma kodu
+function showGameOverScreen() {
+    const gameContainer = document.getElementById('game-container');
+  
+    // Var olan overlay varsa kaldır
+    let existingOverlay = document.querySelector('.game-over-screen');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+  
+    const overlay = document.createElement('div');
+    overlay.className = 'game-over-screen';
+    overlay.innerHTML = `
+        <h2>Oyun Bitti!</h2>
+        <div>
+            <button id="menuButton" onclick="goToMenu()">Ana Menü</button>
+        </div>
+    `;
+    gameContainer.appendChild(overlay);
+  
+    // Butonun overlay alanı içinde kalmasını sağlayan ve ilk konumunu doğru ayarlayan fonksiyon
+    const menuButton = document.getElementById('menuButton');
+  
+    
+    function repositionButton() {
+        // Butonun genişliğini ve yüksekliğini alıyoruz
+        const btnWidth = menuButton.offsetWidth;
+        const btnHeight = menuButton.offsetHeight;
+        // Overlay'in iç boyutlarını alıyoruz
+        const overlayWidth = overlay.clientWidth;
+        const overlayHeight = overlay.clientHeight;
+        
+        // Butonun tamamen görünür kalması için maksimum X ve Y değerlerini hesaplıyoruz
+        const maxX = overlayWidth - btnWidth;
+        const maxY = overlayHeight - btnHeight;
+        
+        // Rastgele koordinatlar üretiyoruz
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+        
+        // Butonun yeni konumuna yumuşak geçişle hareket etmesi için left ve top değerlerini güncelliyoruz
+        menuButton.style.left = randomX + 'px';
+        menuButton.style.top = randomY + 'px';
+    }
+    
+    // İlk konumlandırmayı, overlay tamamen render edildikten sonra yapıyoruz
+    requestAnimationFrame(repositionButton);
+
+    
+    // // Fare buton üzerine geldiğinde konumu yeniden hesapla
+    // menuButton.addEventListener('mouseover', repositionButton);
+  }
+  
+
+
+window.goToMenu = function () {
+    const username = localStorage.getItem('username');
+    history.pushState(null, null, `/profile/${username}`);  // Giriş yaptıktan sonra yönlendirilen sayfa
+    router();
+}

@@ -43,6 +43,15 @@
             <div class="loading-spinner"></div>
         </div>
 
+        <!-- Game Over Screen -->
+        <!-- <div class="game-over-screen" style="display: none;">
+            <h2>Oyun Bitti!</h2>
+            <div>
+                <button onclick="restartGame()">Yeniden Başla</button>
+                <button onclick="goToMenu()">Ana Menü</button>
+            </div>
+        </div> -->
+
         <!-- Kontrol Bilgileri -->
         <div class="controls-info">
             <p class="mb-0">
@@ -60,3 +69,11 @@
         </p>
     </footer>
 </div>
+<script>
+        // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+        const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+      homeLink.href = "profile/" + navbarUsername;
+    }
+</script>

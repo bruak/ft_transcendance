@@ -12,7 +12,7 @@ const accessToken = localStorage.getItem("accessToken") || "";
  * @returns {Promise<Object>}
  */
 export async function apiGetUser(username) {
-  const response = await fetch(`${apiBaseUrl}/user/getuser/${username}`, {
+  const response = await fetch(`${apiBaseUrl}/user/getuserprofile/${username}/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -110,9 +110,9 @@ export async function apiListFriendRequests(username) {
       'Authorization': `Bearer ${accessToken}`
     }
   });
-  if (response.status === 404) {
-    return { notFound: true };
-  }
+  // if (response.status === 404) {
+  //   return { notFound: true };
+  // }
   if (!response.ok) {
     throw new Error(`Arkadaşlık istekleri listelenirken hata: ${response.status}`);
   }
@@ -157,7 +157,6 @@ export async function apiListFriends(username) {
       'Authorization': `Bearer ${accessToken}`
     }
   });
-  console.log("response.status :", response.status);
   if (!response.ok) {
     throw new Error(`Arkadaş listesi alınırken hata: ${response.status}`);
   }

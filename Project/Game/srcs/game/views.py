@@ -191,7 +191,7 @@ class GameView(View):
 				{
 					"match_id": match.id,
 					"player1": match.player1,
-					"player2": match.player2,
+					"player2": match.player2 or "waiting",
 					"creator": match.tournament.creator,
 					"detail_url": f"game/room_{match.id}/"
 				}
@@ -207,7 +207,7 @@ class GameView(View):
 	def list_tournaments_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		try:
-			tournaments = Tournament.objects.all()
+			tournaments = Tournament.objects.filter(status='upcoming')
 			tournaments_list = [
 				{
 					"tournament_id": tournament.id,

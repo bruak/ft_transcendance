@@ -279,3 +279,6 @@ msgstr "Boş istek gövdesi"
 
 msgid "Invalid JSON request body"
 msgstr "Geçersiz JSON istek gövdesi"
+
+msgid "image upload error"
+msgstr "resim yükleme hatası"

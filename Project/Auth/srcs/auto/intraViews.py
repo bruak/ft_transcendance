@@ -6,12 +6,11 @@ from django.http import JsonResponse
 from .models import Users
 import requests
 
-
 class IntraRequest(View):
     # İntra Login
     def intra_login(request):
         UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
-        redirect_uri = "https://10.12.14.4:8080/api/auth/callback/"  # Callback URL
+        redirect_uri = "https://10.12.15.2:8080/api/auth/callback/"  # Callback URL
         auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
         return JsonResponse({'url': auth_url}, status=200)
 
@@ -23,8 +22,9 @@ class IntraRequest(View):
 
         UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
         SECRET = "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"
-        redirect_uri = "https://10.12.14.4:8080/api/auth/callback/"  # Callback URL
+        redirect_uri = "https://10.12.15.2:8080/api/auth/callback/"  # Callback URL
         token_url = "https://api.intra.42.fr/oauth/token"
+        
         data = {
             'grant_type': 'authorization_code',
             'client_id': UID,
@@ -32,6 +32,7 @@ class IntraRequest(View):
             'code': code,
             'redirect_uri': redirect_uri
         }
+
         response = requests.post(token_url, data=data)
         if response.status_code != 200:
             return JsonResponse({"error": get_translated_message("ACCESS_TOKEN_FETCH_ERROR", user_language)}, status=response.status_code)
@@ -62,6 +63,7 @@ class IntraRequest(View):
                 "expiration_date": refresh_exp,
             },
         }
+        
         if username_check(username):
             user = Users.objects.get(username=username)
             user.access_token = intra_access_token

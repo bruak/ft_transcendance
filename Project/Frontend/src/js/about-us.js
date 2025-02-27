@@ -4,11 +4,11 @@ export function initAbout() {
     const username = localStorage.getItem('username');
 
     // Navbar'daki Home linkinin href özelliğini username olarak ayarla
-        const navbarUsername = localStorage.getItem('username');
-        const homeLink = document.getElementById('home');
-        if (homeLink && navbarUsername) {
-          homeLink.href = navbarUsername;
-        }
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+      homeLink.href = "profile/" + navbarUsername;
+    }
 
     /* ======================[*] Kartları Fade-in Animasyonu ile Göster [*]====================== */
     const cards = document.querySelectorAll('.card');

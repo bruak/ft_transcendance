@@ -16,17 +16,17 @@ def handle_post(request):
 			return JsonResponse({'error': get_translated_message("EMPTY_REQUEST_BODY", user_language)}, status=500)
 		try:
 			payload = JSONParser().parse(request)
-		except JSONDecodeError:
+		except Exception as e:
 			return JsonResponse({'error': get_translated_message("INVALID_JSON_REQUEST_BODY", user_language)}, status=500)
 	else:
 		payload = None
 	try:
 		headers = request.headers
 		response = requests.post(target_url, json=payload, headers=headers)
-		# Yanıtın boş olup olmadığını kontrol et
+
 		if response.text.strip() == '':
 			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
-		# Yanıtı JSON olarak çözümle
+	
 		response_json = response.json()
 
 		if response.status_code == 200 or response.status_code == 201:

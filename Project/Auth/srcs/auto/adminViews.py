@@ -3,7 +3,7 @@ from .models import Users, MailTokens, TwofactorCodes
 from .tokenService import TokenService
 from .serializer import MailTokenSerializer, TwoFactoSerializer
 from .translate_way import get_translated_message
-from .tools import image_to_url
+from .tools import image_to_url, is_image
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,10 +12,9 @@ import os
 from datetime import timedelta
 from django.utils import timezone
 import uuid
-
+from .translate_way import get_translated_message
 
 class AdminRequest(View):
-	# Admin Update
 	@csrf_exempt
 	def admin_user_update(request, username):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -38,6 +37,8 @@ class AdminRequest(View):
 				user.password = make_password(new_password)
 
 			if avatar:
+				if is_image(avatar) == False:
+					return JsonResponse({'error': get_translated_message("IMAGE_UPLOAD_ERROR", user_language)}, status=400)
 				if avatar and os.path.exists(f"/app/{userDB_response.json().get('message').get('avatar')}"):
 					os.remove(f"/app/{userDB_response.json().get('message').get('avatar')}")
 				new_avatar = image_to_url(avatar, user.username)

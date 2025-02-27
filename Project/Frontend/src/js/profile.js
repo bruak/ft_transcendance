@@ -392,7 +392,7 @@ function setupFriendSearch() {
     const searchValue = friendSearchInput.value.trim();
     const suggestionsList = document.getElementById('friendSuggestions');
     if (!suggestionsList) return;
-
+    console.log("asfas")
     if (searchValue.length >= 3) {
       suggestionsList.innerHTML = '<li class="list-group-item">Yükleniyor...</li>';
       suggestionsList.style.display = 'block';

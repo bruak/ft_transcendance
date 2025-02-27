@@ -94,17 +94,17 @@ class FriendRequestView(View):
 		try:
 			response = requests.get('http://project-auth-1:8000/get-username/',  headers=request.headers)
 			if response.status_code != 200:
-				return JsonResponse({"error": get_translated_message("ACCESS_TOKEN_USER_MISMATCH", user_language)},  status=response.status_code)
+				return JsonResponse({"error": get_translated_message("ACCESS_TOKEN_USER_MISMATCH", language)},  status=response.status_code)
 			response_data = response.json()
 			usernameToken = response_data.get('message').get('username')
 			response = Friends.objects.filter(
 				models.Q(friendname=usernameToken, status="accepted") | models.Q(username=usernameToken, status="accepted")
 			)
-
-			if not response.exists():
-				return JsonResponse({"message": get_translated_message("NO_FRIENDS_FOUND", language)}, status=status.status.HTTP_200_OK)
-
 			modified_data = []
+			
+			if not response.exists():
+				return JsonResponse({'message': modified_data}, status=200)
+
 
 			for friend in response:
 				if friend.friendname == usernameToken:

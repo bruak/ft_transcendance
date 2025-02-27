@@ -1,8 +1,9 @@
 from django.views import View
 import requests
 from django.db import models
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from .models import User
 from .serializers import UserSerializer
 from rest_framework.parsers import JSONParser
@@ -92,8 +93,16 @@ class UserRequest(View):
                 models.Q(first_name__icontains=query) |
                 models.Q(last_name__icontains=query)
             )
-            serializer = UserSerializer(users, many=True)
+
+            page_size = int(request.GET.get("page_size", 2))  # Varsayılan olarak 10 sonuç gösterilir
+            page_number = int(request.GET.get("page_number", 1))  # Varsayılan olarak 1. sayfa gösterilir
+        
+            paginator = Paginator(users, page_size)
+            page = paginator.page(page_number)
+            serializer = UserSerializer(page.object_list, many=True)
             return JsonResponse({'message': serializer.data}, status=200)
+        except EmptyPage:
+            return JsonResponse({"error": get_translated_message("NEED_QUERY_FOR_SEARCH", user_language)}, status=404) # todo error messaj
         except Exception as e:
             return JsonResponse({"error": get_translated_message("USER_FETCH_ERROR", user_language)}, status=500) # değişcek (neden -burak)
 

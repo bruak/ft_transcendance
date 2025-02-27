@@ -86,7 +86,7 @@ export function init2fac() {
         // Handle successful response (e.g., redirect to the protected resource)
         // console.log('Verification successful:', data);
         
-        history.pushState(null, null, `/${username}`);
+        history.pushState(null, null, `/profile/${username}`);
         router();
       } catch (error) {
         handleError(error); // Call a separate function to handle errors

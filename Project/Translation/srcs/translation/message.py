@@ -85,4 +85,5 @@ MESSAGES = {
 	"INVALID_CONTENT_TYPE": "Invalid content type",
 	"EMPTY_REQUEST_BODY": "Empty request body",
 	"INVALID_JSON_REQUEST_BODY": "Invalid JSON request body",
+	"IMAGE_UPLOAD_ERROR": "image upload error"
 }

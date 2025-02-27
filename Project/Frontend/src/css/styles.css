@@ -1661,3 +1661,70 @@ body {
     }
 }
 
+  /* Butonun overlay içindeki konumunu kontrol etmek için absolute konumlandırma ekliyoruz */
+  .game-page .game-over-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    z-index: 1000;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    backdrop-filter: blur(6px);
+    animation: popIn 0.6s ease-out;
+  }
+  
+  .game-page .game-over-screen h2 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  }
+  
+  /* Buton overlay içinde absolute, ayrıca left ve top geçişleri yumuşak olsun */
+  .game-page .game-over-screen button {
+    position: absolute;
+    margin: 10px;
+    padding: 15px 35px;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #ff7a18, #af002d);
+    color: #fff;
+    cursor: pointer;
+    transition: left 0.4s ease, top 0.4s ease, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  
+  .game-page .game-over-screen button:hover {
+    box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+  }
+  
+  .game-page .game-over-screen button:active {
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+  }
+  
+  @keyframes popIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    80% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  

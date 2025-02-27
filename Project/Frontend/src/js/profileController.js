@@ -98,32 +98,108 @@ import {
   
   /** Navbar linklerini ayarlar (örneğin "home" linkini ilgili username'e yönlendirir) */
   function setupNavbarLinks() {
-	const navbarUsername = localStorage.getItem("username");
-	const homeLink = document.getElementById("home");
-	if (homeLink && navbarUsername) {
-	  // SPA mantığında mesela /username'e yönlendiriyor
-	  homeLink.href = `/${navbarUsername}`;
-	}
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+      homeLink.href = "profile/" + navbarUsername;
+    }
   }
   
   /** Profil verisini alıp UI'yi günceller */
   async function loadProfileData(userToLoad, isOwnProfile) {
-	const user = await apiGetUser(userToLoad);
-	updateProfileUI(user);
+	try
+	{
+		const user = await apiGetUser(userToLoad);
+		updateProfileUI(user);
   
-	if (user.notifications) {
-	  updateNotifications(user.notifications);
+		if (user.notifications) {
+			updateNotifications(user.notifications);
+		}
+		
+		// Başkasının profilindeysek, düzenleme aksiyonlarını kapat
+		if (!isOwnProfile) {
+			const profileActions = document.getElementById("profileActions");
+			if (profileActions) {
+				profileActions.style.display = "none";
+			}
+		}
 	}
-  
-	// Başkasının profilindeysek, düzenleme aksiyonlarını kapat
-	if (!isOwnProfile) {
-	  const profileActions = document.getElementById("profileActions");
-	  if (profileActions) {
-		profileActions.style.display = "none";
-	  }
+	catch (err)
+	{
+		document.querySelector('#app').innerHTML = `
+<div id="dreamEffect" style="
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+">
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 200px;
+		height: 200px;
+		background: rgba(255, 0, 0, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 6s ease-in-out infinite;
+	"></div>
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 150px;
+		height: 150px;
+		background: rgba(0, 255, 0, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 7s ease-in-out infinite;
+	"></div>
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 250px;
+		height: 250px;
+		background: rgba(0, 0, 255, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 8s ease-in-out infinite;
+	"></div>
+	<div id="dreamText" style="
+		position: relative;
+		z-index: 10;
+		color: #fff;
+		font-family: 'Courier New', Courier, monospace;
+		font-size: 2.5em;
+		animation: fadeInOut 5s ease-in-out infinite;
+	">
+		Sayfa Bulunamadı
+	</div>
+	<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
+</div>
+
+<style>
+	@keyframes moveShape {
+		0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+		25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
+		50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
+		75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
+		100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
 	}
-  }
-  
+	@keyframes fadeInOut {
+		0%, 100% { opacity: 0; }
+		50% { opacity: 1; }
+	}
+</style>
+
+
+
+	`;
+		throw err;
+	}
+}
   /** Profil düzenleme formunu yönetir (kendi profilimizse) */
   function setupProfileForm(isOwnProfile) {
 	const settingsForm = document.getElementById("settingsForm");
@@ -158,7 +234,7 @@ import {
   function setupFriendSearch() {
 	const friendSearchInput = document.getElementById("friendSearchInput");
 	if (!friendSearchInput) return;
-  
+	
 	friendSearchInput.addEventListener(
 	  "input",
 	  debounce(async () => {
@@ -175,7 +251,7 @@ import {
 			if (Array.isArray(result.data) && result.data.length > 0) {
 			  result.data.forEach((u) => createSuggestionItem(u, suggestionsList));
 			} else if (result.data && typeof result.data === "object") {
-			  createSuggestionItem(result.data, suggestionsList);
+				suggestionsList.innerHTML = '<li class="list-group-item">Sonuç bulunamadı.</li>';
 			} else {
 			  suggestionsList.innerHTML = '<li class="list-group-item">Sonuç bulunamadı.</li>';
 			}
@@ -199,7 +275,7 @@ import {
 	listItem.className = "list-group-item d-flex justify-content-between align-items-center";
   
 	const userNameLink = document.createElement("a");
-	userNameLink.href = `/${userObj.username}`;
+	userNameLink.href = `profile/${userObj.username}`;
 	userNameLink.textContent = `${userObj.first_name} ${userObj.last_name}`;
 	userNameLink.className = "text-decoration-none text-white";
   
@@ -573,3 +649,4 @@ import {
 	// setInterval veya setTimeout temizliği
 	console.log("Profile cleanup yapıldı (örnek).");
   }
+

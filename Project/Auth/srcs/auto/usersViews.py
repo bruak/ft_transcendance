@@ -1,7 +1,7 @@
 from .models import Users, MailTokens, TwofactorCodes
 from django.views import View
 from .tokenService import TokenService
-from .tools import image_to_url, generate_random_code, access_token_validate, username_check
+from .tools import image_to_url, generate_random_code, access_token_validate, username_check, is_image
 from .translate_way import get_translated_message
 from django.http import JsonResponse
 from django.utils import timezone
@@ -42,6 +42,8 @@ class UserRequest(View):
                 user.password = make_password(new_password)
 
             if avatar:
+                if is_image(avatar) == False:
+                    return JsonResponse({'error': get_translated_message("IMAGE_UPLOAD_ERROR", user_language)}, status=400)
                 if avatar and os.path.exists(f"/app/{userDB_response.json().get('message').get('avatar')}"):
                     os.remove(f"/app/{userDB_response.json().get('message').get('avatar')}")
                 new_avatar = image_to_url(avatar, user.username)
@@ -75,14 +77,13 @@ class UserRequest(View):
     # User Login
     @csrf_exempt
     def singin(request):
+        user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
         if request.method == "POST":
-            data = JSONParser().parse(request)
-            singin = data.get("sign")
-            password = data.get("password")
-
-            user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
 
             try:
+                data = JSONParser().parse(request)
+                singin = data.get("sign")
+                password = data.get("password")
                 user = (
                     Users.objects.get(email=singin)
                     if "@" in singin
@@ -110,7 +111,7 @@ class UserRequest(View):
 
                 return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
 
-            except Exception as e:
+            except:
                 return JsonResponse({'error': get_translated_message("NOT_FOUND_USER", user_language)}, status=404)
         else:
             return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
@@ -135,11 +136,12 @@ class UserRequest(View):
                 return JsonResponse({'error': get_translated_message("USERNAME_EXISTS", user_language)}, status=409)
             if Users.objects.filter(email=email).exists():
                 return JsonResponse({'error': get_translated_message("MAIL_ALREADY_EXISTS", user_language)}, status=409)
+            if is_image(avatar_file) == False:
+                return JsonResponse({'error': get_translated_message("IMAGE_UPLOAD_ERROR", user_language)}, status=400)
 
             avatar_url = image_to_url(avatar_file, username)
-
             hashed_password = make_password(password)
-
+            
             user = Users.objects.create(
                 username=username,
                 email=email,

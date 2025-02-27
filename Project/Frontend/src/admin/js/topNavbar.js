@@ -35,7 +35,7 @@ function initializeSearchForm() {
 	document.getElementById('myaccount').addEventListener('click', function(event) {
 		event.preventDefault();
 	  	const username = localStorage.getItem('username')
-		history.pushState(null, null, `/${username}`)
+		history.pushState(null, null, `/profile/${username}`)
 		router()
 	});
 		  

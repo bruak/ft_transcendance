@@ -150,10 +150,29 @@ export function initLogReg() {
         });
     }
 
+    const next1 = document.getElementById('next-1');
+    const next2 = document.getElementById('next-2');
+    const next3 = document.getElementById('next-3');
+    const next4 = document.getElementById('next-4');
+    const next5 = document.getElementById('next-5');
+    const prev2 = document.getElementById('prev-2');
+    const prev3 = document.getElementById('prev-3');
+    const prev4 = document.getElementById('prev-4');
+    const prev5 = document.getElementById('prev-5');
+    const prev6 = document.getElementById('prev-6');
+
     /* ======================[*] Form Geçiş Butonları [*]====================== */
     if (switchToRegister && switchToLogin) {
         switchToRegister.addEventListener('click', (event) => {
             event.preventDefault();
+            const firstName = document.getElementById('register-first_name').value.trim();
+            const lastName = document.getElementById('register-last_name').value.trim();
+            const username = document.getElementById('register-username').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+
+
             switchForm(loginForm, registerForm);
         });
 
@@ -170,16 +189,7 @@ export function initLogReg() {
     /**
      * Kayıt formu adımları (ileri/geri) validasyonu
      */
-    const next1 = document.getElementById('next-1');
-    const next2 = document.getElementById('next-2');
-    const next3 = document.getElementById('next-3');
-    const next4 = document.getElementById('next-4');
-    const next5 = document.getElementById('next-5');
-    const prev2 = document.getElementById('prev-2');
-    const prev3 = document.getElementById('prev-3');
-    const prev4 = document.getElementById('prev-4');
-    const prev5 = document.getElementById('prev-5');
-    const prev6 = document.getElementById('prev-6');
+
 
     // Adım 1 (Ad)
     if (next1) {
@@ -396,7 +406,7 @@ export function initLogReg() {
             localStorage.setItem('username', username)
             localStorage.setItem('language', 'tr');
             console.log(access_token.token)
-            history.pushState(null, null, `/${username}`)
+            history.pushState(null, null, `/profile/${username}`)
 		    router()
     
     

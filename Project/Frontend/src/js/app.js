@@ -62,7 +62,7 @@ function showErrorMessage(message) {
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
     '/': { html: './views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/:username': { html: './views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
+    '/profile/:username': { html: './views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
     '/about': { html: './views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
     '/2fac': { html: './views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
     '/GamePage': { html: './views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },
@@ -102,7 +102,75 @@ export async function router() {
     }
 
     if (!route) {
-        document.querySelector('#app').innerHTML = '<h1>Sayfa bulunamadı.</h1>';
+        document.querySelector('#app').innerHTML = `
+        <div id="dreamEffect" style="
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+">
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 200px;
+		height: 200px;
+		background: rgba(255, 0, 0, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 6s ease-in-out infinite;
+	"></div>
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 150px;
+		height: 150px;
+		background: rgba(0, 255, 0, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 7s ease-in-out infinite;
+	"></div>
+	<div class="animated-shape" style="
+		position: absolute;
+		width: 250px;
+		height: 250px;
+		background: rgba(0, 0, 255, 0.5);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: moveShape 8s ease-in-out infinite;
+	"></div>
+	<div id="dreamText" style="
+		position: relative;
+		z-index: 10;
+		color: #fff;
+		font-family: 'Courier New', Courier, monospace;
+		font-size: 2.5em;
+		animation: fadeInOut 5s ease-in-out infinite;
+	">
+		Sayfa Bulunamadı
+	</div>
+	<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
+</div>
+
+<style>
+	@keyframes moveShape {
+		0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+		25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
+		50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
+		75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
+		100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+	}
+	@keyframes fadeInOut {
+		0%, 100% { opacity: 0; }
+		50% { opacity: 1; }
+	}
+</style>
+
+        `;
         return;
     }
     document.querySelector('#app').innerHTML = '<h1>Loading...</h1>'; // Loading durumu
@@ -120,20 +188,6 @@ export async function router() {
     }
 }
 
-/* ======================[*] Link Tıklamalarını Yakala ve Router Fonksiyonunu Çağır [*]====================== */
-document.addEventListener('click', (event) => {
-    const target = event.target.closest('a[data-link]');
-    if (target) {
-        event.preventDefault();
-        const href = target.getAttribute('href');
-        history.pushState(null, null, href);
-        if (typeof window.cleanup === 'function') {
-            window.cleanup();
-            delete window.cleanup;
-        }
-        router(); // Sayfayı güncelle
-    }
-});
 
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
