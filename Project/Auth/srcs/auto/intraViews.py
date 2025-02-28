@@ -5,12 +5,13 @@ from .translate_way import get_translated_message
 from django.http import JsonResponse
 from .models import Users
 import requests
+import os
 
 class IntraRequest(View):
     # İntra Login
     def intra_login(request):
-        UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
-        redirect_uri = "https://10.12.15.2:8080/api/auth/callback/"  # Callback URL
+        UID = os.environ.get("UID")
+        redirect_uri = os.environ.get("REDURECT_URI") 
         auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={UID}&redirect_uri={redirect_uri}&response_type=code"
         return JsonResponse({'url': auth_url}, status=200)
 
@@ -20,9 +21,9 @@ class IntraRequest(View):
         if not code:
             return JsonResponse({"error": get_translated_message("AUTH_CODE_NOT_FOUND_CALLBACK", user_language)}, status=400)
 
-        UID = "u-s4t2ud-6bf7b96b9658649645f95d27723a7b7fe00ca48b52141ddc969b12c4e348b0a8"
-        SECRET = "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"
-        redirect_uri = "https://10.12.15.2:8080/api/auth/callback/"  # Callback URL
+        UID = os.environ.get("UID")
+        SECRET = os.environ.get("SECRET")
+        redirect_uri = os.environ.get("REDURECT_URI") 
         token_url = "https://api.intra.42.fr/oauth/token"
         
         data = {

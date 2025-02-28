@@ -23,7 +23,6 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
     }
 }
 
-
 /* ======================[*] Global State Yönetimi [*]====================== */
 const globalState = new Proxy(
     {
@@ -187,6 +186,22 @@ export async function router() {
         document.querySelector('#app').innerHTML = '<h1>Sayfa yüklenirken bir hata oluştu.</h1>';
     }
 }
+
+
+/* ======================[*] Link Tıklamalarını Yakala ve Router Fonksiyonunu Çağır [*]====================== */
+document.addEventListener('click', (event) => {
+    const target = event.target.closest('a[data-link]');
+    if (target) {
+        event.preventDefault();
+        const href = target.getAttribute('href');
+        history.pushState(null, null, href);
+        if (typeof window.cleanup === 'function') {
+            window.cleanup();
+            delete window.cleanup;
+        }
+        router(); // Sayfayı güncelle
+    }
+});
 
 
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */

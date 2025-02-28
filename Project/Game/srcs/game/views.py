@@ -52,6 +52,16 @@ class GameView(View):
 			username = data.get('username')
 			if not username:
 				return JsonResponse({"error": get_translated_message("USERNAME_IS_REQUIRED", user_language)}, status=400)
+			match_query = Match.objects.filter(match_type='B', player1=username)
+
+			waiting_match = match_query.filter(status='waiting').first()
+			if waiting_match:
+				return JsonResponse({"match_id": waiting_match.id, "detail_url": f"bot/room_{waiting_match.id}/" }, status=200)
+			
+			playing_match = match_query.filter(status='playing').first()
+			if playing_match:
+				return JsonResponse({"match_id": playing_match.id, "detail_url": f"bot/room_{playing_match.id}/" }, status=200)
+
 			new_match = Match.objects.create(match_type='S',
 				player1 = username ,
 				player2 = 'bot',
@@ -72,7 +82,7 @@ class GameView(View):
 					"player1": match.player1,
 					"player2": match.player2,
 					"timestamp": match.updated_at,
-					"detail_url": f"game/room_{match.id}/" if match.match_type == 'M' else f"bot/room_{match.id}/"
+					"detail_url": f"game/room_{match.id}/" if match.match_type == 'M' else (f"bot/room_{match.id}/" if match.match_type == 'B' else f"local/room_{match.id}/")
 				}
 				for match in playing_matches
 			]
@@ -223,3 +233,32 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 
+	@csrf_exempt
+	def local_game_view(request):
+		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != 'POST':
+			return JsonResponse
+		try:
+			data = JSONParser().parse(request)
+			player1 = data.get('player1')
+			player2 = "guest"
+			if not player1:
+				return JsonResponse({"error": get_translated_message("MISSING_REQUEST_FIELDS", user_language)}, status=400)
+			query = Match.objects.filter(match_type='L', player1=player1)
+			
+			waiting_match = query.filter(status='waiting').first()
+			if waiting_match:
+				return JsonResponse({"match_id": waiting_match.id, "detail_url": f"local/room_{waiting_match.id}/" }, status=200)
+			
+			playing = query.filter(status='playing').first()
+			if playing:
+				return JsonResponse({"match_id": playing.id, "detail_url": f"local/room_{playing.id}/" }, status=200)
+			new_match = Match.objects.create(
+				match_type='L',
+				player1=player1,
+				player2=player2,
+				status='waiting'
+			)
+			return JsonResponse({"match_id": new_match.id, "detail_url": f"local/room_{new_match.id}/" }, status=200)
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500)

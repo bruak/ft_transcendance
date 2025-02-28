@@ -1,13 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
-import { getState, router } from './app.js';
+import { getState, router, setState } from './app.js';
 
-
-    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
-    const navbarUsername = localStorage.getItem('username');
-    const homeLink = document.getElementById('home');
-    if (homeLink && navbarUsername) {
-      homeLink.href = "profile/" + navbarUsername;
-    }
 
 function hideSpinner() {
     const spinner = document.querySelector('.loading-spinner');
@@ -15,12 +8,10 @@ function hideSpinner() {
         spinner.style.display = 'none';
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    initGame();
-});
 
 // Game state
 let gameState = {
+    mode: 'multi',
     scene: null,
     camera: null,
     renderer: null,
@@ -59,6 +50,7 @@ function disposeObject(obj) {
 }
 
 function cleanupGame() {
+    console.log('Cleaning up game...');
     if (gameState.animationId) {
         cancelAnimationFrame(gameState.animationId);
     }
@@ -108,6 +100,7 @@ function cleanupGame() {
 
     // Reset game state
     gameState = {
+        mode: 'multi',
         scene: null,
         camera: null,
         renderer: null,
@@ -136,8 +129,24 @@ function cleanupGame() {
 }
 
 export function initGame() {
-    // Cleanup existing game if any
     cleanupGame();
+    const roomName = getState('detail_url');
+
+    if (roomName) {
+        if (roomName.split('/')[0] === 'local')
+        {
+            gameState.mode = 'local';
+        }
+        else {
+            gameState.mode = 'multi';
+        }
+    }
+    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+        homeLink.href = "profile/" + navbarUsername;
+    }
     // showGameOverScreen(); 
     const canvas = document.getElementById('gameCanvas');
     const gameContainer = document.getElementById('game-container');
@@ -313,7 +322,7 @@ export function initGame() {
     // WebSocket
 
     const token = localStorage.getItem('accessToken');
-    const roomName = getState('detail_url');
+
     if (token && roomName) {
 
         gameState.socket = new WebSocket(
@@ -346,7 +355,6 @@ export function initGame() {
                 }
             }
             else if (data.type === 'game_status') {
-                console.log('Game status:', data.status);
                 if (data.status === 'start')
                 {
                     hideSpinner();
@@ -359,46 +367,82 @@ export function initGame() {
         };
 
         gameState.socket.onclose = function () {
-            console.log('WebSocket connection closed.');
         }
     }
     // Controls
-    gameState.handleKeydown = (e) => {
-        if (gameState.socket?.readyState === WebSocket.OPEN) {
-            if (e.key === 'w' || e.key === 'W') {
-                gameState.socket.send(JSON.stringify({
-                    type: 'move',
-                    player_id: gameState.playerId,
-                    move_up: true
-                }));
-            }
-            else if (e.key === 's' || e.key === 'S') {
-                gameState.socket.send(JSON.stringify({
-                    type: 'move',
-                    player_id: gameState.playerId,
-                    move_down: true
-                }));
-            }
+    const keyMap = {
+        local: {
+          w:         { player: "player1", property: "move_up" },
+          W:         { player: "player1", property: "move_up" },
+          s:         { player: "player1", property: "move_down" },
+          S:         { player: "player1", property: "move_down" },
+          ArrowUp:   { player: "player2", property: "move_up" },
+          ArrowDown: { player: "player2", property: "move_down" },
+        },
+        multi: {
+          w: { property: "move_up" },
+          W: { property: "move_up" },
+          s: { property: "move_down" },
+          S: { property: "move_down" },
         }
+      };
+
+    function buildMovePayload(mode, key, isPressed, playerId) {
+        const entry = keyMap[mode][key];
+        
+        if (!entry) return null;
+      
+        const payload = { type: "move" };
+      
+        if (mode === "multi") {
+          payload.player_id = playerId;
+        } else {
+          payload.player = entry.player;
+        }
+      
+        if (entry.property === "move_up") {
+          payload.move_up = isPressed;
+        } 
+        if (entry.property === "move_down") {
+          payload.move_down = isPressed;
+        }
+        return payload;
+      }
+
+      const keysPressed = {};
+
+    gameState.handleKeydown = (e) => {
+    keysPressed[e.key] = true;
+
+    if (gameState.socket?.readyState === WebSocket.OPEN) {
+        const payload = buildMovePayload(
+        gameState.mode,
+        e.key,
+        true,
+        gameState.playerId
+        );
+        
+        if (payload) {
+        gameState.socket.send(JSON.stringify(payload));
+        }
+    }
     };
 
     gameState.handleKeyup = (e) => {
-        if (gameState.socket?.readyState === WebSocket.OPEN) {
-            if (e.key === 'w' || e.key === 'W') {
-                gameState.socket.send(JSON.stringify({
-                    type: 'move',
-                    player_id: gameState.playerId,
-                    move_up: false
-                }));
-            }
-            else if (e.key === 's' || e.key === 'S') {
-                gameState.socket.send(JSON.stringify({
-                    type: 'move',
-                    player_id: gameState.playerId,
-                    move_down: false
-                }));
-            }
+    keysPressed[e.key] = false;
+
+    if (gameState.socket?.readyState === WebSocket.OPEN) {
+        const payload = buildMovePayload(
+        gameState.mode,
+        e.key,
+        false,
+        gameState.playerId
+        );
+        
+        if (payload) {
+        gameState.socket.send(JSON.stringify(payload));
         }
+    }
     };
 
     document.addEventListener('keyup', gameState.handleKeyup);
@@ -523,7 +567,7 @@ function showGameOverScreen() {
 
     
     // // Fare buton üzerine geldiğinde konumu yeniden hesapla
-    // menuButton.addEventListener('mouseover', repositionButton);
+    menuButton.addEventListener('mouseover', repositionButton);
   }
   
 

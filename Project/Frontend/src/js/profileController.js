@@ -16,7 +16,8 @@ import {
 	apiSignOut,
 	apiJoinTournament,
 	apiStartTournament,
-	apiGetTournamentsMatch
+	apiGetTournamentsMatch,
+	apiLocalMatch
   } from "./profileApi.js";
   
   import {
@@ -127,75 +128,72 @@ import {
 	catch (err)
 	{
 		document.querySelector('#app').innerHTML = `
-<div id="dreamEffect" style="
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	background: #000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-">
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 200px;
-		height: 200px;
-		background: rgba(255, 0, 0, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 6s ease-in-out infinite;
-	"></div>
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 150px;
-		height: 150px;
-		background: rgba(0, 255, 0, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 7s ease-in-out infinite;
-	"></div>
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 250px;
-		height: 250px;
-		background: rgba(0, 0, 255, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 8s ease-in-out infinite;
-	"></div>
-	<div id="dreamText" style="
-		position: relative;
-		z-index: 10;
-		color: #fff;
-		font-family: 'Courier New', Courier, monospace;
-		font-size: 2.5em;
-		animation: fadeInOut 5s ease-in-out infinite;
-	">
-		Sayfa Bulunamadı
-	</div>
-	<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
-</div>
+		<div id="dreamEffect" style="
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background: #000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		">
+			<div class="animated-shape" style="
+				position: absolute;
+				width: 200px;
+				height: 200px;
+				background: rgba(255, 0, 0, 0.5);
+				border-radius: 50%;
+				filter: blur(10px);
+				animation: moveShape 6s ease-in-out infinite;
+			"></div>
+			<div class="animated-shape" style="
+				position: absolute;
+				width: 150px;
+				height: 150px;
+				background: rgba(0, 255, 0, 0.5);
+				border-radius: 50%;
+				filter: blur(10px);
+				animation: moveShape 7s ease-in-out infinite;
+			"></div>
+			<div class="animated-shape" style="
+				position: absolute;
+				width: 250px;
+				height: 250px;
+				background: rgba(0, 0, 255, 0.5);
+				border-radius: 50%;
+				filter: blur(10px);
+				animation: moveShape 8s ease-in-out infinite;
+			"></div>
+			<div id="dreamText" style="
+				position: relative;
+				z-index: 10;
+				color: #fff;
+				font-family: 'Courier New', Courier, monospace;
+				font-size: 2.5em;
+				animation: fadeInOut 5s ease-in-out infinite;
+			">
+				Sayfa Bulunamadı
+			</div>
+			<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
+		</div>
 
-<style>
-	@keyframes moveShape {
-		0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
-		25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
-		50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
-		75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
-		100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-	}
-	@keyframes fadeInOut {
-		0%, 100% { opacity: 0; }
-		50% { opacity: 1; }
-	}
-</style>
-
-
-
+		<style>
+			@keyframes moveShape {
+				0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+				25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
+				50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
+				75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
+				100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+			}
+			@keyframes fadeInOut {
+				0%, 100% { opacity: 0; }
+				50% { opacity: 1; }
+			}
+		</style>
 	`;
 		throw err;
 	}
@@ -378,7 +376,10 @@ import {
 	  bootstrapModal.show();
   
 	  modal.addEventListener("hidden.bs.modal", () => {
-		// Modal kapanınca temizleme
+            // Modal kapanınca liste temizleniyor
+            document.getElementById("friendsList").innerHTML = "";
+
+            showFriendsBtn.blur();
 	  });
   
 	  await showFriendsSection(userToLoad, currentUser);
@@ -435,10 +436,15 @@ import {
 		  setupTournamentCreation(optionContent);
 		} else if (optionId === "onlineOptions") {
 		  setupRandomMatch(optionContent);
+		  return;
 		} else if (optionId === "aiOptions") {
-		  setupBotMatch(optionContent);
+		  setupBotMatch();
+		  return
+		}else if (optionId === "quickMatchOptions") {
+			setupQuickMatch();
+			return;
 		}
-  
+
 		const modal = document.getElementById("gameOptionsModal");
 		modal.classList.add("animate__animated", "animate__fadeInDown");
 		const bootstrapModal = new bootstrap.Modal(modal);
@@ -475,44 +481,39 @@ import {
   }
   
   /** Online -> Rastgele maç ayarı */
-  function setupRandomMatch(optionContent) {
-	const randomMatchBtn = optionContent.querySelector(".btn-outline-info");
-	if (!randomMatchBtn) return;
-  
-	if (randomMatchBtn.textContent.includes("Rastgele Maç")) {
-	  randomMatchBtn.addEventListener("click", async () => {
-		try {
-		  const data = await apiRandomMatch();
-		  if (data.data && data.data.detail_url) {
-			setState("detail_url", data.data.detail_url);
-			history.pushState(null, null, "/GamePage");
-			router();
-		  }
-		} catch (err) {
-		  console.error("Rastgele maç istek hatası:", err);
-		}
-	  });
+  async function setupRandomMatch(optionContent) {
+
+	const data = await apiRandomMatch();
+	if (data.data && data.data.detail_url) {
+		setState("detail_url", data.data.detail_url);
+		history.pushState(null, null, "/GamePage");
+		router();
 	}
+
   }
   
   /** Bot maçı ayarı */
-  function setupBotMatch(optionContent) {
-	const botMatchBtn = optionContent.querySelector(".btn-success");
-	if (!botMatchBtn) return;
-  
-	if (botMatchBtn.textContent.includes("Başlat")) {
-	  botMatchBtn.addEventListener("click", async () => {
-		try {
-		  const data = await apiBotMatch();
-		  if (data.data && data.data.detail_url) {
-			setState("detail_url", data.data.detail_url);
+  async function setupBotMatch(optionContent) {
+	const data = await apiBotMatch();
+	if (data.data && data.data.detail_url) {
+		setState("detail_url", data.data.detail_url);
+		history.pushState(null, null, "/GamePage");
+		router();
+	}
+  }
+
+  async function setupQuickMatch() {
+	try {
+		const response = await apiLocalMatch();
+		console.log(response.data);
+		if (response.data && response.data.detail_url) {
+			setState("detail_url", response.data.detail_url);
 			history.pushState(null, null, "/GamePage");
 			router();
-		  }
-		} catch (err) {
-		  console.error("Bot maç istek hatası:", err);
 		}
-	  });
+	}
+	catch (error) {
+		console.error("Hata:", error);
 	}
   }
   

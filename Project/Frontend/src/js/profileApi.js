@@ -316,3 +316,22 @@ export async function apiGetTournamentsMatch(tournamentId)
   });
   return response.json();
 }
+
+
+export async function apiLocalMatch()
+{
+  const response = await fetch(`${apiBaseUrl}/game/local-match/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Language': 'tr',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ player1: localStorage.getItem('username') })
+  });
+  if (!response.ok) {
+    throw new Error(`Local match başlatılırken hata: ${response.status}`);
+  }
+  return response.json();
+} 

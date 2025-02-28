@@ -125,7 +125,6 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 				room_info["spectators"].remove(self.channel_name)
 
 			if self.player_id in ['player1', 'player2'] and self.game_loop_running == True:
-				print("---------------------Game canceled---------------------")
 				self.game_loop_running = False
 				self.match.status = "canceled"
 				self.match.updated_at = timezone.now()
@@ -283,3 +282,28 @@ class PongBotConsumer(BasePongConsumer):
 				self.game_state['players'][bot_id]['move_down'] = False
 
 			await asyncio.sleep(1 / 60)
+
+class LocalPongConsumer(BasePongConsumer):
+	async def handle_player_connection(self, room_info):
+		room_info["host"] = self.channel_name
+		room_info["guest"] = self.channel_name
+		self.player_id = 'local'
+		
+		await self.broadcast_game_status("start")
+		
+		if not self.game_loop_running:
+			await self.update_match_status("playing")
+			self.game_loop_running = True
+			asyncio.create_task(self.start_game_loop())
+
+	async def receive(self, text_data=None, bytes_data=None):
+		data = json.loads(text_data)
+		message_type = data.get('type')
+
+		if message_type == 'move':
+			player = data.get('player')
+			move_up = data.get('move_up', False)
+			move_down = data.get('move_down', False)
+			if player in self.game_state['players']:
+				self.game_state['players'][player]['move_up'] = move_up
+				self.game_state['players'][player]['move_down'] = move_down
