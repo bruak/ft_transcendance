@@ -2,6 +2,7 @@ from django.urls import path
 from .views import MailRequest
 
 urlpatterns = [
+	# Bunlar admin değil ama sadece locale içinde kullanılması lazım
 	path('sendmail/', MailRequest.mail_send, name='mail_send'),
 	path('2fa/', MailRequest.send_2fa_email, name='2fa'),
 	path('verify/', MailRequest.send_verification_email, name="verify" ),

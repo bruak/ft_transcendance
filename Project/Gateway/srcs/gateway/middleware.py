@@ -25,14 +25,27 @@ EXCLUDED_PATHS = [
 ]
 
 ADMIN_PATHS = [
-  #  "http://auth:8000/validate_admin/", bu admin diye kontrol edicek
-    #"http://auth:8000/delete/",
+    # auth
+    "http://auth:8000/validate_admin/", #  bu admin diye kontrol edicek
+    "http://auth:8000/delete/",
+    "http://auth:8000/adminput/",
     "http://auth:8000/listtwofactor/",
-    #"http://auth:8000/listusers/",
+    "http://auth:8000/listusers/",
     "http://auth:8000/listmail/",
-    "http://users:8000/list/",
-    #"http://users:8000/delete/",
+    "http://auth:8000/mailDelete/",
+    "http://auth:8000/mailinfo/",
+
+    # Users
+    #"http://users:8000/list/",
+    "http://users:8000/get/",
+    "http://users:8000/adminuser/",
+    "http://users:8000/delete/",
+
+    # Friend
     "http://friend:8000/friend_list/",
+    "http://friend:8000/update/",
+    "http://friend:8000/info/",
+    "http://friend:8000/delete/",
 ]
 
 AUTH_VALIDATION_URL = "http://project-auth-1:8000/validate-token/"

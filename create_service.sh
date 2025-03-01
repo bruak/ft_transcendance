@@ -32,7 +32,7 @@ find_free_port() {
 
 FREE_PORT=$(find_free_port)
 echo "Kullanılabilir port: $FREE_PORT"
-if [ -f "Project/Django/Dockerfile" ] && [ ! -d "Project/${SERVICE}" ]; then
+if [ -f "Project/User/Dockerfile" ] && [ ! -d "Project/${SERVICE}" ]; then
 
 if ! grep -q "$LOWSERVICE:" "$COMPOSE" 2>/dev/null; then
   

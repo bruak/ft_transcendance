@@ -42,7 +42,7 @@ class IntraRequest(View):
         if not access_token:
             return JsonResponse({"error": get_translated_message("INTRA_ACCESS_TOKEN_NOT_FOUND", user_language)}, status=400)
 
-    # Kullanıcı bilgilerini çekmek için token'ı kullanın
+        # Kullanıcı bilgilerini çekmek için token'ı kullanın
         user_info_url = "https://api.intra.42.fr/v2/me"
         headers = {
             'Authorization': f'Bearer {access_token}'

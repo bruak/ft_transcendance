@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import re_path, path
 from game.consumers import PongConsumer, PongBotConsumer, LocalPongConsumer
 
 websocket_urlpatterns = [

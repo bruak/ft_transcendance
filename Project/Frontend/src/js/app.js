@@ -69,7 +69,7 @@ const routes = {
     '/forget-password/:token': { html: './views/forgot-password.html', init: (params) => import("./password.js").then(({ initPassword }) => initPassword(params)) },
     '/verify-email/:token': { html: './views/verify_email.html', init: (params) => import("./verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
     '/recover-password': { html: './views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
-    
+    '/callback/': {html: './views/callback.html'}
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */

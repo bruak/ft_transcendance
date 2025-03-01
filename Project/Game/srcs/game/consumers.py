@@ -16,9 +16,8 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.groups = []
-		self.game_loop_running = False
 		self.speed_timer = 0
-		self.player_id = None  # Önemli: oyuncu id'sini başlatıyoruz.
+		self.player_id = None  
 
 	async def update_match_status(self, new_status):
 		self.match.status = new_status
@@ -43,7 +42,6 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		
 		current_winner = self.match.winner
 		match_count = await sync_to_async(Match.objects.filter(tournament=tournament, status="finished").count)()
-		print(f"Match count: {match_count} | Player limit: {tournament.player_limit - 1}")
 		if int(match_count) == int(tournament.player_limit - 1):
 			print("Tournament finished")
 			tournament.status = "finished"
@@ -94,7 +92,8 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 				"host": None,
 				"guest": None,
 				"spectators": [],
-				"game_state": self.create_initial_game_state()
+				"game_state": self.create_initial_game_state(),
+				"game_loop_running": False
 			}
 
 		room_info = self.room_data[self.room_name]
@@ -124,12 +123,10 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 			elif self.channel_name in room_info["spectators"]:
 				room_info["spectators"].remove(self.channel_name)
 
-			if self.player_id in ['player1', 'player2'] and self.game_loop_running == True:
-				self.game_loop_running = False
+			if self.player_id in ['player1', 'player2'] and self.room_data.get(self.room_name, {}).get("game_loop_running"):
+				self.room_data[self.room_name]["game_loop_running"] = False
 				self.match.status = "canceled"
-				self.match.updated_at = timezone.now()
 				await sync_to_async(self.match.save)()
-
 			if room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"] and self.room_name in self.room_data:
 				del self.room_data[self.room_name]
 
@@ -211,48 +208,54 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 			self.ball_speed = 1
 
 	async def start_game_loop(self):
-		p1 = self.game_state['players']['player1']
-		p2 = self.game_state['players']['player2']
-		while self.game_loop_running:
-			self.update_paddle_positions()
-			self.update_ball_position()
-			if p2['score'] >= 5 or p1['score'] >= 5:
-				winner = "player1" if p1['score'] > p2['score'] else "player2"
-				self.game_loop_running = False
-				await self.save_match_data(winner)
+		room_info = self.room_data[self.room_name]
+		if room_info["game_loop_running"]:
+			return
 
-			await self.broadcast_game_state()
-			await asyncio.sleep(1 / 60)
+		room_info["game_loop_running"] = True
+		try:
+			p1 = room_info['game_state']['players']['player1']
+			p2 = room_info['game_state']['players']['player2']
+			while room_info["game_loop_running"]:
+				self.update_paddle_positions()
+				self.update_ball_position()
+				if p2['score'] >= 5 or p1['score'] >= 5:
+					winner = "player1" if p1['score'] > p2['score'] else "player2"
+					room_info["game_loop_running"] = False
+					await self.save_match_data(winner)
+					break
+
+				await self.broadcast_game_state()
+				await asyncio.sleep(1 / 60)
+		finally:
+			room_info["game_loop_running"] = False
 
 class PongConsumer(BasePongConsumer):
 	async def handle_player_connection(self, room_info):
 		if self.scope['user'].username == self.match.player1:
-			print(f"Player 1 connected{self.match.player1}")
 			room_info["host"] = self.channel_name
 			self.player_id = 'player1'
-		elif self.scope['user'].username == self.match.player2:
+		elif self.match.player2 and self.scope['user'].username == self.match.player2:
 			room_info["guest"] = self.channel_name
 			self.player_id = 'player2'
 		else:
 			room_info["spectators"].append(self.channel_name)
 			self.player_id = 'spectator'
 
-		if room_info["host"] and room_info["guest"]:
+		if room_info["host"] and room_info["guest"] and not room_info["game_loop_running"]:
 			await self.broadcast_game_status("start")
-			if self.game_loop_running == False:
-				await self.update_match_status("playing")
-				asyncio.create_task(self.start_game_loop())
-				self.game_loop_running = True
+			await self.update_match_status("playing")
+			asyncio.create_task(self.start_game_loop())
 
 class PongBotConsumer(BasePongConsumer):
 	async def handle_player_connection(self, room_info):
 		if self.scope['user'].username == self.match.player1:
 			room_info["host"] = self.channel_name
 			self.player_id = 'player1'
-			await self.update_match_status("playing")
-			self.game_loop_running = True
-			asyncio.create_task(self.start_game_loop())
-			asyncio.create_task(self.bot_loop())
+			if not room_info["game_loop_running"]:
+				await self.update_match_status("playing")
+				asyncio.create_task(self.start_game_loop())
+				asyncio.create_task(self.bot_loop())
 		else:
 			room_info["spectators"].append(self.channel_name)
 			self.player_id = 'spectator'
@@ -261,7 +264,8 @@ class PongBotConsumer(BasePongConsumer):
 
 	async def bot_loop(self):
 		bot_id = "player2" if self.player_id == "player1" else "player1"
-		while self.game_loop_running:
+		room_info = self.room_data[self.room_name]
+		while room_info["game_loop_running"]:
 			ball = self.game_state['ball']
 			bot_position = self.game_state['players'][bot_id]['position']
 
@@ -291,9 +295,8 @@ class LocalPongConsumer(BasePongConsumer):
 		
 		await self.broadcast_game_status("start")
 		
-		if not self.game_loop_running:
+		if not room_info["game_loop_running"]:
 			await self.update_match_status("playing")
-			self.game_loop_running = True
 			asyncio.create_task(self.start_game_loop())
 
 	async def receive(self, text_data=None, bytes_data=None):

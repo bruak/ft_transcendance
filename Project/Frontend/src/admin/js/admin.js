@@ -23,7 +23,7 @@ async function Rol() {
 
 	if (!response.ok) {
 		if (localStorage.getItem("accessToken") && localStorage.getItem('username'))
-			history.pushState(null,null,`/${localStorage.getItem('username')}`);
+			history.pushState(null,null,`/profile/${localStorage.getItem('username')}`);
 		else
 			history.pushState(null,null,`/`);
 		router();
@@ -34,7 +34,7 @@ async function Rol() {
 }
 
 export async function initAdmin() {
-	//const status = await Rol();
+	const status = await Rol();
 	await initializeTopNavbar();
 	await initializeSideNavbar();
 }

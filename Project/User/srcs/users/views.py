@@ -93,7 +93,7 @@ class UserRequest(View):
                 models.Q(first_name__icontains=query) |
                 models.Q(last_name__icontains=query)
             )
-
+    
             page_size = int(request.GET.get("page_size", 2))  # Varsayılan olarak 10 sonuç gösterilir
             page_number = int(request.GET.get("page_number", 1))  # Varsayılan olarak 1. sayfa gösterilir
         

@@ -41,6 +41,25 @@ import {
    * Eski "initProfile" fonksiyonunun temel mantığını barındırır.
    * @param {Object} params
    */
+
+  const socket = new WebSocket(`ws://localhost:8007/ws/notification/`);
+  socket.onopen = () => {
+    console.log("WebSocket connected");
+  };
+  socket.onmessage = (e) => {
+	const data = JSON.parse(e.data);
+	const message = data.message;
+	console.log("WebSocket message:", message);
+	if (message === "friend_request") {
+	}
+	else if (message === "create_tournaments" || message === "join_tournaments" || message === "start_tournaments") {
+		setupActiveTournamentsAccordion();
+	}
+	else if (message === "recent_activities") {
+		loadRecentActivities();
+	}
+}
+  
   export async function initProfileController(params = {}) {
 	try {
 	  // 1) Navbar linklerini ve temel sayfa kontrolünü ayarla

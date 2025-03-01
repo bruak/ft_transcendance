@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from .models import Match, Tournament, Participant
 from django.db import transaction
 from .translate_way import get_translated_message
+import requests
 
 class GameView(View):
 	@csrf_exempt
@@ -69,20 +70,21 @@ class GameView(View):
 			return JsonResponse({"match_id": new_match.id, "detail_url": f"bot/room_{new_match.id}/"}, status=200)
 		except Exception as e:
 			return JsonResponse({"error ": str(e)}, status=500)
-
+		finally:
+			requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
 
 	@csrf_exempt
 	def playing_matches_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		try:
-			playing_matches = Match.objects.filter(status='playing')
+			playing_matches = Match.objects.filter(status='playing').exclude(match_type='L')
 			matches_list = [
 				{
 					"match_id": match.id,
 					"player1": match.player1,
 					"player2": match.player2,
 					"timestamp": match.updated_at,
-					"detail_url": f"game/room_{match.id}/" if match.match_type == 'M' else (f"bot/room_{match.id}/" if match.match_type == 'B' else f"local/room_{match.id}/")
+					"detail_url": f"game/room_{match.id}/" if match.match_type == 'M' else f"bot/room_{match.id}/"
 				}
 				for match in playing_matches
 			]
@@ -114,9 +116,11 @@ class GameView(View):
 				"tournament_id": tournament.id,
 				"detail_url": f"/tournament/{tournament.id}/"
 			}, status=201)
+			
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
-
+		finally:
+			requests.post('http://notification:8000/create/', json={"message": "create_tournaments"})
 	@csrf_exempt
 	def join_tournament_view(request, tournament_id):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -144,6 +148,8 @@ class GameView(View):
 			return JsonResponse({"error": get_translated_message("TOURNAMENT_NOT_FOUND", user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
+		finally:
+			requests.post('http://notification:8000/create/', json={"message": "join_tournaments"})
 
 	@csrf_exempt
 	def start_tournament_view(request, tournament_id):
@@ -179,7 +185,6 @@ class GameView(View):
 					room_name = f"tournament_{match.id}"
 					match.detail_url = f"game/room_{match.id}/"
 					match.save()
-				
 				return JsonResponse({
 					"message": "Tournament started successfully.",
 					"matches": [{"match_id": match.id, "detail_url": match.detail_url} for match in matches]
@@ -188,6 +193,8 @@ class GameView(View):
 			return JsonResponse({"error": get_translated_message("TOURNAMENT_NOT_FOUND", user_language)}, status=404)
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
+		finally:
+				requests.post('http://notification:8000/create/', json={"message": "start_tournaments"})
 	
 	@csrf_exempt
 	def playing_tournament_views(request, tournament_id):
@@ -217,7 +224,7 @@ class GameView(View):
 	def list_tournaments_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		try:
-			tournaments = Tournament.objects.filter(status='upcoming')
+			tournaments = Tournament.objects.filter(status__in=['upcoming', 'ongoing'])
 			tournaments_list = [
 				{
 					"tournament_id": tournament.id,

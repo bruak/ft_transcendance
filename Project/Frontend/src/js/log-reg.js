@@ -315,6 +315,36 @@ export function initLogReg() {
         });
     }
 
+    // Düzenlencek Resim İçin  # todo
+    document.getElementById("register-avatar").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+      
+        // Dosya türünü kontrol et
+        if (file) {
+          const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+          if (!validTypes.includes(file.type)) {
+            alert('Lütfen geçerli bir resim dosyası seçin (JPG, JPEG, PNG).');
+            return;
+          }
+      
+          // Dosya boyutunu kontrol et
+          const maxSize = 2 * 1024 * 1024; // 2 MB
+          if (file.size > maxSize) {
+            alert('Resmin boyutu 2MB\'yi aşamaz.');
+            return;
+          }
+      
+          // Resmi önizle
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById("avatar-preview");
+            img.style.display = "block"; // Görünür yap
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
     /* ======================[*] Kayıt Formu İşleme [*]====================== */
     if (registerForm) {
         registerForm.addEventListener('submit', async (event) => {
@@ -326,7 +356,7 @@ export function initLogReg() {
             const password = document.getElementById('register-password').value;
             const avatar = document.getElementById('register-avatar').files[0];
             const submitBtn = document.getElementById('register-submit-btn');
-
+            
             if (firstName && lastName && username && email && password && avatar) {
                 // Loading deneyimi
                 submitBtn.disabled = true;
@@ -389,36 +419,57 @@ export function initLogReg() {
                 throw new Error(`API Error: ${response.status}`);
             }
     
-            // API'den dönen JSON verisini işliyoruz
             const responseJson = await response.json();
-    
-            // Pop-up'ı açıyoruz
             const popup = createPopup(responseJson.message.url);
-            
-            // İhtiyaç duyulursa, pop-up ayarlarını kapatma fonksiyonu ekleyebilirsiniz
-            const data = await getPopupData(popup);
-            console.log("Pop-up'tan gelen veri:", data);
-            
-            // Elde edilen JSON verisini localStorage'da saklama
-            const { access_token, refresh_token, username} = data.data;
-            localStorage.setItem('accessToken', access_token.token);
-            localStorage.setItem('refreshToken', refresh_token.token);
-            localStorage.setItem('username', username)
-            localStorage.setItem('language', 'tr');
-            console.log(access_token.token)
-            history.pushState(null, null, `/profile/${username}`)
-		    router()
-    
-    
+            await closePopup(popup);
         } catch (error) {
-            console.error("Hata:", error);  // Hata durumunda yazdır
-            Toast({
-                title: "Error",
-                message: error.message,
-                theme: "danger",
-            });
+            console.error("Hata:", error);
         }
     });
+    
+    // Pop-up'tan İstek Gönderme
+    async function closePopup(popup) {
+        const host = window.location.host;
+        const apiBaseUrl = `https://${host}/api/`;
+    
+        const timer = setInterval(async function () {
+            const urlParams = new URLSearchParams(popup.location.search);
+            const code = urlParams.get("code");
+    
+            if (code) {
+                clearInterval(timer);
+                popup.close();
+                try {
+                    const responseCallback = await fetch(`${apiBaseUrl}auth/callback/?code=${code}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept-Language": "tr",
+                        },
+                    });
+    
+                    if (!responseCallback.ok) {
+                        throw new Error(`Callback Error: ${responseCallback.status}`);
+                    }
+    
+                    const data = await responseCallback.json();
+                    const { access_token, refresh_token, username } = data.data;
+    
+                    // Verileri localStorage'a kaydediyoruz
+                    localStorage.setItem('accessToken', access_token.token);
+                    localStorage.setItem('refreshToken', refresh_token.token);
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('language', 'tr');
+    
+                    console.log(access_token.token);
+                    window.location.href = `/profile/${username}`;
+                } catch (error) {
+                    console.error("Callback Error:", error);
+                }
+            }
+    
+        }, 1000);
+    }
     
     // Pop-up oluşturma fonksiyonu
     function createPopup(url) {
@@ -433,7 +484,7 @@ export function initLogReg() {
             `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`
         );
     }
-
+    
 
     /* ======================[*] Şifremi Unuttum! [*]====================== */
 
@@ -445,44 +496,7 @@ export function initLogReg() {
         router();
     });
 
-    /* ======================[*] Pop-up'tan Veri Alma [*]====================== */
     
-    // Pop-up'tan veri almak için kullanılan fonksiyon
-    async function getPopupData(popup) {
-        return new Promise((resolve, reject) => {
-            const timer = setInterval(function () {
-                try {
-                    if (popup.closed) {
-                        clearInterval(timer); // Pop-up kapatıldığında interval'i durduruyoruz
-                        reject(new Error("Pop-up kapatıldı."));
-                        return;
-                    }
-    
-                    // Pop-up'ın içeriğini kontrol ediyoruz
-                    if (popup.document.readyState === 'complete') {
-                        try {
-                            // İçeriği JSON olarak işleme
-                            const jsonResponse = popup.document.body.innerText.trim(); // İçeriği al
-                            let data;
-    
-                            if (jsonResponse.startsWith("{") && jsonResponse.endsWith("}")) {
-                                // JSON formatında ise doğrudan parse et
-                                data = JSON.parse(jsonResponse);
-                                clearInterval(timer); // Interval'i durdur
-                                popup.close(); // Pop-up'ı kapat
-                                resolve(data);  // JSON verisini döndür
-                            }
-           
-                        } catch (error) {
-                            console.error("Pop-up içeriği JSON verisi değil:", error);
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error in getPopupData:", error);
-                }
-            }, 1000); // Her saniye kontrol eder
-        });
-    }
 }
 
 /* ======================[*] Sayfa Yüklendiğinde initLogReg Fonksiyonunu Çağır [*]====================== */

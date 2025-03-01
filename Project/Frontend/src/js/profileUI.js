@@ -231,12 +231,8 @@ export function updateProfileUI(user) {
 		  <div class="accordion-body bg-dark text-white">
 			<div class="row">
 			  <div class="col-md-6">
-				<p><i class="bi bi-calendar-event"></i> Başlangıç: ${new Date(tournament.start_date).toLocaleDateString()}</p>
-				<p><i class="bi bi-calendar-check"></i> Bitiş: ${new Date(tournament.end_date).toLocaleDateString()}</p>
-			  </div>
-			  <div class="col-md-6">
 				<p><i class="bi bi-person-circle"></i> Oluşturan: ${tournament.creator}</p>
-				<p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.player1}/${tournament.player2}</p>
+				<p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.player_count}/${tournament.current_players}</p>
 			  </div>
 			</div>
 			<div class="Base-list"> </div>
