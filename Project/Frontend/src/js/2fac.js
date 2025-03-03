@@ -1,117 +1,221 @@
 import { router } from './app.js';
 
-/* ======================[*] 2-Factor Authentication Başlatma Fonksiyonu [*]====================== */
+const host = window.location.host;
+const form = document.getElementById('onay-form');
+const inputs = document.querySelectorAll('.code-inputs input');
+const resendButton = document.getElementById('resendCode');
+const timerDisplay = document.getElementById('timer');
+const countdownSpan = document.getElementById('countdown');
 export function init2fac() {
-  const host = window.location.host;
 
-  /* ======================[*] Doğrulama Kodu İçin Input Odaklanma [*]====================== */
-  const inputs = document.querySelectorAll('.split_input_item input');
-  inputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      if (input.value.length === 1 && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-      }
-    });
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
-        inputs[index - 1].focus();
-      }
-    });
-  });
+  // Input handling
+  setupInputHandlers(inputs);
 
-  /* ======================[*] Doğrulama Formu İşleme [*]====================== */
-  const onayForm = document.getElementById('onay-form');
-  if (onayForm) {
-    onayForm.addEventListener('submit', async function (event) {
-      event.preventDefault();
-
-      const username = localStorage.getItem("username");
-      // console.log("KULLANICI ADI", username);
-      const verificationCode = [
-        document.getElementById('digit-1').value,
-        document.getElementById('digit-2').value,
-        document.getElementById('digit-3').value,
-        document.getElementById('digit-4').value,
-      ].join('');
-      // console.log("KOD", verificationCode);
-
-      try {
-        const response = await fetch(`https://${host}/api/auth/twofactor/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, code: verificationCode }),
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Hata: ${errorText}`);
-        }
-
-        const data = await response.json();
-        // console.log("Gelen Yanıt:", data);
-
-        if (!data.data || !data.data.message || !data.data.message.access_token || !data.data.message.refresh_token) {
-          throw new Error("Sunucudan beklenen veri alınamadı!");
-        }
-
-        // Store tokens and redirect to profile
-        localStorage.setItem('accessToken', data.data.message.access_token.token);
-        localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
-        const accessToken = data.data.message.access_token.token;
-        const refreshToken = data.data.message.refresh_token.token;
-        // console.log("Access Token:", accessToken);
-        // console.log("Başarılı bir şekilde giriş yaptınız!");
-        // console.log(response.statusText, response.status); // this message came from backend
-        if (!response.ok) {
-          throw new Error(await response.text()); // Get specific error message from response
-        }
-
-        /*{
-          "message": {
-            "username": "bsoykan",
-            "access_token": {
-              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.IPLvkNCCDQESoV5zGkv6-dsIWkUy3arxh5X2fboc9M8",
-              "expiration_date": "2026-01-27T14:02:32.673Z"
-            },
-            "refresh_token": {
-              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJzb3lrYW4iLCJleHAiOjE3Njk1MjI1NTJ9.uLn9A4S3443EllNCaXMFRa6z81umNi2ZTLeT466dpTI",
-              "expiration_date": "2026-01-27T14:02:32.673Z"
-            }
-          }
-        } */
-
-        // Handle successful response (e.g., redirect to the protected resource)
-        // console.log('Verification successful:', data);
-        
-        history.pushState(null, null, `/${username}`);
-        router();
-      } catch (error) {
-        handleError(error); // Call a separate function to handle errors
-      }
-    });
+  // Form submission
+  if (form) {
+    form.addEventListener('submit', handleFormSubmit);
   }
 
-  /* ======================[*] Hata İşleme Fonksiyonu [*]====================== */
-  function handleError(error) {
-    console.error('Error:', error);
-    let errorMessage = 'An error occurred.';
-
-    if (error.message === 'Invalid code. Please try again.') {
-      errorMessage = error.message;
-    } else if (error.message.includes('Network error')) {
-      errorMessage = 'Network error. Please check your internet connection and try again.';
-    } else {
-      // Additional error handling can be added here
-    }
-
-    alert(errorMessage);
+  // Resend code functionality
+  if (resendButton) {
+    resendButton.addEventListener('click', handleResendCode);
   }
 }
 
-/* ======================[*] Sayfa Yüklendiğinde init2fac Fonksiyonunu Çağır [*]====================== */
+function setupInputHandlers(inputs) {
+  inputs.forEach((input, index) => {
+    // Only allow numbers
+    input.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+
+      if (e.target.value.length === 1) {
+        if (index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      }
+    });
+
+    // Handle backspace
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+
+    // Handle paste
+    input.addEventListener('paste', handlePaste);
+  });
+}
+
+function handlePaste(e) {
+  e.preventDefault();
+  const pasteData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 4);
+  const inputs = document.querySelectorAll('.code-inputs input');
+
+  pasteData.split('').forEach((char, i) => {
+    if (i < inputs.length) {
+      inputs[i].value = char;
+      if (i < inputs.length - 1) {
+        inputs[i + 1].focus();
+      }
+    }
+  });
+}
+
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  const username = localStorage.getItem("username");
+  const verificationCode = [...document.querySelectorAll('.code-inputs input')]
+    .map(input => input.value)
+    .join('');
+
+  try {
+    const response = await submitVerificationCode(username, verificationCode);
+    await handleVerificationResponse(response, username);
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+async function submitVerificationCode(username, code) {
+  const response = await fetch(`https://${host}/api/auth/twofactor/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, code })
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json();
+}
+
+async function handleVerificationResponse(data, username) {
+  if (!data.data?.message?.access_token || !data.data?.message?.refresh_token) {
+    throw new Error("Sunucudan beklenen veri alınamadı!");
+  }
+
+  // Store tokens
+  localStorage.setItem('accessToken', data.data.message.access_token.token);
+  localStorage.setItem('refreshToken', data.data.message.refresh_token.token);
+  localStorage.setItem('language', 'tr');
+
+  // Show success message and redirect
+  document.getElementById('onay-formu').style.display = 'none';
+  document.getElementById('onay-mesaji').style.display = 'block';
+
+  // Redirect after a short delay
+  setTimeout(() => {
+    history.pushState(null, null, `/profile/${username}`);
+    router();
+  }, 2000);
+}
+
+function handleError(error) {
+  console.error('Error:', error);
+  const errorElement = document.getElementById('error-message');
+
+  errorElement.style.display = 'flex';
+  errorElement.querySelector('span').textContent =
+    error.message.includes('Network')
+      ? 'Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.'
+      : 'Geçersiz doğrulama kodu. Lütfen tekrar deneyin.';
+}
+
+function handleResendCode(e) {
+  e.preventDefault();
+  const username = localStorage.getItem("username");
+
+  // Buttonu devre dışı bırak ve yükleniyor göster
+  const resendButton = document.getElementById('resendCode');
+  const originalText = resendButton.textContent;
+  resendButton.textContent = "Gönderiliyor...";
+  resendButton.style.pointerEvents = "none";
+
+  // API isteği gönder
+  fetch(`https://${host}/api/auth/resend-code/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username })
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Kod gönderilemedi, lütfen daha sonra tekrar deneyin.");
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Başarılı olduğunda toast mesajı göster
+      showToastMessage("Doğrulama kodu tekrar gönderildi. Lütfen e-postanızı kontrol edin.");
+
+      // Sayacı başlat
+      startResendTimer();
+    })
+    .catch(error => {
+      console.error("Resend error:", error);
+      showToastMessage(error.message, true);
+
+      // Hata durumunda butonu eski haline getir
+      resendButton.textContent = originalText;
+      resendButton.style.pointerEvents = "auto";
+    });
+}
+
+// Toast mesajı gösterme fonksiyonu
+function showToastMessage(message, isError = false) {
+  // Eğer mevcut bir toast varsa, kaldır
+  const existingToast = document.querySelector('.toast-message');
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  // Yeni toast oluştur
+  const toast = document.createElement('div');
+  toast.className = `toast-message ${isError ? 'toast-error' : 'toast-success'}`;
+  toast.innerHTML = `
+    <div class="toast-content">
+      <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+
+  // Toast'ı sayfaya ekle
+  document.body.appendChild(toast);
+
+  // Toast'ı göster ve animasyon ekle
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+
+  // Belirli süre sonra toast'ı kaldır
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 4000);
+}
+
+function startResendTimer() {
+  let timeLeft = 60;
+  const timerDisplay = document.getElementById('timer');
+  const countdownSpan = document.getElementById('countdown');
+  const resendButton = document.getElementById('resendCode');
+
+  timerDisplay.classList.remove('d-none');
+  resendButton.style.display = 'none';
+
+  const timer = setInterval(() => {
+    timeLeft--;
+    countdownSpan.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      timerDisplay.classList.add('d-none');
+      resendButton.style.display = 'inline';
+    }
+  }, 1000);
+}
+
 document.addEventListener('DOMContentLoaded', init2fac);
-
-// ... (rest of your code for input handling)
-

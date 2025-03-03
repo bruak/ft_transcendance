@@ -1,5 +1,6 @@
 #!/bin/sh
 mkdir -p /etc/ssl/private
+sed -i "s|!DOMAIN!|$IP_ADDR|g" /etc/nginx/nginx.conf
 
 if [ -f "/etc/ssl/private/nginx.key" ] && [ -f "/etc/ssl/private/ngnix.crt" ]; then
     echo "SSL sertificate is already created!"

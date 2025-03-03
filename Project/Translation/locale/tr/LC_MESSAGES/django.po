@@ -213,3 +213,72 @@ msgstr "Ad boş olamaz."
 
 msgid "Last name can not be empty."
 msgstr "Soyad boş olamaz."
+
+msgid "Missing parameters."
+msgstr "Eksik parametreler."
+
+msgid "Friendship not found."
+msgstr "Arkadaşlık bulunamadı."
+
+msgid "Friend removed successfully."
+msgstr "Arkadaş başarıyla kaldırıldı."
+
+msgid "You cannot remove this friend."
+msgstr "Bu arkadaşı kaldıramazsınız."
+
+msgid "Only DELETE requests are allowed."
+msgstr "Sadece DELETE isteği kabul edilmektedir."
+
+msgid "Error deleting user."
+msgstr "Kullanıcı silinirken bir hata oluştu."
+
+msgid "Access token does not belong to this user"
+msgstr "Erişim belirteci bu kullanıcıya ait değil"
+
+msgid "Error changing mail token status"
+msgstr "E-posta jetonu değiştirme hatası"
+
+msgid "Password reset mail already sent"
+msgstr "Şifre sıfırlama e-postası zaten gönderildi"
+
+msgid "Username is required"
+msgstr "kullanıcı adı gerekli"
+
+msgid "Missing required fields"
+msgstr "Gerekli alanlar eksik"
+
+msgid "Tournament name already exists"
+msgstr "Turnuva adı zaten mevcut"
+
+msgid "Tournament is not open"
+msgstr "Turnuva açık değil"
+
+msgid "Tournament is full"
+msgstr "Turnuva dolu"
+
+msgid "User is already a participant"
+msgstr "Kullanıcı zaten katılımcı"
+
+msgid "Tournament not found"
+msgstr "Turnuva bulunamadı"
+
+msgid "Joined tournament successfully"
+msgstr "Turnuvaya başarıyla katıldı"
+
+msgid "Number of participants must be a power of 2 and at least 4"
+msgstr "Katılımcı sayısı 2'nin kuvveti olmalı ve en az 4 olmalıdır"
+
+msgid "need query parameter for search"
+msgstr "Arama için 'query' parametresi gereklidir"
+
+msgid "Invalid content type"
+msgstr "Geçersiz içerik türü"
+
+msgid "Empty request body"
+msgstr "Boş istek gövdesi"
+
+msgid "Invalid JSON request body"
+msgstr "Geçersiz JSON istek gövdesi"
+
+msgid "image upload error"
+msgstr "resim yükleme hatası"

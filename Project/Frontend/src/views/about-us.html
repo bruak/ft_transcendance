@@ -1,185 +1,238 @@
 <div class="about-us-page">
+
+    <!-- Skip to content link for keyboard users -->
+    <!-- <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a> -->
+
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;"
+   
+ 
+
+   role="navigation" aria-label="Main navigation">
         <div class="container">
-            <div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- Örnek rotalar -->
-                        <li class="nav-item mt-2">
-                            <a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
-                        </li>
-                        <li class="nav-item mt-2">
-                            <a class="nav-link" href="/GamePage" data-link>Game</a>
-                        </li>
-                        <li class="nav-item mt-2 mb-2">
-                            <a class="nav-link" href="/about" data-link>About</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Profil Küçük Resmi - Dropdown -->
-            <div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img id="profileSmallPhoto" src="" alt="User" width="30" height="30" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Örnek1</a></li>
-                    <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
+            <a class="navbar-brand" aria-label="Pong Game Home">
+                <i class="bi bi-joystick" aria-hidden="true"></i> Pong Game
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" id="home" href="/username" data-link aria-label="Go to home page">
+                            <i class="bi bi-house" aria-hidden="true"></i> Home
+                        </a>
                     </li>
-                    <!-- Çıkış işlemi profile.js içinde #signout yakalanarak yapılacak -->
-                    <li><a class="dropdown-item" href="#signout">Sign out</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/GamePage" data-link aria-label="Go to game page">
+                            <i class="bi bi-controller" aria-hidden="true"></i> Game
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active disabled" href="/about" data-link aria-current="page"
+                            aria-label="About page - current page">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i> About
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
     <!-- /Navbar -->
+
     <!-- Başlık Bölümü -->
-    <header class="bg-dark text-white py-5">
-        <h1>Hakkımızda</h1>
+    <header class="glass-effect" role="banner">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">Hakkımızda</h1>
+        </div>
     </header>
 
-    <div class="container mt-5">
-        <!-- Proje Tanıtımı -->
-        <section class="mb-5">
-            <h2 class="text-center mb-4">Projemiz</h2>
-            <p class="text-center">
-                Bu proje, 42 Türkiye’deki mezuniyetimizin bir parçası olarak yaratıldı. Amacımız, gerçek zamanlı çok oyunculu bir Pong platformu oluşturarak kullanıcı deneyimini en üst düzeye çıkarmaktır.
-                Teknolojilerimiz: Docker, Mikroservis Mimarisi, PostgreSQL, 2FA, Livechat ve daha fazlası.
-            </p>
-        </section>
+    <main id="main-content" role="main">
+        <div class="container mt-5">
+            <!-- Proje Tanıtımı -->
+            <section class="mb-5 animate__animated animate__fadeIn" aria-labelledby="project-section">
+                <h2 id="project-section">Projemiz</h2>
+                <div class="card glass-effect" role="region" aria-label="Project description">
+                    <div class="card-body">
+                        <p class="text-center">
+                            Bu proje, 42 Türkiye'deki mezuniyetimizin bir parçası olarak yaratıldı. Amacımız, gerçek
+                            zamanlı
+                            çok
+                            oyunculu bir Pong platformu oluşturarak kullanıcı deneyimini en üst düzeye çıkarmaktır.
+                            Teknolojilerimiz: Docker, Mikroservis Mimarisi, PostgreSQL, 2FA, Livechat ve daha fazlası.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Öğrendiklerimiz -->
-        <section class="mb-5">
-            <h2 class="text-center mb-4">Bazı Önceki Projelerimiz</h2>
-            <div class="row">
-                <div class="col-md-4 col-sm-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Algoritma ve Problem Çözme</h5>
-                            <p class="card-text">
-                                <strong>Push Swap</strong> projesinde, algoritmaların verimliliğini optimize etmeyi ve sıralama algoritmalarını uygulamayı öğrendik. Ayrıca, bu süreçte problem çözme becerilerimizi geliştirdik ve zaman/mekan karmaşıklığını analiz etmeyi deneyimledik.
-                            </p>
+            <!-- Öğrendiklerimiz -->
+            <section class="mb-5" aria-labelledby="prev-projects-section">
+                <h2 id="prev-projects-section">Önceki Projelerimiz</h2>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 mb-4">
+                        <div class="card glass-effect h-100" role="region" aria-labelledby="algo-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="algo-title">Algoritma ve Problem Çözme</h5>
+                                <p class="card-text">
+                                    <strong>Push Swap</strong> projesinde, algoritmaların verimliliğini optimize etmeyi
+                                    ve
+                                    sıralama algoritmalarını uygulamayı öğrendik. Ayrıca, bu süreçte problem çözme
+                                    becerilerimizi geliştirdik ve zaman/mekan karmaşıklığını analiz etmeyi deneyimledik.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 col-sm-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Sistem Yönetimi ve Güvenlik</h5>
-                            <p class="card-text">
-                                <strong>Born2BeRoot</strong> projesinde, Linux tabanlı bir sistemin güvenliğini sağlama, yapılandırma ve sunucu yönetimi konularında derinlemesine bilgi edindik. Ayrıca, SSH, UFW ve güçlü parola politikalarını uyguladık.
-                            </p>
+                    <div class="col-md-4 col-sm-12 mb-4">
+                        <div class="card glass-effect h-100" role="region" aria-labelledby="system-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="system-title">Sistem Yönetimi ve Güvenlik</h5>
+                                <p class="card-text">
+                                    <strong>Born2BeRoot</strong> projesinde, Linux tabanlı bir sistemin güvenliğini
+                                    sağlama,
+                                    yapılandırma ve sunucu yönetimi konularında derinlemesine bilgi edindik. Ayrıca,
+                                    SSH,
+                                    UFW ve güçlü parola politikalarını uyguladık.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 col-sm-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Ağ Yönetimi</h5>
-                            <p class="card-text">
-                                <strong>NetPractice</strong> projesiyle ağ yapıları, IP adresleme ve yönlendirme protokollerini detaylı bir şekilde öğrenerek ağ sorunlarını çözme becerisi kazandık.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 col-sm-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Kabuk Programlama ve İşletim Sistemleri</h5>
-                            <p class="card-text">
-                                <strong>Minishell</strong> projesiyle, bir komut satırı arayüzü oluşturmayı öğrendik. İşlem yönetimi, borulama ve sinyal işleme gibi işletim sistemi kavramlarını derinlemesine anlama fırsatı bulduk.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Sanallaştırma ve Docker</h5>
-                            <p class="card-text">
-                                <strong>Inception</strong> projesi ile sanallaştırma teknolojilerini, özellikle Docker konteynerlerini kullanarak çoklu servisleri bir arada çalıştırmayı öğrendik. Mikroservis mimarisini tasarlama ve yönetme konusunda deneyim kazandık.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Ağ Tabanlı Uygulama Geliştirme</h5>
-                            <p class="card-text">
-                                <strong>ft_irc</strong> projesinde, IRC protokolüne uygun bir sohbet sunucusu geliştirdik. Çoklu bağlantılar, istemci-sunucu iletişimi ve ağ programlama konularında yetkinlik kazandık.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Ekip Bölümü -->
-        <section class="mb-5">
-            <h2 class="text-center mb-4">Ekibimiz</h2>
-            <div class="row">
-                <div class="col-md-3 col-sm-12 mb-4">
-                    <div class="card">
-                        <img src="../../img/ali.jpg" class="card-img-top" alt="Ekip Üyesi 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Ali</h5>
-                            <p class="card-text">Ali, Lorem ipsum dolor sit amet.</p>
-                            <a style="display: block;" href="https://github.com/imrann0" class="btn btn-primary" target="_blank">Github</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-12 mb-4">
-                    <div class="card">
-                        <div class="card-img-top position-relative">
-                            <img src="../../img/burak.jpg" class="image card-img-top" alt="Ekip Üyesi 2">
-                            <div class="overlay">
-                                <div class="text">Burak Soykan</div>
-                                <a style="display: block; margin-top: 10px;" href="https://github.com/bruak" class="btn btn-primary" target="_blank">Github</a>
+                    <div class="col-md-4 col-sm-12 mb-4">
+                        <div class="card glass-effect h-100" role="region" aria-labelledby="network-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="network-title">Ağ Yönetimi</h5>
+                                <p class="card-text">
+                                    <strong>NetPractice</strong> projesiyle ağ yapıları, IP adresleme ve yönlendirme
+                                    protokollerini detaylı bir şekilde öğrenerek ağ sorunlarını çözme becerisi kazandık.
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-3 col-sm-12 mb-4">
-                    <div class="card">
-                        <img src="../../img/ibrahim.jpg" class="card-img-top" alt="Ekip Üyesi 3">
-                        <div class="card-body">
-                            <h5 class="card-title">İbrahim</h5>
-                            <p class="card-text">İbrahim, Lorem ipsum dolor sit amet.</p>
-                            <a style="display: block;" href="https://github.com/iedelemen" class="btn btn-primary" target="_blank">Github</a>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 mb-4">
+                        <div class="card glass-effect h-100" role="region" aria-labelledby="shell-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="shell-title">Kabuk Programlama ve İşletim Sistemleri</h5>
+                                <p class="card-text">
+                                    <strong>Minishell</strong> projesiyle, bir komut satırı arayüzü oluşturmayı
+                                    öğrendik.
+                                    İşlem yönetimi, borulama ve sinyal işleme gibi işletim sistemi kavramlarını
+                                    derinlemesine anlama fırsatı bulduk.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4">
+                        <div class="card glass-effect h-100" role="region" aria-labelledby="docker-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="docker-title">Sanallaştırma ve Docker</h5>
+                                <p class="card-text">
+                                    <strong>Inception</strong> projesi ile sanallaştırma teknolojilerini, özellikle
+                                    Docker
+                                    konteynerlerini kullanarak çoklu servisleri bir arada çalıştırmayı öğrendik.
+                                    Mikroservis
+                                    mimarisini tasarlama ve yönetme konusunda deneyim kazandık.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-12 mb-4">
-                    <div class="card">
-                        <img src="../../img/tufan.jpg" class="card-img-top" alt="Ekip Üyesi 4">
-                        <div class="card-body">
-                            <h5 class="card-title">Tufan</h5>
-                            <p class="card-text">Tufan, Lorem ipsum dolor sit amet.</p>
-                            <a style="display: block;" href="https://github.com/TufanKurukaya" class="btn btn-primary" target="_blank">Github</a>
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card glass-effect" role="region" aria-labelledby="irc-title">
+                            <div class="card-body">
+                                <h5 class="card-title" id="irc-title">Ağ Tabanlı Uygulama Geliştirme</h5>
+                                <p class="card-text">
+                                    <strong>ft_irc</strong> projesinde, IRC protokolüne uygun bir sohbet sunucusu
+                                    geliştirdik. Çoklu bağlantılar, istemci-sunucu iletişimi ve ağ programlama
+                                    konularında
+                                    yetkinlik kazandık.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+            <!-- Ekip Bölümü -->
+            <section class="mb-5" aria-labelledby="team-section">
+                <h2 id="team-section">Ekibimiz</h2>
+                <div class="row">
+                    <div class="col-md-3 col-sm-12 mb-4">
+                        <div class="card glass-effect team-card" tabindex="0" role="article"
+                            aria-labelledby="ali-title">
+                            <img src="../../img/ali.jpg" class="card-img-top" alt="Ali'nin fotoğrafı - Takım üyesi"
+                                loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title" id="ali-title">Ali</h5>
+                                <p class="card-text">Full Stack Developer</p>
+                                <a href="https://github.com/imrann0"
+                                    class="btn btn-primary stretched-link d-flex justify-content-center" target="_blank"
+                                    rel="noopener" aria-label="Ali'nin Github profili - yeni sekmede açılır">
+                                    <i class="bi bi-github" aria-hidden="true"></i> Github
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-    </div>
+                    <div class="col-md-3 col-sm-12 mb-4">
+                        <div class="card glass-effect team-card" tabindex="0" role="article"
+                            aria-labelledby="burak-title">
+                            <img src="../../img/burak.jpg" class="card-img-top"
+                                alt="Burak'ın fotoğrafı - Full Stack Developer" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title" id="burak-title">Burak</h5>
+                                <p class="card-text">Full Stack Developer</p>
+                                <a href="https://github.com/bruak"
+                                    class="btn btn-primary stretched-link d-flex justify-content-center" target="_blank"
+                                    rel="noopener" aria-label="Burak'ın Github profili - yeni sekmede açılır">
+                                    <i class="bi bi-github" aria-hidden="true"></i> Github
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-12 mb-4">
+                        <div class="card glass-effect team-card" tabindex="0" role="article"
+                            aria-labelledby="ibrahim-title">
+                            <img src="../../img/ibrahim.jpg" class="card-img-top"
+                                alt="İbrahim'in fotoğrafı - Full Stack Developer" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title" id="ibrahim-title">İbrahim</h5>
+                                <p class="card-text">Full Stack Developer</p>
+                                <a href="https://github.com/iedelemen"
+                                    class="btn btn-primary stretched-link d-flex justify-content-center" target="_blank"
+                                    rel="noopener" aria-label="İbrahim'in Github profili - yeni sekmede açılır">
+                                    <i class="bi bi-github" aria-hidden="true"></i> Github
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 mb-4">
+                        <div class="card glass-effect team-card" tabindex="0" role="article"
+                            aria-labelledby="tufan-title">
+                            <img src="../../img/tufan.jpg" class="card-img-top"
+                                alt="Tufan'ın fotoğrafı - Full Stack Developer" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title" id="tufan-title">Tufan</h5>
+                                <p class="card-text">Full Stack Developer</p>
+                                <a href="https://github.com/TufanKurukaya"
+                                    class="btn btn-primary stretched-link d-flex justify-content-center" target="_blank"
+                                    rel="noopener" aria-label="Tufan'ın Github profili - yeni sekmede açılır">
+                                    <i class="bi bi-github" aria-hidden="true"></i> Github
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
     <!-- Altbilgi Bölümü -->
-    <footer class="bg-dark text-white text-center py-3" >
-        <p>Tüm hakları saklıdır &copy; 2025</p>
+    <footer class="glass-effect" role="contentinfo">
+        <p><i class="bi bi-code-slash" aria-hidden="true"></i> 2025 Tüm hakları saklı değildir.</p>
     </footer>
     <!-- Özel JS -->
     <!-- <script src="../js/about-us.js"></script> -->

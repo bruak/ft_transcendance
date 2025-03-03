@@ -1,3 +1,4 @@
+# DO NOT DELETE THESE LINES, THESE LINES ARE CONFIG
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -8,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:07+0000\n"
+"POT-Creation-Date: 2025-01-30 13:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,24 +17,211 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: translation/views.py:10
 msgid "User Password Error"
 msgstr "User Password Error"
 
-#: translation/views.py:11
 msgid "Mail Could Not Be Sent"
 msgstr "Mail Could Not Be Sent"
 
-#: translation/views.py:12
+msgid "Mail already exists"
+msgstr "Email already exists"
+
 msgid "Successful"
 msgstr "Successful"
 
-#: translation/views.py:13
 msgid "Not Found User"
-msgstr "Not Found User"
+msgstr "User Not Found"
 
-#: translation/views.py:14
 msgid "Only POST requests are allowed."
 msgstr "Only POST requests are allowed."
+
+msgid "Only GET request are allowed"
+msgstr "Only GET requests are allowed"
+
+msgid "There is a problem in user service"
+msgstr "There is a problem in 'user' service"
+
+msgid "User signup Error"
+msgstr "User Signup Error"
+
+msgid "User authentication not done"
+msgstr "Account Authentication Not Done"
+
+msgid "Invalid code"
+msgstr "Invalid code"
+
+msgid "Two factor authentication code not found"
+msgstr "Two-factor authentication code not found"
+
+msgid "Mail token has expired check your mail for new authentication token link"
+msgstr "Email token has expired"
+
+msgid "authontication successful"
+msgstr "authentication successful"
+
+msgid "Token not found"
+msgstr "Token not found"
+
+msgid "You cannot send a request to your own account."
+msgstr "You cannot send a request to your own account."
+
+msgid "Friend request already exists or you are already friends."
+msgstr "Friend request already exists or you are already friends."
+
+msgid "Friend request sent successfully."
+msgstr "Friend request sent successfully."
+
+msgid "No pending friend requests found."
+msgstr "No pending friend requests found."
+
+msgid "Friend request not found."
+msgstr "Friend request not found."
+
+msgid "Friend request accepted."
+msgstr "Friend request accepted."
+
+msgid "No friends found."
+msgstr "No friends found."
+
+msgid "User successfully signout."
+msgstr "User successfully logged out."
+
+msgid "There was a problem logging the user signout."
+msgstr "There was a problem logging the user signout."
+
+msgid "invalid validate token"
+msgstr "invalid validate token"
+
+msgid "Invalid Token Error when trying to signout"
+msgstr "Invalid Token Error when trying to sign out"
+
+msgid "Invalid Token Error when trying to validate token"
+msgstr "Invalid Token Error when trying to validate token"
+
+msgid "User not found."
+msgstr "User not found"
+
+msgid "Token has expired. New token has been sent to your email."
+msgstr "Token has expired. A new token has been sent to your email."
+
+msgid "invalid verification token"
+msgstr "invalid verification token"
+
+msgid "Authorization code not found in intra callback"
+msgstr "Authorization code not found in intra callback"
+
+msgid "Unable to fetch access token"
+msgstr "Unable to fetch access token"
+
+msgid "Intra access token not found"
+msgstr "Intra access token not found"
+
+msgid "Unable to fetch user data"
+msgstr "Unable to fetch user data"
+
+msgid "this username already exist"
+msgstr "this username already exists"
+
+msgid "this email already exist"
+msgstr "this email already exists"
+
+msgid "an error occurred while creating a user"
+msgstr "an error occurred while creating a user"
+
+msgid "an error occurred while getting a user"
+msgstr "an error occurred while retrieving a user"
+
+msgid "an error occurred while updating a user"
+msgstr "an error occurred while updating a user"
+
+msgid "Avatar download error"
+msgstr "Avatar download error"
+
+msgid "Friend blocked."
+msgstr "Friend blocked."
+
+msgid "Friend relationship not found."
+msgstr "Friend relationship not found."
+
+msgid "Service not found."
+msgstr "Service not found."
+
+msgid "Missing token"
+msgstr "Missing token"
+
+msgid "Invalid validate token"
+msgstr "Invalid validation token"
+
+msgid "Invalid path argument"
+msgstr "Invalid path argument"
+
+msgid "Empty response from target URL"
+msgstr "Empty response from target URL"
+
+msgid "Request was successful"
+msgstr "Request was successful"
+
+msgid "Request failed"
+msgstr "Request failed"
+
+msgid "Invalid JSON response"
+msgstr "Invalid JSON response"
+
+msgid "Username required."
+msgstr "Username required"
+
+msgid "Password Reset Request"
+msgstr "Password Reset Request"
+
+msgid "Click on this link to reset your password: "
+msgstr "Click on this link to reset your password: "
+
+msgid "Password reset link sent."
+msgstr "Password reset link sent."
+
+msgid "An error has occurred."
+msgstr "An error occurred."
+
+msgid "details"
+msgstr "details"
+
+msgid "Your password has been successfully changed. You can log in now."
+msgstr "Your password has been successfully changed. You can log in now."
+
+msgid "An error occurred while updating the password."
+msgstr "An error occurred while updating the password."
+
+msgid "An invalid or expired connection. Please try again."
+msgstr "An invalid or expired connection. Please try again."
+
+msgid "Verify Code"
+msgstr "Verification Code"
+
+msgid "Email sent successfully."
+msgstr "Email sent successfully."
+
+msgid "Password can not be empty."
+msgstr "Password cannot be empty."
+
+msgid "Avatar can not be empty."
+msgstr "Avatar cannot be empty."
+
+msgid "First name can not be empty."
+msgstr "First name cannot be empty."
+
+msgid "Last name can not be empty."
+msgstr "Last name cannot be empty."
+
+msgid "Only DELETE requests are allowed."
+msgstr "Only DELETE requests are allowed."
+
+msgid "Error deleting user."
+msgstr "Error deleting user."
+
+msgid "Access token does not belong to this user"
+msgstr "Access token does not belong to this user"
+
+msgid "Error changing mail token status"
+msgstr "Error changing mail token status"

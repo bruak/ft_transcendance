@@ -2,14 +2,46 @@ from rest_framework import serializers
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
-	avatar = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'avatar']
 
-	class Meta:
-		model = User
-		fields = ['first_name', 'last_name', 'username', 'email', 'avatar']
+    def __init__(self, *args, hide_email=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if hide_email:
+            self.fields.pop('email')
 
-	def get_avatar(self, obj):
-		request = self.context.get('request')
-		if obj.avatar:
-			return request.build_absolute_uri(obj.avatar) if request else obj.avatar
-		return None
+    def create(self, validated_data):
+        # Gelen avatar verisini işliyoruz
+        avatar = validated_data.get('avatar')
+        if not avatar:  # Eğer avatar gönderilmemişse varsayılan bir avatar atayın
+            validated_data['avatar'] = "/media/avatars/default.jpg"
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if instance.avatar and request:
+            # Avatar alanına tam bir URL ekleyin
+            representation['avatar'] = request.build_absolute_uri(instance.avatar)
+        return representation
+    
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # Gelen avatar verisini işliyoruz
+        avatar = validated_data.get('avatar')
+        if not avatar:  # Eğer avatar gönderilmemişse varsayılan bir avatar atayın
+            validated_data['avatar'] = "/media/avatars/default.jpg"
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if instance.avatar and request:
+            # Avatar alanına tam bir URL ekleyin
+            representation['avatar'] = request.build_absolute_uri(instance.avatar)
+        return representation

@@ -3,33 +3,33 @@ COMPOSE_DIR := ./Project
 all: up
 
 up:
-	@echo "Başlatılıyor..."
-	docker compose -f $(COMPOSE_DIR)/docker-compose.yml up --build
+	@echo "initializing..."
+	docker compose -f $(COMPOSE_DIR)/docker-compose.yml up -d --build
 
 start:
-	@echo "Başlatılıyor..."
+	@echo "initializing..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml start
 
 down:
-	@echo "Durduruluyor..."
+	@echo "Stopping..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml down
 
 stop:
-	@echo "Durduruluyor..."
+	@echo "Stopping..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml stop
 
 restart: down up
 
 build:
-	@echo "Yeniden oluşturuluyor..."
+	@echo "Rebuilding..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml build
 
 clean:
-	@echo "Geçici dosyalar temizleniyor..."
+	@echo "Removing temp files..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml down --volumes --remove-orphans
 
 fclean: clean
-	@echo "Konteynerler ve imajlar tamamen temizleniyor..."
+	@echo "Containers and images are completely cleaned..."
 	docker compose -f $(COMPOSE_DIR)/docker-compose.yml down --rmi all --volumes --remove-orphans
 
 re: fclean all

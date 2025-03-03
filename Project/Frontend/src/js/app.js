@@ -1,6 +1,5 @@
 /* ======================[*] Önbellek Yapısı [*]====================== */
 const cache = new Map();
-
 async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
     try {
         const now = Date.now();
@@ -13,7 +12,7 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP Hatası: ${response.status}`);
-        
+
         const content = await response.text();
         cache.set(url, { timestamp: now, content });
         return content;
@@ -23,7 +22,6 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
         return ""; // Hata durumunda boş string dönelim.
     }
 }
-
 
 /* ======================[*] Global State Yönetimi [*]====================== */
 const globalState = new Proxy(
@@ -43,11 +41,11 @@ const globalState = new Proxy(
     }
 );
 
-function setState(key, value) {
+export function setState(key, value) {
     globalState[key] = value;
 }
 
-function getState(key) {
+export function getState(key) {
     return globalState[key];
 }
 
@@ -62,22 +60,28 @@ function showErrorMessage(message) {
 
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
-    '/': { html: './views/log-reg.html', init: () => import("./log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/:username': { html: './views/profile.html', init: (params) => import("./profile.js").then(({ initProfile }) => initProfile(params)) },
-    '/about': { html: './views/about-us.html', init: () => import("./about-us.js").then(({ initAbout }) => initAbout()) },
-    '/2fac': { html: './views/2factor.html', init: () => import("./2fac.js").then(({ init2fac }) => init2fac()) },
-    '/GamePage': { html: './views/game.html', init: () => import("./game.js").then(({ initGame }) => initGame()) },
+    '/': { html: './views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
+    '/profile/:username': { html: './views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
+    '/about': { html: './views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
+    '/2fac': { html: './views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
+    '/GamePage': { html: './views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },
+    '/a': { html: './admin/index.html', init: () => import("/admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
+    '/forget-password/:token': { html: './views/forgot-password.html', init: (params) => import("./password.js").then(({ initPassword }) => initPassword(params)) },
+    '/verify-email/:token': { html: './views/verify_email.html', init: (params) => import("./verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
+    '/recover-password': { html: './views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
+    '/callback/': { html: './views/callback.html' },
+    '/404': { html: './views/404.html' } // 404 sayfası için yeni rota eklendi
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
+
 export async function router() {
     const path = window.location.pathname;
     let route = routes[path] || null;
     let params = {};
 
     // Dinamik rota kontrolü
-    if (!route)
-    {
+    if (!route) {
         for (const [key, value] of Object.entries(routes)) {
             const paramNames = [];
             const regexPath = key.replace(/:\w+/g, (match) => {
@@ -95,17 +99,13 @@ export async function router() {
                 break;
             }
         }
-        // console.log('Params:', params); // params konsole yazdır
     }
-
 
     if (!route) {
-        document.querySelector('#app').innerHTML = `<h1>Sayfa bulunamadı.</h1>`;
-        return;
+        route = routes['/404'];
     }
 
-
-    document.querySelector('#app').innerHTML = `<h1>Loading...</h1>`; // Loading durumu
+    document.querySelector('#app').innerHTML = '<h1>Loading...</h1>'; // Loading durumu
 
     try {
         const content = await fetchWithCache(route.html);
@@ -116,7 +116,7 @@ export async function router() {
     } catch (err) {
         console.error('Sayfa yüklenirken hata oluştu:', err);
         showErrorMessage("Bir hata oluştu, lütfen tekrar deneyin.");
-        document.querySelector('#app').innerHTML = `<h1>Sayfa yüklenirken bir hata oluştu.</h1>`;
+        document.querySelector('#app').innerHTML = '<h1>Sayfa yüklenirken bir hata oluştu.</h1>';
     }
 }
 
@@ -127,13 +127,24 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
+        if (typeof window.cleanupProfile === 'function') {
+            window.cleanupProfile();
+            delete window.cleanupProfile;
+        }
         router(); // Sayfayı güncelle
     }
 });
 
+
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
-window.addEventListener('popstate', router);
+window.addEventListener('popstate', () => {
+    if (typeof window.cleanupProfile === 'function') {
+        window.cleanupProfile();
+        delete window.cleanupProfile;
+    }
+    router();
+});
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
@@ -155,4 +166,3 @@ document.addEventListener("stateChange:user", (event) => {
 //     history.pushState(null, null, "/");
 //     router();
 // }
-

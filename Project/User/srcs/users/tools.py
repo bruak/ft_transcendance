@@ -9,11 +9,8 @@ def username_check(username):
 
 def image_to_url(avatar, username):
     if avatar:
-        # Dosya uzantısını korumak için uzantıyı alıyoruz
-        file_extension = os.path.splitext(avatar.name)[1]  # Örneğin: '.jpg', '.png'
-        # Kullanıcı adını dosya adı olarak ayarlıyoruz
+        file_extension = os.path.splitext(avatar.name)[1]
         new_filename = f"{username}{file_extension}"
-        # Yeni dosya adını belirterek kaydediyoruz
         avatar.name = new_filename
         avatar_url = default_storage.save('avatars/' + avatar.name, avatar)
         avatar_url = default_storage.url(avatar_url)
@@ -23,14 +20,10 @@ def image_to_url(avatar, username):
 
 def image_intra_create(avatar_url):
 	response = requests.get(avatar_url)
-	response.raise_for_status()  # Eğer istekte hata olursa, bunu yakala
+	response.raise_for_status()
 	filename = os.path.basename(avatar_url)
-	# Dosya kaydetme işlemi için file_path oluşturuluyor
-	file_path = 'avatars/' + filename  # Kaydedilecek dosyanın yol
-	# İndirilen dosya içeriği
+	file_path = 'avatars/' + filename
 	avatar_file = ContentFile(response.content)
-	# Dosyayı kaydet ve dosya yolunu al
 	file_path = default_storage.save(file_path, avatar_file)
-	# Kaydedilen dosyanın URL'sini al
 	avatar_url = default_storage.url(file_path)
 	return avatar_url

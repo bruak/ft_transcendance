@@ -1,0 +1,284 @@
+/* =================== Log-Reg Sayfası Tasarımı =================== */
+
+.log-reg-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #00041a, #032a55);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Form Konumu */
+.log-reg-page form {
+    background-color: rgba(34, 34, 34, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    transition: all 0.4s ease-in-out;
+}
+
+/* Form Başlıkları */
+.log-reg-page form h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #ededed;
+    font-size: 1.8rem;
+}
+
+/* Form İç Alanları */
+.log-reg-page form article {
+    margin-bottom: 20px;
+}
+
+/* Label Stilleri */
+.log-reg-page form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #bbb;
+    text-align: left;
+}
+
+/* Giriş Alanları */
+.log-reg-page form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #4ca1af;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #222;
+    color: #fff;
+    font-size: 16px;
+    transition: border 0.3s ease-in-out;
+}
+
+.log-reg-page form input:focus {
+    border: 1px solid #007bff;
+    outline: none;
+}
+
+/* Butonlar */
+
+/* =================== Güncellenmiş Buton Stilleri =================== */
+
+.log-reg-page .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.log-reg-page .button-group button {
+    padding: 8px 14px; 
+    font-size: 14px; 
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.log-reg-page .button-group .btn-next {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.log-reg-page .button-group .btn-next:hover {
+    background-color: #0056b3;
+}
+
+.log-reg-page .button-group .btn-prev {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.log-reg-page .button-group .btn-prev:hover {
+    background-color: #5a6268;
+}
+
+.log-reg-page form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.log-reg-page form button:hover {
+    background-color: #0056b3;
+}
+
+/* Sosyal Giriş Butonu */
+.log-reg-page .social-btn {
+    background-color: #474d54;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.log-reg-page .social-btn:hover {
+    background-color: #5a6470;
+}
+
+/* Şifre Göster/Gizle Butonu */
+.log-reg-page .password-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #222;
+    border: 1px solid #4ca1af;
+    border-radius: 8px;
+    padding: 0;
+}
+
+.log-reg-page .password-wrapper input {
+    border: none;
+    flex-grow: 1;
+    background: none;
+    color: white;
+    padding: 12px;
+}
+
+.log-reg-page .password-wrapper button {
+    background: none;
+    border: none;
+    color: #4ca1af;
+    cursor: pointer;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+.log-reg-page .password-wrapper button:hover {
+    color: #007bff;
+}
+
+/* Form Geçişleri */
+.log-reg-page .hidden {
+    display: none;
+}
+
+.log-reg-page .form-container {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.log-reg-page .form-container.slide-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.log-reg-page .form-container.slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+/* =================== Stepper (Adım Göstergesi) =================== */
+
+.stepper-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    margin: 20px auto;
+    padding-bottom: 10px;
+}
+
+/* Step Düğmeleri */
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background-color: #555;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Aktif Adım */
+.step.active {
+    background-color: #007bff;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* Step Metinleri */
+.step .step-title {
+    position: absolute;
+    top: 50px;
+    width: max-content;
+    font-size: 12px;
+    color: #ccc;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Progress Bar */
+.progress-bar-wrapper {
+    width: 100%;
+    max-width: 350px;
+    height: 5px;
+    background-color: #444;
+    border-radius: 5px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 5px;
+    transition: width 0.4s ease-in-out;
+}
+
+/* =================== Responsive Ayarlar =================== */
+
+@media screen and (max-width: 768px) {
+    .log-reg-page form {
+        width: 90%;
+    }
+
+    .stepper-container {
+        max-width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .step {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .step .step-title {
+        font-size: 10px;
+        top: 40px;
+    }
+}

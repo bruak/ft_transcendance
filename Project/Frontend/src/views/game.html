@@ -1,70 +1,87 @@
-<div class="game-page">
+<div class="game-page" role="main" aria-label="Pong Game Page">
+    <!-- <link rel="stylesheet" href="/css/game.css"> -->
+
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;"
+        role="navigation" aria-label="Main Navigation">
         <div class="container">
-            <div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- Örnek rotalar -->
-                        <li class="nav-item mt-2">
-                            <a class="nav-link active" aria-current="page" href="/profile" data-link>Home</a>
-                        </li>
-                        <li class="nav-item mt-2">
-                            <a class="nav-link" href="/GamePage" data-link>Game</a>
-                        </li>
-                        <li class="nav-item mt-2 mb-2">
-                            <a class="nav-link" href="/about" data-link>About</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Profil Küçük Resmi - Dropdown -->
-            <div class="dropdown ms-auto position-absolute top-0 end-0 mt-3 me-3">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img id="profileSmallPhoto" src="" alt="User" width="30" height="30" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Örnek1</a></li>
-                    <li><a class="dropdown-item" href="/#" data-link>Örnek2</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
+            <a class="navbar-brand" aria-label="Pong Game">
+                <i class="bi bi-joystick" aria-hidden="true"></i> Pong Game
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" id="home" href="/profile" data-link role="menuitem"
+                            aria-label="Go to Home page">
+                            <i class="bi bi-house" aria-hidden="true"></i> Home
+                        </a>
                     </li>
-                    <!-- Çıkış işlemi profile.js içinde #signout yakalanarak yapılacak -->
-                    <li><a class="dropdown-item" href="#signout">Sign out</a></li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link active disabled" href="/GamePage" data-link role="menuitem"
+                            aria-current="page" aria-label="Game page, current page">
+                            <i class="bi bi-controller" aria-hidden="true"></i> Game
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="/about" data-link role="menuitem" aria-label="About page">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i> About
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <!-- /Navbar -->
 
-    <main>
-        <!-- Oyun Alanı -->
-        <section class="d-flex justify-content-center align-items-center flex-column game-container"
-            style="height: 80vh;">
-            <div id="game-container" class="game-area">
-                <!-- Oyun içeriği buraya gelecek -->
-                <div id="scoreboard">0 : 0</div>
-                <canvas id="gameCanvas" class="game-canvas"></canvas>
+    <!-- Main Content -->
+    <main class="game-container" aria-label="Pong Game Area">
+        <!-- Score Board -->
+        <div id="scoreboard" role="status" aria-live="polite" aria-label="Game Score">0 : 0</div>
+
+        <!-- Game Area -->
+        <div id="game-container" class="game-area" aria-label="Active Game Canvas" role="application">
+            <canvas id="gameCanvas" aria-label="Pong Game Canvas" tabindex="0"></canvas>
+            <div class="loading-spinner" role="progressbar" aria-label="Loading game" aria-valuemin="0"
+                aria-valuemax="100" aria-valuenow="50"></div>
+        </div>
+
+        <!-- Game Over Screen - Initially Hidden -->
+        <!-- <div class="game-over-screen" style="display: none;">
+            <h2>Oyun Bitti!</h2>
+            <div>
+                <button onclick="restartGame()">Yeniden Başla</button>
+                <button onclick="goToMenu()">Ana Menü</button>
             </div>
-            <div class="mt-4">
-                <button class="btn btn-primary m-2" onclick="playAgainstComputer()">Bilgisayara Karşı Oyna</button>
-                <button class="btn btn-secondary m-2" onclick="playWithFriend()">Arkadaşınla Oyna</button>
-                <button class="btn btn-success m-2" onclick="playMultiplayer()">Çoklu Oyna</button>
-                <a class="btn btn-warning m-2" href="/profile" data-link>Geri Dön</a>
-            </div>
-        </section>
-        <!-- Oyun Alanı Sonu -->
+        </div> -->
+
+        <!-- Controls Information -->
+        <div class="controls-info" role="region" aria-label="Game Controls Information">
+            <p class="mb-0" aria-label="Game control instructions">
+                <i class="bi bi-keyboard" aria-hidden="true"></i> Controls:
+                <span class="badge bg-primary" aria-label="Press W key to move up">W</span>
+                <span aria-hidden="true">Up</span> <span class="visually-hidden">Move Up</span> |
+                <span class="badge bg-primary" aria-label="Press S key to move down">S</span>
+                <span aria-hidden="true">Down</span> <span class="visually-hidden">Move Down</span>
+            </p>
+        </div>
     </main>
-    <!-- Alt bilgi bölümü -->
-    <footer class="bg-light text-center py-3 mt-4">
-        <p>Tüm hakları saklıdır &copy; 2025</p>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <p class="mb-0">
+            <i class="bi bi-code-slash" aria-hidden="true"></i> 2025 Tüm hakları saklı değildir.
+        </p>
     </footer>
-
-
 </div>
+<script>
+    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+        homeLink.href = "profile/" + navbarUsername;
+        homeLink.setAttribute('aria-label', `Go to ${navbarUsername}'s profile`);
+    }
+</script>

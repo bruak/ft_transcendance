@@ -7,10 +7,9 @@ def translation(request, key):
 	user_language = request.headers.get("Accept-Language", "tr")
 	activate(user_language)
 	try:
-		#messages = {key: _(message) for key, message in MESSAGES.items()}
 		if key in MESSAGES:
-			message = _(MESSAGES[key])  # İlgili key'in çevirisini al
-			return JsonResponse({"message": message}, status=200)  # Sadece mesajı döndür
+			message = _(MESSAGES[key])
+			return JsonResponse({"message": message}, status=200)
 		else:
 			return JsonResponse({"error": "Key not found"}, status=404)
 	except Exception as e:

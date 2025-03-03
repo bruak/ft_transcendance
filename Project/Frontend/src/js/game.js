@@ -1,203 +1,641 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
+import { getState, router, setState } from './app.js';
 
-const scene = new THREE.Scene();
 
-document.addEventListener('DOMContentLoaded', () => {
-  initGame();
-});
-
-function createWall(width, height, depth, position) {
-  const wallGeometry = new THREE.BoxGeometry(width, height, depth);
-  const wallMaterial = new THREE.MeshStandardMaterial(
-    {
-      color: 0x555555,
-      map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/brick_diffuse.jpg')
-
+function hideSpinner() {
+    const spinner = document.querySelector('.loading-spinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+        // Announce to screen readers that game is loaded
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.setAttribute('aria-busy', 'false');
+        announceToScreenReader('Game loaded and ready to play');
     }
-  ); // Gri renkli duvar
-  const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-  wall.position.set(position.x, position.y, position.z);
-  wall.rotation.x = Math.PI / 2; // Duvarı yatay konumda oluştur
-  scene.add(wall);
 }
 
-function createGoal(position, rotation) {
-  const goalWidth = 12;
-  const goalHeight = 2 * rotation;
-  const goalDepth = 0.4;
-
-  // Direkleri oluştur
-  const postMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-
-  // Üst direk
-  const topPost = new THREE.Mesh(new THREE.BoxGeometry(goalWidth, 0.2, goalDepth), postMaterial);
-  topPost.position.set(position.x + (goalHeight / 2), position.y, position.z);
-  topPost.rotation.z = Math.PI / 2;
-  scene.add(topPost);
-
-  // // Yan direkler
-  const leftPost = new THREE.Mesh(new THREE.BoxGeometry(0.2, goalHeight, goalDepth), postMaterial);
-  leftPost.position.set(position.x, position.y - (goalWidth / 2), position.z);
-  leftPost.rotation.z = Math.PI / 2;
-  scene.add(leftPost);
-
-  const rightPost = new THREE.Mesh(new THREE.BoxGeometry(0.2, goalHeight, goalDepth), postMaterial);
-  rightPost.position.set(position.x, position.y + (goalWidth / 2), position.z);
-  rightPost.rotation.z = Math.PI / 2;
-  scene.add(rightPost);
+// Function to announce messages to screen readers
+function announceToScreenReader(message) {
+    let ariaLive = document.getElementById('game-announcer');
+    if (!ariaLive) {
+        ariaLive = document.createElement('div');
+        ariaLive.id = 'game-announcer';
+        ariaLive.className = 'sr-only';
+        ariaLive.setAttribute('aria-live', 'assertive');
+        ariaLive.setAttribute('aria-atomic', 'true');
+        document.body.appendChild(ariaLive);
+    }
+    ariaLive.textContent = message;
 }
 
-function createNet(position) {
-  const netWidth = 4;
-  const netHeight = 2;
+// Game state
+let gameState = {
+    mode: 'multi',
+    scene: null,
+    camera: null,
+    renderer: null,
+    paddle1: null,
+    paddle2: null,
+    ball: null,
+    socket: null,
+    animationId: null,
+    playerId: 'spectator',
+    handleKeydown: null, // Klavye olay fonksiyonunu tutmak için
+    handleKeyup: null,
+    arcadeBase: null,
+    playField: null,
+    leftWall: null,
+    rightWall: null,
+    topWall: null,
+    bottomWall: null,
+    middleLine: null,
+    joystickBaseLeft: null,
+    joystickBaseRight: null,
+    joystickStickLeft: null,
+    joystickStickRight: null,
+    joystickBallLeft: null,
+    joystickBallRight: null
+};
 
-  // Ağ dokusu ve transparan yapı
-  const netMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    flatShading: true,
-    wireframe: true,  // File efekti
-    transparent: true, opacity: 0.5, // Hafif şeffaflık
-  });
-
-  const netGeometry = new THREE.PlaneGeometry(netWidth, netHeight, 10, 10);
-  const net = new THREE.Mesh(netGeometry, netMaterial);
-  net.position.set(position.x, position.y, position.z);
-  net.rotation.x = Math.PI / 2;
-  scene.add(net);
+function disposeObject(obj) {
+    if (!obj) return;
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) {
+        if (Array.isArray(obj.material)) {
+            obj.material.forEach(material => material.dispose());
+        } else {
+            obj.material.dispose();
+        }
+    }
 }
 
+function cleanupGame() {
+    console.log('Cleaning up game...');
+    if (gameState.animationId) {
+        cancelAnimationFrame(gameState.animationId);
+    }
+
+    if (gameState.socket) {
+        gameState.socket.close();
+    }
+
+    // Remove event listener
+    if (gameState.handleKeydown) {
+        document.removeEventListener('keydown', gameState.handleKeydown);
+    }
+    if (gameState.handleKeyup) {
+        document.removeEventListener('keyup', gameState.handleKeyup);
+    }
+
+
+    // Dispose THREE.js objects
+    disposeObject(gameState.paddle1);
+    disposeObject(gameState.paddle2);
+    disposeObject(gameState.ball);
+    disposeObject(gameState.arcadeBase);
+    disposeObject(gameState.playField);
+    disposeObject(gameState.leftWall);
+    disposeObject(gameState.rightWall);
+    disposeObject(gameState.topWall);
+    disposeObject(gameState.bottomWall);
+    disposeObject(gameState.middleLine);
+    disposeObject(gameState.joystickBaseLeft);
+    disposeObject(gameState.joystickBaseRight);
+    disposeObject(gameState.joystickStickLeft);
+    disposeObject(gameState.joystickStickRight);
+    disposeObject(gameState.joystickBallLeft);
+    disposeObject(gameState.joystickBallRight);
+
+    if (gameState.scene) {
+        while (gameState.scene.children.length > 0) {
+            const object = gameState.scene.children[0];
+            gameState.scene.remove(object);
+            disposeObject(object);
+        }
+    }
+
+    if (gameState.renderer) {
+        gameState.renderer.dispose();
+    }
+
+    // Remove accessibility elements
+    const announcer = document.getElementById('game-announcer');
+    if (announcer) {
+        announcer.remove();
+    }
+
+    // Reset game state
+    gameState = {
+        mode: 'multi',
+        scene: null,
+        camera: null,
+        renderer: null,
+        paddle1: null,
+        paddle2: null,
+        ball: null,
+        socket: null,
+        animationId: null,
+        playerId: 'spectator',
+        handleKeydown: null,
+        handleKeyup: null,
+        arcadeBase: null,
+        playField: null,
+        leftWall: null,
+        rightWall: null,
+        topWall: null,
+        bottomWall: null,
+        middleLine: null,
+        joystickBaseLeft: null,
+        joystickBaseRight: null,
+        joystickStickLeft: null,
+        joystickStickRight: null,
+        joystickBallLeft: null,
+        joystickBallRight: null
+    };
+}
 
 export function initGame() {
+    cleanupGame();
+    const roomName = getState('detail_url');
 
-  const username = localStorage.getItem('username');
-
-  // Navbar'daki Home linkinin href özelliğini username olarak ayarla
-  const homeLink = document.querySelector('.nav-link.active');
-  if (homeLink) {
-    homeLink.href = username;
-  }
-
-
-  scene.background = new THREE.Color(0x000000);
-
-  // 2) Kamera
-  const canvas = document.getElementById('gameCanvas');
-  const camera = new THREE.PerspectiveCamera(
-    60,           // FOV
-    canvas.clientWidth / canvas.clientHeight, // en-boy oranı
-    0.1,          // near
-    1000          // far
-  );
-
-  camera.position.set(0, -10, 15); // Kamera pozisyonunu ayarla
-  camera.lookAt(0, 0, 0); // Kameranın bakış açısını ayarla
-
-  // 3) Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-  // Işık ekleyelim
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  directionalLight.position.set(0, 10, 10);
-  scene.add(directionalLight);
-
-  // Raket geometrisi
-  const paddleGeometry = new THREE.BoxGeometry(1, 3, 0.5);
-  const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-  const paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  const paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-
-  // Raketlerin sahneye eklenmesi
-
-  const geometry = new THREE.PlaneGeometry(20, 12);
-  const textureLoader = new THREE.TextureLoader();
-  const grassTexture = textureLoader.load('https://threejs.org/examples/textures/terrain/grasslight-big.jpg'); // Çim dokusu
-
-  const material = new THREE.MeshBasicMaterial({ map: grassTexture, side: THREE.DoubleSide });
-  const field = new THREE.Mesh(geometry, material);
-  field.position.z = -0.5;
-  // scene.add(field);
-
-  // createWall(20, 5, 0.2, { x: 0, y: 12 / 2, z: 2 });  // Ön duvar
-  // createWall(20, 3, 0.2, { x: 0, y: -12 / 2, z: 0 }); // Arka duvar
-  // createGoal({ x: 10, y: 0, z: -0.3 }, 1); // Sol kale
-  // createGoal({ x: -10, y: 0, z: -0.3 }, -1); // Sol kale
-
-
-  paddle1.position.x = -10;
-  paddle2.position.x = 10;
-  scene.add(paddle1);
-  scene.add(paddle2);
-
-  // Top geometrisi
-  const ballGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-  const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-  const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-  scene.add(ball);
-
-  const scoreboard = document.getElementById('scoreboard');
-  let roomName = "room1/";
-  const socket = new WebSocket('wss://' + window.location.host + '/game/ws/game/' + roomName + '?token=' + localStorage.getItem('accessToken'));
-
-  let playerId = 'spectator';
-
-  socket.onopen = function () {
-    console.log('WebSocket bağlantısı kuruldu.');
-  };
-
-  socket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    if (data.type === 'init' || data.type === 'game_state') {
-      const state = data.state;
-
-
-      if (data.player_id) {
-        playerId = data.player_id;
-      }
-      console.log("Kanaldaki Kişi", playerId)
-
-      paddle1.position.y = state.players.player1.position;
-      paddle2.position.y = state.players.player2.position;
-
-      ball.position.x = state.ball.x;
-      ball.position.y = state.ball.y;
-      ball.position.z = state.ball.z;
-
-      scoreboard.innerText = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+    if (roomName) {
+        if (roomName.split('/')[0] === 'local') {
+            gameState.mode = 'local';
+        }
+        else {
+            gameState.mode = 'multi';
+        }
     }
-    else {
-      console.log('Sunucudan mesaj alındı:', data);
+    // Navbar'daki Home linkinin href özelliğini username olarak ayarla
+    const navbarUsername = localStorage.getItem('username');
+    const homeLink = document.getElementById('home');
+    if (homeLink && navbarUsername) {
+        homeLink.href = "profile/" + navbarUsername;
+        homeLink.setAttribute('aria-label', `Go to ${navbarUsername}'s profile`);
     }
-  };
 
-  socket.onclose = function () {
-    console.log('WebSocket bağlantısı kapandı.');
-  };
+    const canvas = document.getElementById('gameCanvas');
+    const gameContainer = document.getElementById('game-container');
+    if (!canvas || !gameContainer) return;
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'w' || e.key === 'W') {
-      socket.send(JSON.stringify({
-        type: 'move',
-        player_id: playerId,
-        position_change: 0.5
-      }));
+    // Set initial accessibility attributes
+    gameContainer.setAttribute('aria-busy', 'true');
+    announceToScreenReader('Loading pong game. Please wait.');
+
+    // Ensure canvas is focusable for keyboard controls
+    canvas.setAttribute('tabindex', '0');
+    canvas.setAttribute('role', 'application');
+    canvas.setAttribute('aria-label', 'Pong Game. Use W and S keys to move paddle up and down.');
+
+    // Canvas boyutlarını ayarlayan fonksiyon
+    function updateCanvasSize() {
+        const containerWidth = gameContainer.clientWidth;
+        const containerHeight = gameContainer.clientHeight;
+
+        // En-boy oranını koru (4:3)
+        const aspectRatio = 4 / 3;
+
+        let newWidth, newHeight;
+
+        if (containerWidth / containerHeight > aspectRatio) {
+            // Container daha geniş, yüksekliğe göre ayarla
+            newHeight = Math.min(containerHeight, window.innerHeight * 0.8);
+            newWidth = newHeight * aspectRatio;
+        } else {
+            // Container daha dar, genişliğe göre ayarla
+            newWidth = Math.min(containerWidth, window.innerWidth * 0.9);
+            newHeight = newWidth / aspectRatio;
+        }
+
+        // Canvas boyutlarını güncelle
+        canvas.style.width = `${newWidth}px`;
+        canvas.style.height = `${newHeight}px`;
+
+        // Renderer boyutlarını güncelle
+        if (gameState.renderer) {
+            gameState.renderer.setSize(newWidth, newHeight);
+        }
+
+        // Kamera aspect ratio'sunu güncelle
+        if (gameState.camera) {
+            gameState.camera.aspect = newWidth / newHeight;
+            gameState.camera.updateProjectionMatrix();
+        }
     }
-    if (e.key === 's' || e.key === 'S') {
-      socket.send(JSON.stringify({
-        type: 'move',
-        player_id: playerId,
-        position_change: -0.5
-      }));
-    }
-  });
 
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-  animate();
+    // Resize event listener
+    const resizeObserver = new ResizeObserver(updateCanvasSize);
+    resizeObserver.observe(gameContainer);
+
+    // Initial setup
+    gameState.scene = new THREE.Scene();
+    gameState.scene.background = new THREE.Color(0x000000);
+
+    gameState.camera = new THREE.PerspectiveCamera(
+        50,
+        canvas.clientWidth / canvas.clientHeight,
+        0.1,
+        1000
+    );
+    gameState.camera.position.set(0, 15, 15);
+    gameState.camera.lookAt(0, 0, 0);
+
+    gameState.renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        canvas,
+        powerPreference: "high-performance"
+    });
+
+    // İlk boyut ayarlaması
+    updateCanvasSize();
+
+    // Cleanup fonksiyonuna ResizeObserver'ı ekle
+    const originalCleanup = cleanupGame;
+    cleanupGame = () => {
+        resizeObserver.disconnect();
+        originalCleanup();
+    };
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(0, 10, 10);
+    gameState.scene.add(ambientLight);
+    gameState.scene.add(directionalLight);
+
+    // Game objects
+    const paddleGeometry = new THREE.BoxGeometry(0.5, 0.5, 2);
+    const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+
+    gameState.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+    gameState.paddle1.position.set(-6.5, 1.5, 0);
+    gameState.scene.add(gameState.paddle1);
+
+
+    gameState.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+    gameState.paddle2.position.set(6.5, 1.5, 0);
+    gameState.scene.add(gameState.paddle2);
+
+    const ballGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+    const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    gameState.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+    gameState.ball.position.set(0, 1.5, 0);
+    gameState.scene.add(gameState.ball);
+
+    // **1. Arcade Masası Gövdesi**
+    const arcadeBaseGeometry = new THREE.BoxGeometry(20, 2, 14);
+    const arcadeBaseMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.3, roughness: 0.7 });
+    gameState.arcadeBase = new THREE.Mesh(arcadeBaseGeometry, arcadeBaseMaterial);
+    gameState.arcadeBase.position.set(0, 0, 0);
+    gameState.scene.add(gameState.arcadeBase);
+
+    // **2. Oyun Alanı**
+    const playFieldGeometry = new THREE.BoxGeometry(14, 0.5, 8);
+    const playFieldMaterial = new THREE.MeshStandardMaterial({ color: 0x0044aa });
+    gameState.playField = new THREE.Mesh(playFieldGeometry, playFieldMaterial);
+    gameState.playField.position.y = 0.76;
+    gameState.scene.add(gameState.playField);
+
+    // **3. Oyun Alanı Kenarları**
+    const borderMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+
+    gameState.leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 8), borderMaterial);
+    gameState.leftWall.position.set(-7.2, 1.5, 0);
+    gameState.scene.add(gameState.leftWall);
+
+    gameState.rightWall = gameState.leftWall.clone();
+    gameState.rightWall.position.set(7.2, 1.5, 0);
+    gameState.scene.add(gameState.rightWall);
+
+
+    gameState.topWall = new THREE.Mesh(new THREE.BoxGeometry(14.4, 0.6, 0.4), borderMaterial);
+    gameState.topWall.position.set(0, 1.5, 4.2);
+    gameState.scene.add(gameState.topWall);
+
+    gameState.bottomWall = gameState.topWall.clone();
+    gameState.bottomWall.position.set(0, 1.5, -4.2);
+    gameState.scene.add(gameState.bottomWall);
+
+
+    // **6. Joystick ve Butonlar (Farklı Stil)**
+    const joystickBaseGeometry = new THREE.CylinderGeometry(1.2, 1.2, 0.3, 32);
+    const joystickBaseMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
+
+    gameState.joystickBaseLeft = new THREE.Mesh(joystickBaseGeometry, joystickBaseMaterial);
+    gameState.joystickBaseLeft.position.set(-7, 1.2, 6);
+    gameState.scene.add(gameState.joystickBaseLeft);
+
+    gameState.joystickBaseRight = gameState.joystickBaseLeft.clone();
+    gameState.joystickBaseRight.position.set(7, 1.2, 6);
+    gameState.scene.add(gameState.joystickBaseRight);
+
+    // Joystick Kolu
+    const joystickStickGeometry = new THREE.CylinderGeometry(0.2, 0.3, 2, 16);
+    const joystickStickMaterial = new THREE.MeshStandardMaterial({ color: 0xdd0000 });
+
+    gameState.joystickStickLeft = new THREE.Mesh(joystickStickGeometry, joystickStickMaterial);
+    gameState.joystickStickLeft.position.set(-7, 2.2, 6);
+    gameState.scene.add(gameState.joystickStickLeft);
+
+    gameState.joystickStickRight = gameState.joystickStickLeft.clone();
+    gameState.joystickStickRight.position.set(7, 2.2, 6);
+    gameState.scene.add(gameState.joystickStickRight);
+
+
+    // Joystick Topu
+    const joystickBallGeometry = new THREE.SphereGeometry(0.6, 16, 16);
+    const joystickBallMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+
+    gameState.joystickBallLeft = new THREE.Mesh(joystickBallGeometry, joystickBallMaterial);
+    gameState.joystickBallLeft.position.set(-7, 3.2, 6);
+    gameState.scene.add(gameState.joystickBallLeft);
+
+    gameState.joystickBallRight = gameState.joystickBallLeft.clone();
+    gameState.joystickBallRight.position.set(7, 3.2, 6);
+    gameState.scene.add(gameState.joystickBallRight);
+
+    // WebSocket
+
+    const token = localStorage.getItem('accessToken');
+
+    if (token && roomName) {
+
+        gameState.socket = new WebSocket(
+            'wss://' + window.location.host + '/game/ws/' + roomName +
+            '?token=' + token, [], {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        }
+        );
+
+        gameState.socket.onopen = function () {
+            console.log('WebSocket connection opened.');
+            announceToScreenReader('Connected to game server');
+        };
+        gameState.socket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'game_state') {
+                const state = data.state;
+                if (data.player_id) {
+                    gameState.playerId = data.player_id;
+
+                    // Announce player assignment to screen readers
+                    if (data.player_id !== 'spectator') {
+                        announceToScreenReader(`You are player ${data.player_id === 'player1' ? '1' : '2'}`);
+                    } else {
+                        announceToScreenReader('You are in spectator mode');
+                    }
+                }
+
+                gameState.paddle1.position.z = state.players.player1.position;
+                gameState.paddle2.position.z = state.players.player2.position;
+                gameState.ball.position.set(state.ball.x, 1.5, state.ball.y);
+
+                const scoreboard = document.getElementById('scoreboard');
+                if (scoreboard) {
+                    const newScore = `P1: ${state.players.player1.score} - P2: ${state.players.player2.score}`;
+
+                    // Only announce score changes
+                    if (scoreboard.innerText !== newScore) {
+                        scoreboard.innerText = newScore;
+                        announceToScreenReader(`Score: ${newScore}`);
+                    } else {
+                        scoreboard.innerText = newScore;
+                    }
+                }
+            }
+            else if (data.type === 'game_status') {
+                if (data.status === 'start') {
+                    hideSpinner();
+                    announceToScreenReader('Game started! Use W key to move up and S key to move down.');
+                }
+                else if (data.status === 'game_over') {
+                    announceToScreenReader('Game over!');
+                    cleanupGame();
+                    showGameOverScreen();
+                }
+            }
+        };
+
+        gameState.socket.onclose = function () {
+            announceToScreenReader('Disconnected from game server');
+        }
+    }
+    // Controls
+    const keyMap = {
+        local: {
+            w: { player: "player1", property: "move_up" },
+            W: { player: "player1", property: "move_up" },
+            s: { player: "player1", property: "move_down" },
+            S: { player: "player1", property: "move_down" },
+            ArrowUp: { player: "player2", property: "move_up" },
+            ArrowDown: { player: "player2", property: "move_down" },
+        },
+        multi: {
+            w: { property: "move_up" },
+            W: { property: "move_up" },
+            s: { property: "move_down" },
+            S: { property: "move_down" },
+        }
+    };
+
+    function buildMovePayload(mode, key, isPressed, playerId) {
+        const entry = keyMap[mode][key];
+
+        if (!entry) return null;
+
+        const payload = { type: "move" };
+
+        if (mode === "multi") {
+            payload.player_id = playerId;
+        } else {
+            payload.player = entry.player;
+        }
+
+        if (entry.property === "move_up") {
+            payload.move_up = isPressed;
+        }
+        if (entry.property === "move_down") {
+            payload.move_down = isPressed;
+        }
+        return payload;
+    }
+
+    const keysPressed = {};
+
+    gameState.handleKeydown = (e) => {
+        keysPressed[e.key] = true;
+
+        // Prevent scrolling when using game controls
+        if (['w', 'W', 's', 'S', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+            e.preventDefault();
+        }
+
+        if (gameState.socket?.readyState === WebSocket.OPEN) {
+            const payload = buildMovePayload(
+                gameState.mode,
+                e.key,
+                true,
+                gameState.playerId
+            );
+
+            if (payload) {
+                gameState.socket.send(JSON.stringify(payload));
+            }
+        }
+    };
+
+    gameState.handleKeyup = (e) => {
+        keysPressed[e.key] = false;
+
+        if (gameState.socket?.readyState === WebSocket.OPEN) {
+            const payload = buildMovePayload(
+                gameState.mode,
+                e.key,
+                false,
+                gameState.playerId
+            );
+
+            if (payload) {
+                gameState.socket.send(JSON.stringify(payload));
+            }
+        }
+    };
+
+    document.addEventListener('keyup', gameState.handleKeyup);
+    document.addEventListener('keydown', gameState.handleKeydown);
+
+    // Focus the canvas when the game is loaded
+    canvas.focus();
+
+    // Animation
+    function animate() {
+        gameState.animationId = requestAnimationFrame(animate);
+        if (gameState.renderer && gameState.scene && gameState.camera) {
+            gameState.renderer.render(gameState.scene, gameState.camera);
+        }
+    }
+    animate();
+
+
+    // Cleanup on route change
+    return () => {
+        cleanupGame();
+    };
+}
+window.cleanup = cleanupGame;
+window.addEventListener('beforeunload', cleanupGame);
+document.addEventListener('DOMContentLoaded', initGame);
+
+// Performance optimizasyonu için throttle fonksiyonu
+function throttle(func, limit) {
+    let inThrottle;
+    return function () {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
 }
 
-document.addEventListener('DOMContentLoaded', initGame);
+// Window resize event listener
+window.addEventListener('resize', throttle(() => {
+    if (gameState.camera && gameState.renderer) {
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas) {
+            const container = canvas.parentElement;
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+
+            // En-boy oranını koru (4:3)
+            const aspectRatio = 4 / 3;
+
+            let newWidth, newHeight;
+
+            if (containerWidth / containerHeight > aspectRatio) {
+                // Container daha geniş, yüksekliğe göre ayarla
+                newHeight = Math.min(containerHeight, window.innerHeight * 0.8);
+                newWidth = newHeight * aspectRatio;
+            } else {
+                // Container daha dar, genişliğe göre ayarla
+                newWidth = Math.min(containerWidth, window.innerWidth * 0.9);
+                newHeight = newWidth / aspectRatio;
+            }
+
+            // Canvas ve renderer boyutlarını güncelle
+            canvas.style.width = `${newWidth}px`;
+            canvas.style.height = `${newHeight}px`;
+            gameState.renderer.setSize(newWidth, newHeight, false);
+
+            // Kamera aspect ratio'sunu güncelle
+            gameState.camera.aspect = newWidth / newHeight;
+            gameState.camera.updateProjectionMatrix();
+        }
+    }
+}, 100)); // 100ms throttle
+
+
+//"Game Over" overlay oluşturma kodu
+function showGameOverScreen() {
+    const gameContainer = document.getElementById('game-container');
+
+    // Var olan overlay varsa kaldır
+    let existingOverlay = document.querySelector('.game-over-screen');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'game-over-screen';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-labelledby', 'game-over-title');
+    overlay.setAttribute('aria-describedby', 'game-over-desc');
+    overlay.innerHTML = `
+        <h2 id="game-over-title">Oyun Bitti!</h2>
+        <p id="game-over-desc" class="visually-hidden">Game is over. You can return to the main menu.</p>
+        <div>
+            <button id="menuButton" onclick="goToMenu()" aria-label="Return to main menu">Ana Menü</button>
+        </div>
+    `;
+    gameContainer.appendChild(overlay);
+
+    // Butonun overlay alanı içinde kalmasını sağlayan ve ilk konumunu doğru ayarlayan fonksiyon
+    const menuButton = document.getElementById('menuButton');
+    menuButton.focus(); // Focus on the menu button for keyboard accessibility
+
+    function repositionButton() {
+        // Butonun genişliğini ve yüksekliğini alıyoruz
+        const btnWidth = menuButton.offsetWidth;
+        const btnHeight = menuButton.offsetHeight;
+        // Overlay'in iç boyutlarını alıyoruz
+        const overlayWidth = overlay.clientWidth;
+        const overlayHeight = overlay.clientHeight;
+
+        // Butonun tamamen görünür kalması için maksimum X ve Y değerlerini hesaplıyoruz
+        const maxX = overlayWidth - btnWidth;
+        const maxY = overlayHeight - btnHeight;
+
+        // Rastgele koordinatlar üretiyoruz
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+
+        // Butonun yeni konumuna yumuşak geçişle hareket etmesi için left ve top değerlerini güncelliyoruz
+        menuButton.style.left = randomX + 'px';
+        menuButton.style.top = randomY + 'px';
+    }
+
+    // İlk konumlandırmayı, overlay tamamen render edildikten sonra yapıyoruz
+    requestAnimationFrame(repositionButton);
+
+    // Fare buton üzerine geldiğinde konumu yeniden hesapla
+    menuButton.addEventListener('mouseover', repositionButton);
+}
+
+window.goToMenu = function () {
+    const username = localStorage.getItem('username');
+    history.pushState(null, null, `/profile/${username}`);  // Giriş yaptıktan sonra yönlendirilen sayfa
+    router();
+};

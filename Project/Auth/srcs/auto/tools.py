@@ -4,13 +4,22 @@ import os, requests
 from django.core.files.base import ContentFile
 import random
 
+def is_image(avatar):
+	allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+	file_extension = os.path.splitext(avatar.name)[1]
+	if file_extension.lower() in allowed_extensions:
+		return True
+	else:
+		return False
+
 def username_check(username):
 	return Users.objects.filter(username=username).exists()
 
 def image_to_url(avatar, username):
 	if avatar:
-		# Dosya uzantısını korumak için uzantıyı alıyoruz
+		
 		file_extension = os.path.splitext(avatar.name)[1]  # Örneğin: '.jpg', '.png'
+	
 		# Kullanıcı adını dosya adı olarak ayarlıyoruz
 		new_filename = f"{username}{file_extension}"
 		# Yeni dosya adını belirterek kaydediyoruz
