@@ -2,9 +2,6 @@
 from pathlib import Path
 import os
 
-USE_X_FORWARDED_HOST = True
-FORCE_SCRIPT_NAME = '/game'
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 

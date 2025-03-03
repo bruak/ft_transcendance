@@ -25,8 +25,6 @@ services:
       - ./User/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8000:8000"
     depends_on:
       - user_db
     env_file:
@@ -55,8 +53,6 @@ services:
       - ./Friend/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8001:8000"
     depends_on:
       - friend_db
     env_file:
@@ -72,8 +68,6 @@ services:
       - ./Mail/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8002:8000"
     env_file:
       - .env
     depends_on:
@@ -101,8 +95,6 @@ services:
       - ./Auth/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8003:8000"
     env_file:
       - .env
     depends_on:
@@ -140,7 +132,6 @@ services:
     ports:
       - 8080:443
     volumes:
-      - ./Auth/srcs/staticfiles:/run/nginx/html/static_auth
       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
       - ./Frontend:/run/nginx/html
 
@@ -151,8 +142,6 @@ services:
       - ./Game/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8004:8000"
     env_file:
       - .env
     depends_on:
@@ -188,8 +177,6 @@ services:
       - ./Gateway/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8005:8000"
     env_file:
       - .env
     depends_on:
@@ -218,8 +205,6 @@ services:
       - ./Translation/locale:/app/locale
     networks:
       - webnet
-    ports:
-      - "8006:8000"
     env_file:
       - .env
     depends_on:
@@ -313,8 +298,6 @@ services:
       - ./Notification/srcs:/app
     networks:
       - webnet
-    ports:
-      - "8007:8000"
     env_file:
       - .env
     depends_on:

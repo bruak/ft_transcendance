@@ -35,7 +35,6 @@ def main():
     try:
         call_command("compilemessages")
         call_command("migrate")
-        call_command("collectstatic", "--noinput")
     except Exception as e:
         print(f"Migrations başarısız!\n{e}")
 

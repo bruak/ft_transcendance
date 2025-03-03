@@ -462,7 +462,8 @@ export function initLogReg() {
                     localStorage.setItem('language', 'tr');
     
                     console.log(access_token.token);
-                    window.location.href = `/profile/${username}`;
+                    history.pushState(null,null,`/profile/${username}`);
+                    router();
                 } catch (error) {
                     console.error("Callback Error:", error);
                 }

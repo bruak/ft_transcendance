@@ -71,8 +71,10 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error ": str(e)}, status=500)
 		finally:
-			requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
-
+			try:
+				requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
+			except Exception as e:
+				pass
 	@csrf_exempt
 	def playing_matches_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -120,7 +122,11 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 		finally:
-			requests.post('http://notification:8000/create/', json={"message": "create_tournaments"})
+			try:
+				requests.post('http://notification:8000/create/', json={"message": "create_tournaments"})
+			except Exception as e:
+				pass
+
 	@csrf_exempt
 	def join_tournament_view(request, tournament_id):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -149,8 +155,10 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 		finally:
-			requests.post('http://notification:8000/create/', json={"message": "join_tournaments"})
-
+			try:
+				requests.post('http://notification:8000/create/', json={"message": "join_tournaments"})
+			except Exception as e:
+				pass
 	@csrf_exempt
 	def start_tournament_view(request, tournament_id):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -194,8 +202,10 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 		finally:
+			try:
 				requests.post('http://notification:8000/create/', json={"message": "start_tournaments"})
-	
+			except Exception as e:
+				pass
 	@csrf_exempt
 	def playing_tournament_views(request, tournament_id):
 		user_language = request.headers.get("Accept-Language", "tr")

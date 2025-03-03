@@ -41,8 +41,9 @@ import {
    * Eski "initProfile" fonksiyonunun temel mantığını barındırır.
    * @param {Object} params
    */
+  const host = window.location.host;
 
-  const socket = new WebSocket(`ws://localhost:8007/ws/notification/`);
+  const socket = new WebSocket(`wss://${host}/notification/ws/notification/`);
   socket.onopen = () => {
     console.log("WebSocket connected");
   };
