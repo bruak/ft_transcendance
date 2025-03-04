@@ -17,9 +17,11 @@ import {
 	apiJoinTournament,
 	apiStartTournament,
 	apiGetTournamentsMatch,
-	apiLocalMatch
+	apiLocalMatch,
+	apiRemoveFriend,
+	apiGetPastGames
   } from "./profileApi.js";
-  
+
   import {
 	updateProfileUI,
 	updateNotifications,
@@ -30,7 +32,8 @@ import {
 	renderFriendsList,
 	renderActiveTournamentsAccordion,
 	renderRecentActivities,
-	renderTournamentList
+	renderTournamentList,
+	renderPastGames
   } from "./profileUI.js";
   
   // Örnek olarak router, setState, getState gibi fonksiyonlar app.js'den import ediliyorsa:
@@ -41,31 +44,49 @@ import {
    * Eski "initProfile" fonksiyonunun temel mantığını barındırır.
    * @param {Object} params
    */
-  const host = window.location.host;
+	// WebSocket connection
+	let socket = null;
+  	const access_token = localStorage.getItem("accessToken");
+	// Initialize WebSocket connection
+	function initWebSocket() {
+		if (socket) {
+			// Close existing connection if it exists
+			socket.close();
+		}
+		const host = window.location.host;
+		socket = new WebSocket(`wss://${host}/notification/ws/notification/?token=${access_token}`);
 
-  const socket = new WebSocket(`wss://${host}/notification/ws/notification/`);
-  socket.onopen = () => {
-    console.log("WebSocket connected");
-  };
-  socket.onmessage = (e) => {
-	const data = JSON.parse(e.data);
-	const message = data.message;
-	console.log("WebSocket message:", message);
-	if (message === "friend_request") {
+		socket.onopen = () => {
+			console.log("WebSocket connected");
+		};
+
+		socket.onmessage = (e) => {
+			const data = JSON.parse(e.data);
+			const message = data.message;
+			console.log("WebSocket message:", message);
+
+			if (message === "friend_request") {
+				updateNotifications();
+			}
+			else if (message === "create_tournaments" || message === "join_tournaments" || message === "start_tournaments") {
+				setupActiveTournamentsAccordion();
+			}
+			else if (message === "recent_activities") {
+				loadRecentActivities();
+			}
+		};
+
+		socket.onerror = (error) => {
+			console.error("WebSocket error:", error);
+		};
+
+		return socket;
 	}
-	else if (message === "create_tournaments" || message === "join_tournaments" || message === "start_tournaments") {
-		setupActiveTournamentsAccordion();
-	}
-	else if (message === "recent_activities") {
-		loadRecentActivities();
-	}
-}
   
   export async function initProfileController(params = {}) {
 	try {
-	  // 1) Navbar linklerini ve temel sayfa kontrolünü ayarla
-	  setupNavbarLinks();
-  
+
+	updateNotifications();
 	  // 2) Hangi kullanıcının profilini yükleyeceğiz?
 	  const routeUser = params.username || null;
 	  const currentUser = localStorage.getItem("username") || null;
@@ -76,6 +97,9 @@ import {
 	  }
 	  const isOwnProfile = userToLoad === currentUser;
   
+	  // Initialize WebSocket for notifications
+	  initWebSocket();
+
 	  // 3) Profil verisini API'den çek ve UI güncelle
 	  await loadProfileData(userToLoad, isOwnProfile);
   
@@ -102,6 +126,8 @@ import {
   
 	  // 11) Son etkinlikler
 	  await loadRecentActivities();
+
+	  await loadPastGames(userToLoad);
   
 	  // Örnek cleanup fonksiyonu isterseniz, window'a atayabilirsiniz:
 	  window.cleanupProfile = cleanupProfile;
@@ -117,14 +143,6 @@ import {
 	 DOM güncellemeleri ve API çağrıları, import ettiğimiz fonksiyonlarla yapılır.
    -------------------------------------------------------------------------- */
   
-  /** Navbar linklerini ayarlar (örneğin "home" linkini ilgili username'e yönlendirir) */
-  function setupNavbarLinks() {
-    const navbarUsername = localStorage.getItem('username');
-    const homeLink = document.getElementById('home');
-    if (homeLink && navbarUsername) {
-      homeLink.href = "profile/" + navbarUsername;
-    }
-  }
   
   /** Profil verisini alıp UI'yi günceller */
   async function loadProfileData(userToLoad, isOwnProfile) {
@@ -132,10 +150,7 @@ import {
 	{
 		const user = await apiGetUser(userToLoad);
 		updateProfileUI(user);
-  
-		if (user.notifications) {
-			updateNotifications(user.notifications);
-		}
+
 		
 		// Başkasının profilindeysek, düzenleme aksiyonlarını kapat
 		if (!isOwnProfile) {
@@ -147,74 +162,9 @@ import {
 	}
 	catch (err)
 	{
-		document.querySelector('#app').innerHTML = `
-		<div id="dreamEffect" style="
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-			background: #000;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-		">
-			<div class="animated-shape" style="
-				position: absolute;
-				width: 200px;
-				height: 200px;
-				background: rgba(255, 0, 0, 0.5);
-				border-radius: 50%;
-				filter: blur(10px);
-				animation: moveShape 6s ease-in-out infinite;
-			"></div>
-			<div class="animated-shape" style="
-				position: absolute;
-				width: 150px;
-				height: 150px;
-				background: rgba(0, 255, 0, 0.5);
-				border-radius: 50%;
-				filter: blur(10px);
-				animation: moveShape 7s ease-in-out infinite;
-			"></div>
-			<div class="animated-shape" style="
-				position: absolute;
-				width: 250px;
-				height: 250px;
-				background: rgba(0, 0, 255, 0.5);
-				border-radius: 50%;
-				filter: blur(10px);
-				animation: moveShape 8s ease-in-out infinite;
-			"></div>
-			<div id="dreamText" style="
-				position: relative;
-				z-index: 10;
-				color: #fff;
-				font-family: 'Courier New', Courier, monospace;
-				font-size: 2.5em;
-				animation: fadeInOut 5s ease-in-out infinite;
-			">
-				Sayfa Bulunamadı
-			</div>
-			<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
-		</div>
-
-		<style>
-			@keyframes moveShape {
-				0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
-				25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
-				50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
-				75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
-				100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-			}
-			@keyframes fadeInOut {
-				0%, 100% { opacity: 0; }
-				50% { opacity: 1; }
-			}
-		</style>
-	`;
+		console.log("windos", window.location.pathname);
+		history.pushState(null, null, "/404");
+		router();
 		throw err;
 	}
 }
@@ -314,7 +264,7 @@ import {
 	if (currentUser && userObj.username) {
 	  addButton.onclick = () => sendFriendRequest(currentUser, userObj.username);
 	} else {
-	  addButton.onclick = () => alert("Arkadaş eklemek için giriş yapmalısınız.");
+	  addButton.onclick = () => showToast("Arkadaş eklemek için giriş yapmalısınız.", "warning");
 	}
   
 	listItem.appendChild(addButton);
@@ -418,10 +368,9 @@ import {
   
 	  // UI fonksiyonunu kullan
 	  renderFriendsList(friendsContainer, friendsArr, canRemove, (friendUsername) => {
-		// "Kaldır" butonuna tıklandığında yapılacak işlemler
-		// Örneğin: removeFriendRequest(userToLoad, friendUsername);
-		showToast(`Arkadaş kaldırma özelliği henüz uygulanmadı: ${friendUsername}`, "warning");
-	  });
+		apiRemoveFriend(userToLoad, friendUsername);
+		showFriendsSection(userToLoad, currentUser);
+	});
 	} catch (err) {
 	  console.error("listFriends hata:", err);
 	  friendsContainer.innerHTML = `<p class="text-danger">Arkadaş listesi yüklenirken hata oluştu.</p>`;
@@ -586,6 +535,7 @@ import {
 	  const baseLists = accordion.querySelectorAll(".Base-list");
 	  baseLists.forEach((ListMatch, index) => {
 		const match = tournamentsMatches[index];
+		console.log("Match",match);
 		if (match && match.data && match.data.length > 0) {
 		  renderTournamentList(ListMatch, match.data);
 		  // Add event listeners for the play match buttons
@@ -655,6 +605,22 @@ import {
 	  showErrorMessage("Son etkinlikler yüklenirken bir hata oluştu.");
 	}
   }
+
+/** Geçmiş oyunları (maçları) yükleyip UI’ye basar */
+async function loadPastGames(userToLoad) {
+	const pastGamesList = document.getElementById("pastGamesList");
+	if (!pastGamesList) return;
+  
+	try {
+	  const games = await apiGetPastGames(userToLoad);
+	  renderPastGames(pastGamesList, games.data || []);
+
+	} catch (error) {
+	  console.error("Geçmiş oyunlar yüklenirken hata oluştu:", error);
+	  showErrorMessage("Geçmiş oyunlar yüklenirken bir hata oluştu.");
+	}
+  }
+
   
   /** Bir maçı izlemek için GamePage'e yönlendiren fonksiyon */
   function joinGame(url) {

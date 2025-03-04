@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 import random
 from game.models import Match, Tournament
 from time import time
+import requests
 
 class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 	room_data = {}
@@ -24,6 +25,13 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		self.match.updated_at = timezone.now()
 		await sync_to_async(self.match.save)()
 
+		# Send POST request to notification service with error handling
+		try:
+			response = requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
+			response.raise_for_status()  # Raise an exception for HTTP errors
+		except requests.RequestException as e:
+			# Log the error or handle it as needed
+			print(f"Error sending notification: {e}")
 
 	async def save_match_data(self, winner):
 		score = f"{self.game_state['players']['player1']['score']}:{self.game_state['players']['player2']['score']}"
@@ -43,8 +51,8 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		current_winner = self.match.winner
 		match_count = await sync_to_async(Match.objects.filter(tournament=tournament, status="finished").count)()
 		if int(match_count) == int(tournament.player_limit - 1):
-			print("Tournament finished")
 			tournament.status = "finished"
+			tournament.winner = current_winner  # Save the winner to the tournament model
 			tournament.updated_at = timezone.now()
 			await sync_to_async(tournament.save)()
 			return

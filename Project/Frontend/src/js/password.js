@@ -1,4 +1,5 @@
 import { router } from "/js/app.js";
+import { showToast } from "/js/profileUI.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     initPassword();
@@ -31,12 +32,12 @@ export async function initPassword(params = {}) {
         const pass2 = document.getElementById('confirmPassword').value;
 
         if (!pass1 || !pass2) {
-            alert("Please fill in both password fields.");
+            showToast("Please fill in both password fields.", "danger");
             return;
         }
 
         if (pass1 !== pass2) {
-            alert("Passwords do not match! Please try again.");
+            showToast("Passwords do not match! Please try again.", "danger");
             return;
         }
 
@@ -56,18 +57,18 @@ export async function initPassword(params = {}) {
             });
 
             if (response.status === 200) {
-                alert("Your password has been successfully reset.");
+                showToast("Your password has been successfully reset.");
                 history.pushState(null, null, "/");
                 router();
             } else if (response.status === 400) {
-                alert("Invalid request. Please check your input and try again.");
+                showToast("Invalid request. Please check your input and try again.", "danger");
             } else if (response.status === 401) {
-                alert("Unauthorized request. The token may be invalid or expired.");
+                showToast("Unauthorized request. The token may be invalid or expired.", "danger");
             } else {
-                alert("An unexpected error occurred. Please try again later.");
+                showToast("An unexpected error occurred. Please try again later.", "danger");
             }
         } catch (error) {
-            alert(`Error: ${error.message}`);
+            showToast(`Error: ${error.message}`, "danger");
         }
     });
 }

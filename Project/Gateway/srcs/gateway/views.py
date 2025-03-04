@@ -91,8 +91,11 @@ def handle_formdata(request):
 			files = request.FILES
 		payload = request.POST
 		headers = {"Accept-Language": request.headers.get("Accept-Language", "tr"), "Authorization" : request.headers.get("Authorization", None)} 
-		response = requests.post(target_url, data=payload, files=files, headers=headers)
-		print(response.status_code)
+		if request.FILES:
+			response = requests.post(target_url, data=payload, files=files, headers=headers)
+		else:
+			response = requests.post(target_url, data=payload, headers=headers)
+		
 		if response.text.strip() == '':
 			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
 		response_json = response.json()

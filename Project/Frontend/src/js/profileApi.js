@@ -142,6 +142,23 @@ export async function apiAcceptFriendRequest(username, friendname) { //bildirimg
   return response.json();
 }
 
+
+export async function apiRemoveFriend(userToLoad, friendUsername) {
+  const response = await fetch(`${apiBaseUrl}/friend/remove_friend/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Language': 'tr',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ username: userToLoad, friendname: friendUsername })
+  });
+  if (!response.ok) {
+    throw new Error(`Arkadaşı silerken hata: ${response.status}`);
+  }
+  return response.json();
+}
 /**
  * Kullanıcının arkadaş listesini getirme
  * @param {string} username 
@@ -247,6 +264,19 @@ export async function apiGetPlayingMatches() {
   return response.json();
 }
 
+export async function apiGetPastGames(userToLoad) {
+  const response = await fetch(`${apiBaseUrl}/game/player-status/${userToLoad}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Accept-Language': 'tr',
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+  return response.json();
+}
+
 /**
  * Oturumdan çıkış yapma (sign out)
  * @returns {Promise<Response>} - response.ok ya da hata
@@ -335,3 +365,5 @@ export async function apiLocalMatch()
   }
   return response.json();
 }
+
+

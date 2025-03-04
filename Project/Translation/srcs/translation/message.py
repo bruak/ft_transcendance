@@ -86,4 +86,5 @@ MESSAGES = {
 	"EMPTY_REQUEST_BODY": "Empty request body",
 	"INVALID_JSON_REQUEST_BODY": "Invalid JSON request body",
 	"IMAGE_UPLOAD_ERROR": "image upload error"
+	"WAIT_2_MINUTES_BEFORE_SENDING_NEW_CODE': 'Please wait 2 minutes before sending a new code",
 }

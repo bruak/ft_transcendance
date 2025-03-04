@@ -7,12 +7,13 @@ SERVICES = {
     "user": "http://users:8000",
     "game": "http://game:8000",
     "mail": "http://mail:8000",
-    "friend": "http://project-friend-1:8000",
+    "friend": "http://friend:8000",
 }
 
 EXCLUDED_PATHS = [
     "singin",
     "twofactor",
+    "resend-code",
     "singup",
     "verify-account",
     "intra",

@@ -282,3 +282,6 @@ msgstr "Geçersiz JSON istek gövdesi"
 
 msgid "image upload error"
 msgstr "resim yükleme hatası"
+
+msgid "Please wait 2 minutes before sending a new code"
+msgstr "Yeni bir kod göndermeden önce lütfen 2 dakika bekleyin"

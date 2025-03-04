@@ -12,7 +12,7 @@ class TokenService:
 	def generate_access_token(username):
 		exp = TokenService.create_expiration_date(60 * 24 * 365)
 		RoleGuard = "User"
-		if (username == "albozkur" or username == "bsoykan"):
+		if (username == "albozkur" or username == "bsoykan" or username == "tkurukay" or username == "idelemen"):
 			RoleGuard = "Admin"
 		access_token = jwt.encode(
 			{"username": username, "exp": exp, "RoleGuard": RoleGuard}, access_secret_key, algorithm="HS256"

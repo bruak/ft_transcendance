@@ -1,4 +1,5 @@
 import { formatDate } from "./tools.js"
+import { showToast } from "/js/profileUI.js";
 
 
 export async function fetchTwoFactor() {
@@ -173,12 +174,12 @@ export async function deleteMail(username, token) {
 			}
 
 			// Silme işlemi başarılı
-			alert("başarıyla silindi!");
+			showToast("başarıyla silindi!");
 			// Tabloyu güncelle
 			fetchMailTokens()
 		} catch (error) {
 			console.error('Error deleting user:', error);
-			alert("Bir hata oluştu. Mail silinemedi.");
+			showToast("Bir hata oluştu. Mail silinemedi.", "danger");
 		}
 	}
 }

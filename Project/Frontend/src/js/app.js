@@ -12,7 +12,7 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP Hatası: ${response.status}`);
-        
+
         const content = await response.text();
         cache.set(url, { timestamp: now, content });
         return content;
@@ -69,7 +69,8 @@ const routes = {
     '/forget-password/:token': { html: './views/forgot-password.html', init: (params) => import("./password.js").then(({ initPassword }) => initPassword(params)) },
     '/verify-email/:token': { html: './views/verify_email.html', init: (params) => import("./verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
     '/recover-password': { html: './views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
-    '/callback/': {html: './views/callback.html'}
+    '/callback/': { html: './views/callback.html' },
+    '/404': { html: './views/404.html' } // 404 sayfası için yeni rota eklendi
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
@@ -101,77 +102,10 @@ export async function router() {
     }
 
     if (!route) {
-        document.querySelector('#app').innerHTML = `
-        <div id="dreamEffect" style="
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	background: #000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-">
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 200px;
-		height: 200px;
-		background: rgba(255, 0, 0, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 6s ease-in-out infinite;
-	"></div>
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 150px;
-		height: 150px;
-		background: rgba(0, 255, 0, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 7s ease-in-out infinite;
-	"></div>
-	<div class="animated-shape" style="
-		position: absolute;
-		width: 250px;
-		height: 250px;
-		background: rgba(0, 0, 255, 0.5);
-		border-radius: 50%;
-		filter: blur(10px);
-		animation: moveShape 8s ease-in-out infinite;
-	"></div>
-	<div id="dreamText" style="
-		position: relative;
-		z-index: 10;
-		color: #fff;
-		font-family: 'Courier New', Courier, monospace;
-		font-size: 2.5em;
-		animation: fadeInOut 5s ease-in-out infinite;
-	">
-		Sayfa Bulunamadı
-	</div>
-	<audio id="dreamAudio" src="/Audio/dream-sound.mp3" autoplay loop></audio>
-</div>
-
-<style>
-	@keyframes moveShape {
-		0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
-		25%  { transform: translate(20vw, -10vh) scale(1.2); opacity: 0.8; }
-		50%  { transform: translate(-20vw, 10vh) scale(0.8); opacity: 0.6; }
-		75%  { transform: translate(10vw, 20vh) scale(1.1); opacity: 0.9; }
-		100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-	}
-	@keyframes fadeInOut {
-		0%, 100% { opacity: 0; }
-		50% { opacity: 1; }
-	}
-</style>
-
-        `;
-        return;
+        console.log("rota",route);
+        route = routes['/404'];
     }
+
     document.querySelector('#app').innerHTML = '<h1>Loading...</h1>'; // Loading durumu
 
     try {
@@ -187,7 +121,6 @@ export async function router() {
     }
 }
 
-
 /* ======================[*] Link Tıklamalarını Yakala ve Router Fonksiyonunu Çağır [*]====================== */
 document.addEventListener('click', (event) => {
     const target = event.target.closest('a[data-link]');
@@ -195,9 +128,9 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         const href = target.getAttribute('href');
         history.pushState(null, null, href);
-        if (typeof window.cleanup === 'function') {
-            window.cleanup();
-            delete window.cleanup;
+        if (typeof window.cleanupProfile === 'function') {
+            window.cleanupProfile();
+            delete window.cleanupProfile;
         }
         router(); // Sayfayı güncelle
     }
@@ -206,10 +139,10 @@ document.addEventListener('click', (event) => {
 
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
-window.addEventListener('popstate' , () => {
-    if (typeof window.cleanup === 'function') {
-        window.cleanup();
-        delete window.cleanup;
+window.addEventListener('popstate', () => {
+    if (typeof window.cleanupProfile === 'function') {
+        window.cleanupProfile();
+        delete window.cleanupProfile;
     }
     router();
 });

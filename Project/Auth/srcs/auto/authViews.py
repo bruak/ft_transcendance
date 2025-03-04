@@ -1,7 +1,7 @@
 from django.views import View
 from .models import Users, MailTokens, TwofactorCodes
 from .tokenService import TokenService
-from .tools import access_token_validate
+from .tools import access_token_validate, generate_random_code
 from .translate_way import get_translated_message
 from django.http import JsonResponse
 from django.utils import timezone
@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from rest_framework.parsers import JSONParser
+from django.db.models import Q
 import uuid
 import requests
 
@@ -36,40 +37,126 @@ class AuthRequest(View):
 	def twofactor(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
-			return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+
 		try:
 			data = JSONParser().parse(request)
-			username = data.get('username')
-			code = data.get('code')
+			username = data.get("username")
+			code = data.get("code")
+
+			# Kullanıcıyı al
 			user = Users.objects.get(username=username)
+
+			# Kullanıcı aktif değilse doğrulama işlemleri
 			if not user.is_active:
-				return (JsonResponse({"error": get_translated_message("USER_AUTH_NOT_DONE", user_language)}, status=400))
+				mail_token = MailTokens.objects.filter(user=user, status=True).first()
+
+				# Aktif bir token varsa kontrol et
+				if mail_token:
+					if timezone.now() > mail_token.expiration:
+						mail_token.status = False
+						mail_token.save()
+					else:
+						# Token hâlâ geçerliyse hata döndür
+						return JsonResponse(
+							{"error": get_translated_message("USER_AUTH_NOT_DONE", user_language)}, 
+							status=400
+						)
+
+				# Yeni bir mail doğrulama token'ı oluştur
+				token = str(uuid.uuid4())
+				MailTokens.objects.create(
+					user=user,
+					token=token,
+					type="verify",
+					expiration=timezone.now() + timedelta(hours=24),
+				)
+				mail_url = f"{ip}/verify-email/{token}"
+				headers = {"Accept-Language": user_language}
+				mail_data = {
+					"token": mail_url,
+					"username": username,
+					"email": user.email,
+				}
+
+				# Doğrulama e-postasını gönder
+				mail_response = requests.post(
+					"http://project-mail-1:8000/api/verify/",
+					json=mail_data,
+					headers=headers,
+				)
+				if mail_response.status_code != 200:
+					return JsonResponse({"error": get_translated_message("MAIL_NOT_SENT", user_language)},status=500,)
+
+			# İki faktör doğrulama kodunu al ve doğrula
 			twofactor = TwofactorCodes.objects.get(user=user, code=code, status=True)
 			if TokenService.is_mail_token_expired(twofactor.expiration):
 				twofactor.status = False
 				twofactor.save()
-				return (JsonResponse({'error': get_translated_message("INVALID_CODE", user_language)}, status=400))
+				return JsonResponse(
+					{"error": get_translated_message("INVALID_CODE", user_language)}, 
+					status=400
+				)
+
+			# Access ve refresh token oluştur
+			access_token, access_exp = TokenService.generate_access_token(user.username)
+			refresh_token, refresh_exp = TokenService.generate_refresh_token(user.username)
+
+			# Kullanıcıya tokenları kaydet
+			user.refresh_token = refresh_token
+			user.access_token = access_token
+			user.save()
+
+			# İki faktör doğrulama kodunu devre dışı bırak
+			twofactor.status = False
+			twofactor.save()
+
+			# Cevabı döndür
+			return JsonResponse({"message": {"username": user.username,"access_token": {"token": access_token, "expiration_date": access_exp}, "refresh_token": {"token": refresh_token, "expiration_date": refresh_exp},}})
+		except Users.DoesNotExist:
+			return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
+		except TwofactorCodes.DoesNotExist:
+			return JsonResponse({"error": get_translated_message("TWO_FACTOR_CODE_NOT_FOUND", user_language)}, status=404)
 		except Exception as e:
-			return (JsonResponse({'error': get_translated_message("TWO_FACTOR_CODE_NOT_FOUND", user_language)}, status=404))
+			return JsonResponse({"error": get_translated_message("UNKNOWN_ERROR", user_language)}, status=500)
 
-		access_token, access_exp = TokenService.generate_access_token(user.username)
-		refresh_token, refresh_exp = TokenService.generate_refresh_token(user.username)
+	@csrf_exempt
+	def twofactor_again(request):
+		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != "POST":
+			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+		try:
+			data = JSONParser().parse(request)
+			singin = data.get("username")
+			user = Users.objects.get(username=singin)
+			
+			two = TwofactorCodes.objects.filter(user=user, status=True).first()
+			if two:
+				if timezone.now() - two.created_at < timedelta(minutes=1):
+					return JsonResponse({"error": get_translated_message("WAIT_2_MINUTES_BEFORE_SENDING_NEW_CODE", user_language)}, status=400)            
+				two.status = False
+				two.save()
+			code = generate_random_code()
+			TwofactorCodes.objects.create(
+				user = user,
+				code = code,
+				expiration = TokenService.create_expiration_date(15),
+			)
 
-		token = {
-			"username": user.username,
-			"access_token": {"token": access_token, "expiration_date": access_exp},
-			"refresh_token": {
-				"token": refresh_token,
-				"expiration_date": refresh_exp,
-			},
-		}
-		user.refresh_token = refresh_token
-		user.access_token = access_token
-		user.save()
+			mail_data = {
+				"email": user.email,
+				"code": code
+			}
+			headers = {"Accept-Language":  user_language}
+			mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
+			if mail_response.status_code != 200:
+				return JsonResponse({'error': get_translated_message("MAIL_NOT_SENT", user_language)}, status=500)
+			return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=200)
+		except Users.DoesNotExist:
+			return JsonResponse({'error': get_translated_message('USER_NOT_FOUND', user_language)}, status=404)
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500) 
 
-		twofactor.status = False
-		twofactor.save()
-		return JsonResponse({'message': token})
 
 	@csrf_exempt
 	def retry_verification_account(request):
@@ -163,7 +250,7 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 
 		try:
-			user = Users.objects.get(username=username)
+			user = Users.objects.get(Q(username=username) | Q(email=username))
 			token = str(uuid.uuid4())
 
 			active_token_exists = MailTokens.objects.filter (
@@ -180,7 +267,7 @@ class AuthRequest(View):
 				user=user,
 				token=token,
 				type="forgot-password",
-                expiration =  timezone.now() + timedelta(minutes=(60 * 24))
+				expiration =  timezone.now() + timedelta(minutes=(60 * 24))
 			)
 			response = requests.get(f"http://mail:8000/api/reset-password/{user.email}/{token}/")
 			
@@ -205,18 +292,15 @@ class AuthRequest(View):
 			data = JSONParser().parse(request)
 			token = data.get('token')
 			password = data.get('password')
-			print(11)
 			mail = MailTokens.objects.get(token=token, status=True)
 			user = mail.user
 			user.password = make_password(password)
 			mail.status = False
-			print(12)
 			headers = {"Accept-Language": user_language}
 			user_password = {
 				"password": user.password
 			}
 			user_response = requests.post(f"http://project-users-1:8000/put/{user.username}/", json=user_password, headers=headers)
-			print(13)
 			if user_response.status_code != 200:
 				return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language)}, status=user_response.status_code)
 			mail.save()

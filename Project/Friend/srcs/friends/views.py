@@ -17,10 +17,12 @@ class FriendRequestView(View):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
 			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+		
 		try:
 			response = requests.get('http://project-auth-1:8000/get-username/',  headers=request.headers)
 			if response.status_code != 200:
 				return JsonResponse({"error": get_translated_message("ACCESS_TOKEN_USER_MISMATCH", user_language)},  status=response.status_code)
+			
 			response_data = response.json()
 			username = response_data.get('message').get('username')
 
@@ -31,24 +33,51 @@ class FriendRequestView(View):
 			friend_response = requests.get(f"http://auth:8000/userexists/{friendname}/", headers=request.headers)
 
 			if user_response.status_code != 200 or friend_response.status_code != 200:
-				return JsonResponse({"error": get_translated_message("NOT_FOUND_USER", user_language)}, status.HTTP_404_NOT_FOUND)
+				return JsonResponse({"error": get_translated_message("NOT_FOUND_USER", user_language)}, status=status.HTTP_404_NOT_FOUND)
 
 			if username == friendname:
-				return JsonResponse({"message": get_translated_message("SELF_REQUEST_NOT_ALLOWED", user_language)}, status = 400)
+				return JsonResponse({"message": get_translated_message("SELF_REQUEST_NOT_ALLOWED", user_language)}, status=400)
 
+			# Eğer zaten arkadaşlarsa, veya isteği zaten göndermişlerse kontrol et
 			if Friends.objects.filter(
-			models.Q(username=username, friendname=friendname) |
-			models.Q(username=friendname, friendname=username)).exists():
+				models.Q(username=username, friendname=friendname, status="accepted") |
+				models.Q(username=friendname, friendname=username, status="accepted")
+			).exists():
 				return JsonResponse({"error": get_translated_message("FRIEND_REQUEST_EXISTS_OR_FRIENDS", user_language)}, status=status.HTTP_400_BAD_REQUEST)
 			
+			# Arkadaşlık isteğini sorgula
+			existing_request = Friends.objects.filter(
+				(models.Q(username=username, friendname=friendname) |
+				models.Q(username=friendname, friendname=username))
+			).first()
+
+			if existing_request:
+				if existing_request.status == "pending":
+					return JsonResponse({"error": get_translated_message("SUCCESSFUL", user_language)}, status=200)
+				elif existing_request.status == "rejected":
+					existing_request.status = "pending"
+					existing_request.save()
+					return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_RECREATED", user_language)}, status=201)
+				elif existing_request.status == "removed":
+					existing_request.status = "pending"
+					existing_request.save()
+					return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_RECREATED", user_language)}, status=201)
+
+			
+			# Eğer hiç istek yoksa yeni bir tane oluştur
 			serializer = FriendsSerializer(data={"username": username, "friendname": friendname, "status": "pending"})
 			if serializer.is_valid():
 				serializer.save()
-				return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_SENT", user_language)}, status=status.HTTP_201_CREATED)
-			return JsonResponse({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+				return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_SENT", user_language)}, status=201)
+			return JsonResponse({"error": "Unexpected flow reached"}, status=500) # buna dil desteği ekle
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
-
+		
+		finally:
+			try:
+				requests.post('http://notification:8000/create/', json={"message": "friend_request"})
+			except Exception as e:
+				pass
 	# Kullanıcıya Gönderilen Arkadaşlık Listeği (Accses TOken)
 	def list_friend_requests(request, username):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -87,6 +116,11 @@ class FriendRequestView(View):
 			return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_ACCEPTED", user_language)}, status=status.HTTP_200_OK)
 		except Friends.DoesNotExist:
 			return JsonResponse({"message": get_translated_message("FRIEND_REQUEST_NOT_FOUND", user_language)}, status=status.HTTP_404_NOT_FOUND)
+		finally:
+			try:
+				requests.post('http://notification:8000/create/', json={"message": "friend_request"})
+			except Exception as e:
+				pass
 
 	# Arkadaşlarını Listeleme (Accses TOken)
 	def friends(request, username):
@@ -140,7 +174,6 @@ class FriendRequestView(View):
 	# Arkadaşlık İsteği Reddetme (Accses TOken)
 	@csrf_exempt
 	def rejected_friend_request(request): 
-		
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
 			return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
@@ -177,11 +210,8 @@ class FriendRequestView(View):
 
 			data = JSONParser().parse(request)
 			friendname = data.get("friendname")
-
 			if not username or not friendname:
 				return JsonResponse({"error": get_translated_message("MISSING_PARAMETERS", user_language)}, status=400)
-
-			# Kullanıcı ve arkadaşını içeren ilişkileri kontrol et (çift yönlü ilişki olabilir)
 			try:
 				friendship = Friends.objects.get(
 					Q(username=username, friendname=friendname) |
@@ -189,7 +219,6 @@ class FriendRequestView(View):
 				)
 			except ObjectDoesNotExist:
 				return JsonResponse({"error": get_translated_message("FRIENDSHIP_NOT_FOUND", user_language)}, status=404)
-
 			if friendship.status == "accepted":
 				friendship.status = "removed"
 				friendship.save()

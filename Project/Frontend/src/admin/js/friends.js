@@ -1,4 +1,5 @@
 import { formatDate } from "./tools.js";
+import { showToast } from "/js/profileUI.js";
 
 export async function viewFriendInfo(username, friendname) {
 	// Örnek veri kaynağı (gerçek API verisini burada çekebilirsiniz)
@@ -105,7 +106,7 @@ export async function updateFriend(username, frinedname) {
 		}
   
 		const result = await updateResponse.json();
-		alert("Kullanıcı başarıyla güncellendi!");
+		showToast("Kullanıcı başarıyla güncellendi!");
 		fetchFriend()
 		// Modal'ı kapat*/
 		updateUserModal.hide();
@@ -139,12 +140,12 @@ export async function deleteFriend(username, friendname) {
 			}
 
 			// Silme işlemi başarılı
-			alert("Kullanıcı başarıyla silindi!");
+			showToast("Kullanıcı başarıyla silindi!");
 			// Tabloyu güncelle
 			fetchFriend()
 		} catch (error) {
 			console.error('Error deleting user:', error);
-			alert("Bir hata oluştu. Kullanıcı silinemedi.");
+			showToast("Bir hata oluştu. Kullanıcı silinemedi.", "danger");
 		}
 	}
 }

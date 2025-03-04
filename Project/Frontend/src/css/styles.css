@@ -864,6 +864,7 @@ body {
 /* ====================== */
 
 /* Kaydırma çubuğunun genişliği */
+#pastGamesList::-webkit-scrollbar,
 #recentActivitiesList::-webkit-scrollbar, 
 #activeTournamentsAccordion::-webkit-scrollbar, 
 #tournamentMatches::-webkit-scrollbar {
@@ -871,6 +872,7 @@ body {
 }
 
 /* Kaydırma çubuğunun arka planı */
+#pastGamesList::-webkit-scrollbar-track,
 #recentActivitiesList::-webkit-scrollbar-track, 
 #activeTournamentsAccordion::-webkit-scrollbar-track, 
 #tournamentMatches::-webkit-scrollbar-track {
@@ -879,6 +881,7 @@ body {
 }
 
 /* Kaydırma çubuğunun kaydırılabilir kısmı */
+#pastGamesList::-webkit-scrollbar-thumb,
 #recentActivitiesList::-webkit-scrollbar-thumb, 
 #activeTournamentsAccordion::-webkit-scrollbar-thumb, 
 #tournamentMatches::-webkit-scrollbar-thumb {
@@ -887,6 +890,7 @@ body {
 }
 
 /* Kaydırma çubuğu üzerine gelince renk değiştirme */
+#pastGamesList::-webkit-scrollbar-thumb:hover, 
 #recentActivitiesList::-webkit-scrollbar-thumb:hover, 
 #activeTournamentsAccordion::-webkit-scrollbar-thumb:hover, 
 #tournamentMatches::-webkit-scrollbar-thumb:hover {
@@ -894,7 +898,7 @@ body {
 }
 
 /* Firefox desteği */
-#recentActivitiesList, #activeTournamentsAccordion, #tournamentMatches {
+#pastGamesList,#recentActivitiesList, #activeTournamentsAccordion, #tournamentMatches {
     scrollbar-width: thin; /* Firefox için ince scrollbar */
     scrollbar-color: #014fa2 #000000; /* Scroll rengi */
 }
@@ -1728,3 +1732,49 @@ body {
     }
   }
   
+
+  /* Accessibility improvements - Focus states */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+[tabindex]:focus {
+    outline: var(--focus-outline);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(95, 185, 216, 0.3);
+}
+
+.profile-page .btn:focus {
+    outline: var(--focus-outline);
+    outline-offset: 2px;
+}
+
+
+/* Improved visibility for active nav items */
+.navbar .nav-link.active {
+    position: relative;
+    font-weight: bold;
+}
+
+.navbar .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--color-primary);
+}
+
+/* Visually hidden class for screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

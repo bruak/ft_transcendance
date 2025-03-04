@@ -27,6 +27,8 @@ services:
       - webnet
     depends_on:
       - user_db
+    ports:
+      - 8001:8000
     env_file:
       - .env
     environment:
@@ -97,6 +99,8 @@ services:
       - webnet
     env_file:
       - .env
+    ports:
+      - 8000:8000
     depends_on:
       - auth_db
     environment:
@@ -144,6 +148,8 @@ services:
       - webnet
     env_file:
       - .env
+    ports:
+      - 8002:8000
     depends_on:
       - game_db
     environment:
@@ -227,7 +233,7 @@ services:
       - POSTGRES_DB=translation
     
 # MONITORING START HERE
-# ITS HAS TO DOIN FINE TUNE
+# IT HAS TO DOIN FINE TUNES
   # prometheus:
   #   image: prom/prometheus
   #   container_name: prometheus

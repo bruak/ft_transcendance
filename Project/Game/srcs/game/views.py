@@ -70,11 +70,7 @@ class GameView(View):
 			return JsonResponse({"match_id": new_match.id, "detail_url": f"bot/room_{new_match.id}/"}, status=200)
 		except Exception as e:
 			return JsonResponse({"error ": str(e)}, status=500)
-		finally:
-			try:
-				requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
-			except Exception as e:
-				pass
+
 	@csrf_exempt
 	def playing_matches_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -277,5 +273,35 @@ class GameView(View):
 				status='waiting'
 			)
 			return JsonResponse({"match_id": new_match.id, "detail_url": f"local/room_{new_match.id}/" }, status=200)
+		except Exception as e:
+			return JsonResponse({"error": str(e)}, status=500)
+
+	@csrf_exempt
+	def player_status_views(request, username):
+		if request.method != 'GET':
+			return JsonResponse({"error": "Only GET requests are allowed."}, status=405)
+		try:
+			p1_match = Match.objects.filter(player1=username, status='finished')
+			p2_match = Match.objects.filter(player2=username, status='finished')
+			match_list = []
+			if p1_match:
+				for match in p1_match:
+					match_list.append({
+						"match_id": match.id,
+						"player1": match.player1,
+						"player2": match.player2,
+						"match_type": match.match_type,
+						"win": True if match.winner == username else False,
+					})
+			if p2_match:
+				for match in p2_match:
+					match_list.append({
+						"match_id": match.id,
+						"player1": match.player1,
+						"player2": match.player2,
+						"match_type": match.match_type,
+						"win": True if match.winner == username else False,
+					})
+			return JsonResponse({"message": match_list}, status=200)
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)

@@ -411,22 +411,27 @@ export function initGame() {
 
       const keysPressed = {};
 
-    gameState.handleKeydown = (e) => {
-    keysPressed[e.key] = true;
-
-    if (gameState.socket?.readyState === WebSocket.OPEN) {
-        const payload = buildMovePayload(
-        gameState.mode,
-        e.key,
-        true,
-        gameState.playerId
-        );
-        
-        if (payload) {
-        gameState.socket.send(JSON.stringify(payload));
-        }
-    }
-    };
+      gameState.handleKeydown = (e) => {
+          keysPressed[e.key] = true;
+  
+          // Prevent scrolling when using game controls
+          if (['w', 'W', 's', 'S', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+              e.preventDefault();
+          }
+  
+          if (gameState.socket?.readyState === WebSocket.OPEN) {
+              const payload = buildMovePayload(
+                  gameState.mode,
+                  e.key,
+                  true,
+                  gameState.playerId
+              );
+  
+              if (payload) {
+                  gameState.socket.send(JSON.stringify(payload));
+              }
+          }
+      };
 
     gameState.handleKeyup = (e) => {
     keysPressed[e.key] = false;
@@ -447,6 +452,10 @@ export function initGame() {
 
     document.addEventListener('keyup', gameState.handleKeyup);
     document.addEventListener('keydown', gameState.handleKeydown);
+
+    // Focus the canvas when the game is loaded
+    canvas.focus();
+
     // Animation
     function animate() {
         gameState.animationId = requestAnimationFrame(animate);

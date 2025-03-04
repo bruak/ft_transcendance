@@ -1,29 +1,31 @@
 <div class="profile-page">
     <!-- <link rel="stylesheet" href="/css/profile.css"> -->
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;"
+        role="navigation" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand">
-                <i class="bi bi-joystick"></i> Pong Game
+            <a class="navbar-brand" aria-label="Pong Game">
+                <i class="bi bi-joystick" aria-hidden="true"></i> Pong Game
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" id="home" href="/username" data-link>
-                            <i class="bi bi-house"></i> Home
+                        <a class="nav-link active disabled" id="home" href="/username" data-link aria-current="page">
+                            <i class="bi bi-house" aria-hidden="true"></i> Home
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/GamePage" data-link>
-                            <i class="bi bi-controller"></i> Game
+                            <i class="bi bi-controller" aria-hidden="true"></i> Game
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/about" data-link>
-                            <i class="bi bi-info-circle"></i> About
+                            <i class="bi bi-info-circle" aria-hidden="true"></i> About
                         </a>
                     </li>
                 </ul>
@@ -32,10 +34,12 @@
                     <!-- Search Bar -->
                     <div class="search-container mb-2 mb-lg-0">
                         <div class="position-relative w-100">
+                            <label for="friendSearchInput" class="visually-hidden">Search friends</label>
                             <input type="search" class="form-control search-input" placeholder="Search friends..."
-                                id="friendSearchInput" autocomplete="off">
+                                id="friendSearchInput" autocomplete="off" aria-label="Search friends">
                             <ul id="friendSuggestions" class="list-group position-absolute mt-2"
-                                style="width: 100%; z-index: 1000; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px;">
+                                style="width: 100%; z-index: 1000; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px;"
+                                aria-label="Friend suggestions" role="listbox">
                             </ul>
                         </div>
                     </div>
@@ -45,18 +49,19 @@
                         <!-- Notification Bell -->
                         <div class="dropdown notification-dropdown">
                             <a href="#" class="nav-link text-white position-relative p-2" id="notificationBell"
-                                data-bs-toggle="dropdown">
-                                <i class="bi bi-bell-fill"></i>
+                                data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                                <i class="bi bi-bell-fill" aria-hidden="true"></i>
                                 <span id="notificationBadge"
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    0
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    aria-label="Notification count">
+                                    
                                 </span>
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" aria-labelledby="notificationBell">
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center" id="requestsMenu">
-                                        <i class="bi bi-person-plus-fill me-2"></i> Friend Requests
-                                        <span class="badge bg-primary ms-auto">0</span>
+                                        <i class="bi bi-person-plus-fill me-2" aria-hidden="true"></i> Friend Requests
+                                        <span class="badge bg-primary ms-auto"></span>
                                     </a>
                                 </li>
                                 <li>
@@ -64,7 +69,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#">
-                                        <i class="bi bi-bell-fill me-2"></i> All Notifications
+                                        <i class="bi bi-bell-fill me-2" aria-hidden="true"></i> All Notifications
                                     </a>
                                 </li>
                             </ul>
@@ -74,16 +79,17 @@
                         <div class="dropdown profile-dropdown">
                             <a href="#"
                                 class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2"
-                                id="navbarDropdown" data-bs-toggle="dropdown">
-                                <img id="profileSmallPhoto" src="" alt="Profile" class="rounded-circle me-2" width="32"
-                                    height="32">
+                                id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                aria-label="User menu">
+                                <img id="profileSmallPhoto" src="" alt="User profile thumbnail"
+                                    class="rounded-circle me-2" width="32" height="32">
                                 <span id="navbarUsername" class="d-none d-md-inline"></span>
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal"
                                         data-bs-target="#settingsModal">
-                                        <i class="bi bi-gear-fill me-2"></i> Settings
+                                        <i class="bi bi-gear-fill me-2" aria-hidden="true"></i> Settings
                                     </a>
                                 </li>
                                 <li>
@@ -91,7 +97,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#signout">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Sign out
+                                        <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i> Sign out
                                     </a>
                                 </li>
                             </ul>
@@ -105,54 +111,58 @@
 
     <main class="container my-5">
         <!-- Profil Bilgileri -->
-        <section>
+        <section aria-labelledby="profileHeader">
             <article class="card p-4 glass-effect">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-center">
-                        <img id="profileImageDisplay" src="" alt="Profil Fotoğrafı" class="rounded-circle" width="150">
+                        <img id="profileImageDisplay" src="" alt="User profile photo" class="rounded-circle"
+                            width="150">
                     </div>
                     <div class="col-md-4 text-center text-md-start">
-                        <h1 id="profileNameDisplay" class="profile-name"></h1>
-                        <p class="title"><i class="bi bi-person"></i> <span id="profileTitleDisplay"></span></p>
-                        <p><i class="bi bi-geo-alt"></i> <span id="profileLocationDisplay"></span></p>
+                        <h1 id="profileNameDisplay" class="profile-name" id="profileHeader"></h1>
+                        <p class="title"><i class="bi bi-person" aria-hidden="true"></i> <span
+                                id="profileTitleDisplay"></span></p>
+                        <p><i class="bi bi-geo-alt" aria-hidden="true"></i> <span id="profileLocationDisplay"></span>
+                        </p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
                         <!-- Arkadaşlar Modalını açar -->
                         <button class="btn friends-card-3d" id="viewFriendsButton" data-bs-toggle="modal"
-                            data-bs-target="#friendsModal">
-                            <i class="bi bi-people-fill"></i> Dostlar
+                            data-bs-target="#friendsModal" aria-label="View friends list">
+                            <i class="bi bi-people-fill" aria-hidden="true"></i> Dostlar
                         </button>
-
                     </div>
                 </div>
             </article>
         </section>
 
         <!-- Oyun Seçenekleri Bölümü -->
-        <section class="my-5">
-            <h2 class="text-center"><i class="bi bi-controller"></i> Oyun Seçenekleri</h2>
-            <div class="card p-4 glass-effect" id="gameOptions">
+        <section class="my-5" aria-labelledby="gameOptionsHeader">
+            <h2 class="text-center" id="gameOptionsHeader"><i class="bi bi-controller" aria-hidden="true"></i> Oyun
+                Seçenekleri</h2>
+            <div class="card p-4 glass-effect" id="gameOptions" role="region" aria-label="Game options selection">
                 <div class="row">
                     <!-- Örnek Oyun Kartları (Yapay Zeka, Turnuva, Online, vb.) -->
                     <section class="col-md-3 p-3 game-option-card" data-option="aiOptions">
-                        <h3><i class="bi bi-cpu"></i> Yapay Zeka</h3>
+                        <h3><i class="bi bi-cpu" aria-hidden="true"></i> Yapay Zeka</h3>
                         <p>Bota Karşı Oyna</p>
-                        <button class="btn btn-primary game-option-button">Oyna</button>
+                        <button class="btn btn-primary game-option-button" aria-label="Play against AI">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="tournamentOptions">
-                        <h3><i class="bi bi-trophy"></i> Turnuva</h3>
+                        <h3><i class="bi bi-trophy" aria-hidden="true"></i> Turnuva</h3>
                         <p>Turnuva oluştur.</p>
-                        <button class="btn btn-primary game-option-button">Oyna</button>
+                        <button class="btn btn-primary game-option-button" aria-label="Create tournament">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="onlineOptions">
-                        <h3><i class="bi bi-globe"></i> Online</h3>
+                        <h3><i class="bi bi-globe" aria-hidden="true"></i> Online</h3>
                         <p>Online Oyna</p>
-                        <button class="btn btn-primary game-option-button">Oyna</button>
+                        <button class="btn btn-primary game-option-button" aria-label="Play online">Oyna</button>
                     </section>
                     <section class="col-md-3 p-3 game-option-card" data-option="quickMatchOptions">
-                        <h3><i class="bi bi-lightning"></i> Hızlı Kapışma</h3>
+                        <h3><i class="bi bi-lightning" aria-hidden="true"></i> Hızlı Kapışma</h3>
                         <p>Lokalde Oyna</p>
-                        <button class="btn btn-primary game-option-button">Oyna</button>
+                        <button class="btn btn-primary game-option-button"
+                            aria-label="Play local quick match">Oyna</button>
                     </section>
                 </div>
             </div>
@@ -161,129 +171,145 @@
         <!-- Oyun Seçenekleri İçeriği (Gizli) -->
         <div id="hiddenOptions" class="d-none">
             <!-- Yapay Zeka Seçenekleri -->
-            <div id="aiOptions" class="game-options">
+            <div id="aiOptions" class="game-options" role="region" aria-label="AI game options">
                 <h4>Yapay Zeka Seçenekleri</h4>
                 <p>Bot zorluk seviyesini seçin:</p>
-                <div class="btn-group" role="group">
-                    <button class="btn btn-secondary">Kolay</button>
-                    <button class="btn btn-secondary">Orta</button>
-                    <button class="btn btn-secondary">Zor</button>
+                <div class="btn-group" role="group" aria-label="AI difficulty levels">
+                    <button class="btn btn-secondary" aria-pressed="false">Kolay</button>
+                    <button class="btn btn-secondary" aria-pressed="false">Orta</button>
+                    <button class="btn btn-secondary" aria-pressed="false">Zor</button>
                 </div>
 
                 <hr>
                 <p>Bot davranışını seçin:</p>
-                <div class="btn-group" role="group">
-                    <button class="btn btn-outline-info">Agresif</button>
-                    <button class="btn btn-outline-info">Savunmacı</button>
-                    <button class="btn btn-outline-info">Dengeli</button>
+                <div class="btn-group" role="group" aria-label="AI behavior types">
+                    <button class="btn btn-outline-info" aria-pressed="false">Agresif</button>
+                    <button class="btn btn-outline-info" aria-pressed="false">Savunmacı</button>
+                    <button class="btn btn-outline-info" aria-pressed="false">Dengeli</button>
                 </div>
 
                 <hr>
                 <p>Oyun süresi:</p>
-                <select class="form-control bg-dark mb-3">
+                <label for="aiGameDuration" class="visually-hidden">Game duration</label>
+                <select id="aiGameDuration" class="form-control bg-dark mb-3" aria-label="Game duration">
                     <option>5 Dakika</option>
                     <option>10 Dakika</option>
                     <option>Sınırsız</option>
                 </select>
-                <button class="btn btn-success mt-3" data-bs-dismiss="modal">Başlat</button>
+                <button class="btn btn-success mt-3" data-bs-dismiss="modal" aria-label="Start game">Başlat</button>
             </div>
 
             <!-- Turnuva Seçenekleri -->
-            <div id="tournamentOptions" class="game-options">
+            <div id="tournamentOptions" class="game-options" role="region" aria-label="Tournament options">
                 <div class="create-tournament-section">
                     <h5 class="mb-3">Yeni Turnuva Oluştur</h5>
                     <div class="form-group mb-3">
-                        <label>Turnuva Adı:</label>
-                        <input type="text" class="form-control" id="tournamentName" placeholder="Turnuva adını girin">
+                        <label for="tournamentName">Turnuva Adı:</label>
+                        <input type="text" class="form-control" id="tournamentName" placeholder="Turnuva adını girin"
+                            aria-required="true">
                     </div>
                     <div class="form-group mb-3">
-                        <label>Katılımcı Sayısı:</label>
-                        <select class="form-control bg-dark" id="playerCount">
+                        <label for="playerCount">Katılımcı Sayısı:</label>
+                        <select class="form-control bg-dark" id="playerCount" aria-label="Number of players">
                             <option value="4">4 Oyuncu</option>
                             <option value="8">8 Oyuncu</option>
                             <option value="16">16 Oyuncu</option>
                             <option value="32">32 Oyuncu</option>
                         </select>
                     </div>
-                    <button id="createTournamentBtn" class="btn btn-success w-100">Turnuva Oluştur</button>
+                    <button id="createTournamentBtn" class="btn btn-success w-100"
+                        aria-label="Create tournament">Turnuva Oluştur</button>
                 </div>
             </div>
 
             <!-- Online Oyun Seçenekleri -->
-            <div id="onlineOptions" class="game-options">
+            <div id="onlineOptions" class="game-options" role="region" aria-label="Online game options">
                 <h4>Online Oyun Seçenekleri</h4>
                 <p>Oyun Türü:</p>
-                <div class="btn-group" role="group">
-                    <button class="btn btn-outline-info" data-bs-dismiss="modal">Rastgele Maç</button>
-                    <button class="btn btn-outline-info">Arkadaşlarla Oyna</button>
+                <div class="btn-group" role="group" aria-label="Online game types">
+                    <button class="btn btn-outline-info" data-bs-dismiss="modal" aria-pressed="false">Rastgele
+                        Maç</button>
+                    <button class="btn btn-outline-info" aria-pressed="false">Arkadaşlarla Oyna</button>
                 </div>
 
                 <hr>
                 <p>Oda Kur / Katıl:</p>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" style="margin-right: 30px;" placeholder="Oda Kodu">
-                    <button class="btn btn-outline-success">Katıl</button>
-                    <button class="btn btn-success">Oda Kur</button>
+                    <label for="roomCode" class="visually-hidden">Room code</label>
+                    <input type="text" id="roomCode" class="form-control" style="margin-right: 30px;"
+                        placeholder="Oda Kodu" aria-label="Room code">
+                    <button class="btn btn-outline-success" aria-label="Join room">Katıl</button>
+                    <button class="btn btn-success" aria-label="Create room">Oda Kur</button>
                 </div>
 
-                <button class="btn btn-primary mt-3">Oyuna Başla</button>
+                <button class="btn btn-primary mt-3" aria-label="Start game">Oyuna Başla</button>
             </div>
 
             <!-- Hızlı Kapışma Seçenekleri -->
-            <div id="quickMatchOptions" class="game-options">
+            <div id="quickMatchOptions" class="game-options" role="region" aria-label="Quick match options">
             </div>
         </div>
 
         <!-- Aktif Turnuvalar -->
-        <section class="my-5">
-            <h2 class="text-center"><i class="bi bi-trophy"></i> Aktif Turnuvalar</h2>
-            <div class="accordion glass-effect position-relative" id="activeTournamentsAccordion" style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;">
-            <!-- Turnuvalar dinamik olarak buraya eklenecek -->
-            <!-- <div class="text-center p-3">
+        <section class="my-5" aria-labelledby="activeTournamentsHeader">
+            <h2 class="text-center" id="activeTournamentsHeader"><i class="bi bi-trophy" aria-hidden="true"></i> Aktif
+                Turnuvalar</h2>
+            <div class="accordion glass-effect position-relative" id="activeTournamentsAccordion"
+                style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
+                role="region" aria-label="Active tournaments">
+                <!-- Turnuvalar dinamik olarak buraya eklenecek -->
+                <!-- <div class="text-center p-3">
                 <div class="spinner-border text-light" role="status">
                 <span class="visually-hidden">Yükleniyor...</span>
                 </div>
             </div> -->
-            <div class="accordion-body bg-dark text-white">
-                <div class="row">
-                <!-- ...existing tournament info... -->
+                <div class="accordion-body bg-dark text-white">
+                    <div class="row">
+                        <!-- ...existing tournament info... -->
+                    </div>
+                    <div class="mt-3 text-center">
+                        <!-- ...existing join button... -->
+                    </div>
                 </div>
-                <div class="mt-3 text-center">
-                <!-- ...existing join button... -->
-                </div>
-            </div>
             </div>
         </section>
 
         <!-- Son Etkinlikler -->
-        <section class="my-5">
-            <h2 class="text-center">Son Etkinlikler</h2>
-            <ul id="recentActivitiesList" class="list-group position-relative" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"></ul>
+        <section class="my-5" aria-labelledby="recentActivitiesHeader">
+            <h2 class="text-center" id="recentActivitiesHeader">Son Etkinlikler</h2>
+            <ul id="recentActivitiesList" class="list-group position-relative"
+                style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
+                role="list" aria-label="Recent activities"></ul>
             <!-- Dinamik içerik buraya eklenecek -->
             </ul>
         </section>
 
+        <!-- Geçmiş Oyunlar -->
+        <section class="my-5" aria-labelledby="pastGamesHeader">
+            <h2 class="text-center" id="pastGamesHeader">Geçmiş Oyunlar</h2>
+            <ul id="pastGamesList" class="list-group position-relative"
+                role="list" aria-label="Geçmiş oyunlar"></ul>
+        </section>
+        
 
         <!-- Dostlar (Arkadaşlar) Modal -->
-        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel">
+        <div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="friendsModalLabel">Arkadaşlarınız</h5>
-
                     </div>
                     <div class="modal-body">
                         <!-- Arkadaş listesi profil.js içinde listFriendsSection fonksiyonuyla doldurulur -->
-                        <ul id="friendsList" class="list-group"></ul>
+                        <ul id="friendsList" class="list-group" role="list" aria-label="Friends list"></ul>
                     </div>
                 </div>
             </div>
         </div>
 
-
-
         <!-- Gelen İstekler Modal -->
-        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel">
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -291,21 +317,22 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <!-- Arkadaşlık isteklerini profile.js içindeki showFriendRequestsSection doldurur -->
-                    <div class="modal-body" id="friendRequestsContainer"></div>
+                    <div class="modal-body" id="friendRequestsContainer" role="region" aria-label="Friend requests">
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Oyun Seçenekleri Modal -->
         <div class="modal fade animate__animated animate__fadeInDown" id="gameOptionsModal" tabindex="-1"
-            aria-labelledby="gameOptionsModalLabel">
+            aria-labelledby="gameOptionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="gameOptionsModalLabel">Oyun Seçenekleri</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="modalContent">
+                    <div class="modal-body" id="modalContent" role="region" aria-label="Game options content">
                         <!-- Dinamik içerik buraya eklenecek (profile.js) -->
                     </div>
                     <div class="modal-footer">
@@ -316,7 +343,8 @@
         </div>
 
         <!-- Kullanıcı Ayarları Modal -->
-        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel">
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -327,15 +355,15 @@
                         <form id="settingsForm">
                             <div class="mb-3">
                                 <label for="settingsEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="settingsEmail">
+                                <input type="email" class="form-control" id="settingsEmail" aria-required="true">
                             </div>
                             <div class="mb-3">
                                 <label for="settingsPassword" class="form-label">Şifre</label>
-                                <input type="password" class="form-control" id="settingsPassword">
+                                <input type="password" class="form-control" id="settingsPassword" aria-required="true">
                             </div>
                             <div class="mb-3">
                                 <label for="profileName" class="form-label">İsim</label>
-                                <input type="text" class="form-control" id="profileName">
+                                <input type="text" class="form-control" id="profileName" aria-required="true">
                             </div>
                             <div class="mb-3">
                                 <label for="profileTitle" class="form-label">Başlık</label>
@@ -347,19 +375,19 @@
                             </div>
                             <div class="mb-3">
                                 <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
-                                <input type="file" class="form-control" id="profileImage">
+                                <input type="file" class="form-control" id="profileImage" accept="image/*">
                             </div>
-                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                            <button type="submit" class="btn btn-primary" aria-label="Save settings">Kaydet</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="toast-container" id="toastContainer"></div>
+        <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
     </main>
 
     <!-- Footer -->
-    <footer class="glass-effect text-center">
-        <p><i class="bi bi-code-slash"></i> 2025 Tüm hakları saklı değildir.</p>
+    <footer class="glass-effect text-center" role="contentinfo">
+        <p><i class="bi bi-code-slash" aria-hidden="true"></i> 2025 Tüm hakları saklı değildir.</p>
     </footer>
 </div>

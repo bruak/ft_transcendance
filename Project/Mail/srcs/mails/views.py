@@ -16,7 +16,6 @@ class MailRequest(View):
 		if request.method != 'GET':
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
-			print(11)
 
 			domain = os.getenv('DOMAIN')
 			reset_link = f"{domain}/forget-password/{token}"
@@ -26,7 +25,6 @@ class MailRequest(View):
 				from_email='lmrnbzkrt0@gmail.com',
 				recipient_list=[email]
 			)
-			print(12)
 			return JsonResponse({'message': get_translated_message("PASSWORD_RESET_SENT", user_language)}, status=200)
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, status=500)

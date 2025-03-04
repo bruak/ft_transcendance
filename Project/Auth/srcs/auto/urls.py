@@ -21,7 +21,8 @@ auth_patterns = [
     path('retry-verification-account/', AuthRequest.retry_verification_account, name='retry_verification_account'),
     path('forget_password/<str:username>/', AuthRequest.forget_password, name="forget_password"),
     path('reset_password/<str:token>/', AuthRequest.reset_password, name="reset_password"),
-    path('validate_mail_token/<str:type>/<str:token>/', AuthRequest.validate_mail_token, name="validate_mail_token")
+    path('validate_mail_token/<str:type>/<str:token>/', AuthRequest.validate_mail_token, name="validate_mail_token"),
+    path('resend-code/', AuthRequest.twofactor_again, name='twofactor-again'),
 ]
 
 # Intra-related URLs

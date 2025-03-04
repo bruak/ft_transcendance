@@ -1,4 +1,5 @@
 import { router } from "./app.js";
+import { showToast } from "/js/profileUI.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     initVerifyEmail();
@@ -51,7 +52,7 @@ export async function initVerifyEmail(params = {}) {
 
 function showMessage(message, type) {
     const prefix = type === "success" ? "Success: " : "Error: ";
-    alert(`${prefix}${message}`);
+    showToast(`${prefix}${message}`, type === "success" ? "success" : "danger");
     history.pushState(null, null, "/");
     router();
 }

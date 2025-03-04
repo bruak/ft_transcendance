@@ -79,7 +79,6 @@ class UserRequest(View):
     def singin(request):
         user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
         if request.method == "POST":
-
             try:
                 data = JSONParser().parse(request)
                 singin = data.get("sign")
@@ -104,7 +103,7 @@ class UserRequest(View):
                         "email": user.email,
                         "code": code
                     }
-                    headers = {"Accept-Language": "application/json"}
+                    headers = {"Accept-Language":  user_language}
                     mail_response = requests.post(f"http://project-mail-1:8000/api/2fa/", json=mail_data, headers=headers)
                     if (mail_response.status_code != 200):
                         return JsonResponse({'error': get_translated_message("MAIL_NOT_SENT", user_language)}, status=500)
@@ -130,25 +129,24 @@ class UserRequest(View):
             username = request.POST.get('username')
             email = request.POST.get('email')
             password = request.POST.get('password')
-            avatar_file = request.FILES.get('avatar', None)
-
+            avatar_file = request.FILES.get('avatar', "/media/avatars/default.jpg")
             if username_check(username):
                 return JsonResponse({'error': get_translated_message("USERNAME_EXISTS", user_language)}, status=409)
             if Users.objects.filter(email=email).exists():
                 return JsonResponse({'error': get_translated_message("MAIL_ALREADY_EXISTS", user_language)}, status=409)
-            if is_image(avatar_file) == False:
+            if avatar_file != "/media/avatars/default.jpg" and is_image(avatar_file) == False:
                 return JsonResponse({'error': get_translated_message("IMAGE_UPLOAD_ERROR", user_language)}, status=400)
+            if (avatar_file != "/media/avatars/default.jpg"):
+                avatar_url = "/media/avatars/default.jpg"
+                avatar_url = image_to_url(avatar_file, username)
 
-            avatar_url = image_to_url(avatar_file, username)
             hashed_password = make_password(password)
-            
             user = Users.objects.create(
                 username=username,
                 email=email,
                 password=hashed_password,
                 is_active = False,
             )
-
             token = str(uuid.uuid4())
             MailTokens.objects.create(
                     user=user,
@@ -157,7 +155,7 @@ class UserRequest(View):
                     expiration =  timezone.now() + timedelta(minutes=(60 * 24))
             )
 
-            headers = {"Accept-Language": "application/json"}
+            headers = {"Accept-Language": user_language}
             user_data = {
                 "username": username,
                 "email": email,
@@ -166,6 +164,7 @@ class UserRequest(View):
                 "avatar": avatar_url,
                 "password": hashed_password,
             }
+
             ip = os.getenv("DOMAIN")
             mail_url = f"{ip}/verify-email/{token}"
             mail_data = {
@@ -173,7 +172,6 @@ class UserRequest(View):
                 "username" : username,
                 "email": email,
             }
-            
             mail_response = requests.post(f"http://project-mail-1:8000/api/verify/", json=mail_data, headers=headers)
             if mail_response.status_code != 200:
                 return JsonResponse({'error': get_translated_message("MAIL_NOT_SENT", user_language)}, status=500)
@@ -186,6 +184,7 @@ class UserRequest(View):
 
             return JsonResponse({'message': get_translated_message("SUCCESSFUL", user_language)}, status=201)
         except Exception as e:
+            print(e)
             return JsonResponse({'error': get_translated_message("USER_SIGNUP_ERROR", user_language)}, status=500)
 
 

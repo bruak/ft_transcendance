@@ -4,6 +4,9 @@
  * Kullanıcı profili verilerini DOM'a yazan fonksiyon
  * @param {Object} user - Sunucudan dönen kullanıcı verisi (user.data formatında)
  */
+
+import { apiListFriendRequests } from './profileApi.js';
+
 export function updateProfileUI(user) {
 	const userData = user.data;
 	if (!userData || typeof userData !== 'object') {
@@ -33,32 +36,17 @@ export function updateProfileUI(user) {
 	if (profileImg) profileImg.src = avatarUrl;
 	if (smallPhoto) smallPhoto.src = avatarUrl;
   }
-  
-  /**
-   * Bildirimleri güncelleme (örn. gelen istek sayısı, toplam bildirim vb.)
-   * @param {Object} notifications - { total, requests } gibi değerler içerir
-   */
-  export function updateNotifications(notifications) {
+
+
+  export async function updateNotifications() {
+	const username = localStorage.getItem('username');
 	const notificationBadge = document.getElementById('notificationBadge');
-	const requestsMenu = document.getElementById('requestsMenu');
-  
-	if (notificationBadge && notifications.total > 0) {
-	  notificationBadge.textContent = notifications.total;
+	const request = await apiListFriendRequests(username);
+	if (notificationBadge && request.data.length > 0) {
+	  notificationBadge.textContent = request.data.length;
 	  notificationBadge.style.display = 'inline';
 	} else if (notificationBadge) {
 	  notificationBadge.style.display = 'none';
-	}
-  
-	if (requestsMenu) {
-	  const badge = requestsMenu.querySelector('.badge');
-	  if (badge) {
-		if (notifications.requests > 0) {
-		  badge.textContent = notifications.requests;
-		  badge.style.display = 'inline-block';
-		} else {
-		  badge.style.display = 'none';
-		}
-	  }
 	}
   }
   
@@ -232,7 +220,7 @@ export function updateProfileUI(user) {
 			<div class="row">
 			  <div class="col-md-6">
 				<p><i class="bi bi-person-circle"></i> Oluşturan: ${tournament.creator}</p>
-				<p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.player_count}/${tournament.current_players}</p>
+				<p><i class="bi bi-people-fill"></i> Katılımcılar: ${tournament.current_players}/${tournament.player_count}</p>
 			  </div>
 			</div>
 			<div class="Base-list"> </div>
@@ -277,6 +265,36 @@ export function updateProfileUI(user) {
 	}).join('');
   }
   
+  export function renderPastGames(container, games) {
+    if (!games || games.length === 0) {
+        container.innerHTML = '<li class="list-group-item text-center text-white bg-dark">Henüz geçmiş oyun bulunmamaktadır.</li>';
+        return;
+    }
+
+    container.innerHTML = games.map(game => {
+        const result = game.win ? `${game.player1} Kazandı` : `${game.player2} Kazandı`;
+
+        // Maç tipi ikonları
+        const matchIcons = {
+            "S": "bi-cpu",
+            "T": "bi-trophy",
+            "L": "bi-lightning",
+            "M": "bi-globe"
+        };
+
+        const matchIcon = matchIcons[game.match_type] || "bi-question-circle"; // Varsayılan ikon
+
+        return `
+          <li class="list-group-item d-flex align-items-center bg-dark text-white p-3 border-0 rounded mb-2 shadow-sm">
+            <i class="bi ${matchIcon} fs-4 me-3 text-warning"></i>
+            <div class="flex-grow-1">
+              <strong class="fs-5">${game.player1} vs ${game.player2}</strong>
+            </div>
+            <span class="badge bg-success fs-6 px-3 py-2">${result}</span>
+          </li>`;
+    }).join('');
+}
+
 
   /**
   * Turnuva maçlarını liste olarak DOM'a basan fonksiyon
