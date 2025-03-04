@@ -6,12 +6,6 @@ queries:
       - active_connections_friend_db
     data_source_name: "postgresql://some_user:abc123@friend_db:5432/friends?sslmode=disable"
 
-  - name: "pg_stat_activity_mail_db"
-    query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
-    metrics:
-      - active_connections_mail_db
-    data_source_name: "postgresql://some_user:abc123@mail_db:5432/mail?sslmode=disable"
-
   - name: "pg_stat_activity_auth_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
@@ -30,15 +24,9 @@ queries:
       - active_connections_tournament_db
     data_source_name: "postgresql://some_user:abc123@tournament_db:5432/tournament?sslmode=disable"
 
-  - name: "pg_stat_activity_chat_db"
-    query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
-    metrics:
-      - active_connections_chat_db
-    data_source_name: "postgresql://some_user:abc123@chat_db:5432/chat?sslmode=disable"
-
   - name: "pg_stat_activity_user_db"
     query: "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
     metrics:
       - pg_stat_activity_user_db
-    data_source_name: "postresql://some_user:abc123@user_db:5432/users?sslmode=disable"
+    data_source_name: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
   

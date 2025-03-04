@@ -1,1 +1,1 @@
-
+data_source_name: "postgresql://some_user:abc123@user_db:5432/users?sslmode=disable"
