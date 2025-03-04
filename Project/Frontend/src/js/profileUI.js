@@ -5,7 +5,7 @@
  * @param {Object} user - Sunucudan dönen kullanıcı verisi (user.data formatında)
  */
 
-import { apiListFriendRequests } from './profileApi.js';
+import { apiListFriendRequests } from '/js/profileApi.js';
 
 export function updateProfileUI(user) {
 	const userData = user.data;
@@ -272,7 +272,6 @@ export function updateProfileUI(user) {
     }
 
     container.innerHTML = games.map(game => {
-        const result = game.win ? `${game.player1} Kazandı` : `${game.player2} Kazandı`;
 
         // Maç tipi ikonları
         const matchIcons = {
@@ -290,7 +289,7 @@ export function updateProfileUI(user) {
             <div class="flex-grow-1">
               <strong class="fs-5">${game.player1} vs ${game.player2}</strong>
             </div>
-            <span class="badge bg-success fs-6 px-3 py-2">${result}</span>
+            <span class="badge bg-success fs-6 px-3 py-2">${game.winner}</span>
           </li>`;
     }).join('');
 }

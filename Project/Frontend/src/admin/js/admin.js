@@ -1,9 +1,7 @@
-import { initializeSideNavbar } from "./sideNavbar.js";
-import { initializeTopNavbar } from "./topNavbar.js";
-import { router } from "../../js/app.js";
-document.addEventListener('DOMContentLoaded', () => {
-	initAdmin();
-});
+import { initializeSideNavbar } from "/admin/js/sideNavbar.js";
+import { initializeTopNavbar } from "/admin/js/topNavbar.js";
+import { router } from "/js/app.js";
+
 
 async function Rol() {
 	const accessToken = localStorage.getItem("accessToken");

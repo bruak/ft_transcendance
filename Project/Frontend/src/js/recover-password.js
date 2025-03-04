@@ -1,8 +1,5 @@
 import { router } from "/js/app.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-    initRecoverPassword();
-});
 
 export async function initRecoverPassword() {
     const host = window.location.host;

@@ -1,9 +1,6 @@
 import { router } from "/js/app.js";
 import { showToast } from "/js/profileUI.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-    initPassword();
-});
 
 export async function initPassword(params = {}) {
     const host = window.location.host;

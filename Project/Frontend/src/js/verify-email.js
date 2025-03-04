@@ -1,10 +1,7 @@
-import { router } from "./app.js";
+import { router } from "/js/app.js";
 import { showToast } from "/js/profileUI.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-    initVerifyEmail();
 
-});
 
 export async function initVerifyEmail(params = {}) {
     const token = params.token;

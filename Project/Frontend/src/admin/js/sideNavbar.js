@@ -1,7 +1,7 @@
-import { viewUserInfo, updateUser, deleteUser, fetchUsers } from "./users.js";
-import { fetchTwoFactor, fetchMailTokens, infoMail, deleteMail } from "./authFetch.js";
-import { fetchFriend, viewFriendInfo, updateFriend, deleteFriend } from "./friends.js"
-import { loadNavbar } from "./tools.js"
+import { viewUserInfo, updateUser, deleteUser, fetchUsers } from "/admin/js/users.js";
+import { fetchTwoFactor, fetchMailTokens, infoMail, deleteMail } from "/admin/js/authFetch.js";
+import { fetchFriend, viewFriendInfo, updateFriend, deleteFriend } from "/admin/js/friends.js"
+import { loadNavbar } from "/admin/js/tools.js"
 
 export async function initializeSideNavbar() {
 	await loadNavbar("side-navbar", "/admin/side-navbar.html");

@@ -1,4 +1,4 @@
-import { router } from "./app.js";
+import { router } from "/js/app.js";
 
 /* ======================[*] Giriş ve Kayıt Sayfasını Başlatma Fonksiyonu [*]====================== */
 export function initLogReg() {
@@ -654,7 +654,7 @@ export function initLogReg() {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+                    throw new Error(`API Error: ${response.error}`);
                 }
 
                 const responseJson = await response.json();
@@ -750,5 +750,4 @@ export function initLogReg() {
     }
 }
 
-/* ======================[*] Sayfa Yüklendiğinde initLogReg Fonksiyonunu Çağır [*]====================== */
-document.addEventListener('DOMContentLoaded', initLogReg);
+

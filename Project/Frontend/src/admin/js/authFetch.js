@@ -1,4 +1,4 @@
-import { formatDate } from "./tools.js"
+import { formatDate } from "/admin/js/tools.js"
 import { showToast } from "/js/profileUI.js";
 
 
@@ -19,7 +19,7 @@ export async function fetchTwoFactor() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const mails = await response.json(); // API'den dönen yanıt
 		// `mails.message` altındaki diziye erişim
@@ -68,7 +68,7 @@ export async function fetchMailTokens() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const mails = await response.json(); // API'den dönen yanıt
 		// `mails.message` altındaki diziye erişim
@@ -123,7 +123,7 @@ export async function infoMail(username, token) {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const friend = await response.json(); // API'den dönen yanıt
 		// `users.message` altındaki diziye erişim
@@ -170,7 +170,7 @@ export async function deleteMail(username, token) {
 			});
 
 			if (!response.ok) {
-				throw new Error(`API Error: ${response.status}`);
+				throw new Error(`API Error: ${response.error}`);
 			}
 
 			// Silme işlemi başarılı

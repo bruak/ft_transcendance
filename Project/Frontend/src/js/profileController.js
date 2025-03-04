@@ -20,7 +20,7 @@ import {
 	apiLocalMatch,
 	apiRemoveFriend,
 	apiGetPastGames
-  } from "./profileApi.js";
+  } from "/js/profileApi.js";
 
   import {
 	updateProfileUI,
@@ -34,10 +34,10 @@ import {
 	renderRecentActivities,
 	renderTournamentList,
 	renderPastGames
-  } from "./profileUI.js";
+  } from "/js/profileUI.js";
   
   // Örnek olarak router, setState, getState gibi fonksiyonlar app.js'den import ediliyorsa:
-  import { router, setState, getState } from "./app.js";
+  import { router, setState, getState } from "/js/app.js";
   
   /**
    * Sayfa veya rota yüklendiğinde çağrılacak ana fonksiyon.
@@ -482,7 +482,7 @@ import {
 		}
 	}
 	catch (error) {
-		console.error("Hata:", error);
+		showToast(error, "danger");
 	}
   }
   

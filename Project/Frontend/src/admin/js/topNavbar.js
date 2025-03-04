@@ -1,5 +1,5 @@
-import { loadNavbar } from "./tools.js"
-import {router} from "../../js/app.js"
+import { loadNavbar } from "/admin/js/tools.js"
+import {router} from "/js/app.js"
 
 export async function initializeTopNavbar() {
 	await loadNavbar("top-navbar", "/admin/top-navbar.html");
@@ -59,7 +59,7 @@ async function searchUsers(query) {
         });
 
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            throw new Error(`API Error: ${response.error}`);
         }
 
         const users = await response.json(); // API'den dönen yanıt
@@ -169,7 +169,7 @@ async function getuser() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const users = await response.json(); // API'den dönen yanıt
 		// `users.message` altındaki diziye erişim
@@ -207,7 +207,7 @@ async function notice() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const users = await response.json(); // API'den dönen yanıt
 		// `users.message` altındaki diziye erişim
@@ -260,7 +260,7 @@ async function singout() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		history.pushState(null,null,`/`);
 		router();

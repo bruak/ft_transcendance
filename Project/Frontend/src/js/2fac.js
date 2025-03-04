@@ -1,4 +1,4 @@
-import { router } from './app.js';
+import { router } from '/js/app.js';
 
 // API yapılandırması: Geliştirme, test ve prod ortamlarında farklı endpoint kullanımı için 
 // bu kısmı ortam değişkenleri veya konfigürasyon dosyasından almayı değerlendirin.
@@ -252,5 +252,4 @@ function startResendTimer() {
   }, 1000);
 }
 
-// DOM yüklendiğinde 2FA işlevleri başlatılır.
-document.addEventListener('DOMContentLoaded', init2fac);
+

@@ -250,7 +250,7 @@ class GameView(View):
 	def local_game_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != 'POST':
-			return JsonResponse
+			return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			data = JSONParser().parse(request)
 			player1 = data.get('player1')
@@ -276,6 +276,7 @@ class GameView(View):
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)
 
+
 	@csrf_exempt
 	def player_status_views(request, username):
 		if request.method != 'GET':
@@ -291,7 +292,8 @@ class GameView(View):
 						"player1": match.player1,
 						"player2": match.player2,
 						"match_type": match.match_type,
-						"win": True if match.winner == username else False,
+						"winner": match.winner,
+						"updated_at": match.updated_at,  # new field
 					})
 			if p2_match:
 				for match in p2_match:
@@ -300,8 +302,10 @@ class GameView(View):
 						"player1": match.player1,
 						"player2": match.player2,
 						"match_type": match.match_type,
-						"win": True if match.winner == username else False,
+						"winner": match.winner,
+						"updated_at": match.updated_at,  # new field
 					})
+			match_list = sorted(match_list, key=lambda x: x["updated_at"], reverse=True)
 			return JsonResponse({"message": match_list}, status=200)
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)

@@ -22,7 +22,7 @@ export async function apiGetUser(username) {
     }
   });
   if (!response.ok) {
-    throw new Error(`Kullanıcı bilgisi çekilirken hata: ${response.status}`);
+    throw new Error(`Kullanıcı bilgisi çekilirken hata: ${response.error}`);
   }
   return response.json();
 }
@@ -90,7 +90,7 @@ export async function apiSendFriendRequest(username, friendUsername) { //bildiri
   });
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.message || `Arkadaşlık isteği gönderilirken hata: ${response.status}`);
+    throw new Error(data.message || `Arkadaşlık isteği gönderilirken hata: ${response.error}`);
   }
   return data;
 }
@@ -114,7 +114,7 @@ export async function apiListFriendRequests(username) {
   //   return { notFound: true };
   // }
   if (!response.ok) {
-    throw new Error(`Arkadaşlık istekleri listelenirken hata: ${response.status}`);
+    throw new Error(`Arkadaşlık istekleri listelenirken hata: ${response.error}`);
   }
   return response.json();
 }
@@ -137,7 +137,7 @@ export async function apiAcceptFriendRequest(username, friendname) { //bildirimg
     body: JSON.stringify({ username, friendname })
   });
   if (!response.ok) {
-    throw new Error(`Arkadaşlık isteği kabul edilirken hata: ${response.status}`);
+    throw new Error(`Arkadaşlık isteği kabul edilirken hata: ${response.error}`);
   }
   return response.json();
 }
@@ -155,7 +155,7 @@ export async function apiRemoveFriend(userToLoad, friendUsername) {
     body: JSON.stringify({ username: userToLoad, friendname: friendUsername })
   });
   if (!response.ok) {
-    throw new Error(`Arkadaşı silerken hata: ${response.status}`);
+    throw new Error(`Arkadaşı silerken hata: ${response.error}`);
   }
   return response.json();
 }
@@ -175,7 +175,7 @@ export async function apiListFriends(username) {
     }
   });
   if (!response.ok) {
-    throw new Error(`Arkadaş listesi alınırken hata: ${response.status}`);
+    throw new Error(`Arkadaş listesi alınırken hata: ${response.error}`);
   }
   return response.json();
 }
@@ -209,7 +209,7 @@ export async function apiCreateTournament(tournamentData) {
     body: JSON.stringify(tournamentData)
   });
   if (!response.ok) {
-    throw new Error(`Turnuva oluşturulurken hata: ${response.status}`);
+    throw new Error(`Turnuva oluşturulurken hata: ${response.error}`);
   }
   setupActiveTournamentsAccordion();
   return response.json();
@@ -360,10 +360,11 @@ export async function apiLocalMatch()
     },
     body: JSON.stringify({ player1: localStorage.getItem('username') })
   });
+  const data = await response.json();
   if (!response.ok) {
-    throw new Error(`Local match başlatılırken hata: ${response.status}`);
+    throw new Error(`${data?.data?.error || 'Maç başlatılırken hata'}`);
   }
-  return response.json();
+  return data;
 }
 
 

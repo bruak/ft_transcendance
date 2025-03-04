@@ -11,7 +11,7 @@ async function fetchWithCache(url, cacheTime = 300000) { // 5 dakika
         }
 
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP Hatası: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP Hatası: ${response.error}`);
 
         const content = await response.text();
         cache.set(url, { timestamp: now, content });
@@ -60,17 +60,17 @@ function showErrorMessage(message) {
 
 /* ======================[*] Rota Tanımlamaları [*]====================== */
 const routes = {
-    '/': { html: './views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
-    '/profile/:username': { html: './views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
-    '/about': { html: './views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
-    '/2fac': { html: './views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
-    '/GamePage': { html: './views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },
-    '/a': { html: './admin/index.html', init: () => import("/admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
-    '/forget-password/:token': { html: './views/forgot-password.html', init: (params) => import("./password.js").then(({ initPassword }) => initPassword(params)) },
-    '/verify-email/:token': { html: './views/verify_email.html', init: (params) => import("./verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
-    '/recover-password': { html: './views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
-    '/callback/': { html: './views/callback.html' },
-    '/404': { html: './views/404.html' } // 404 sayfası için yeni rota eklendi
+    '/': { html: '/views/log-reg.html', init: () => import("/js/log-reg.js").then(({ initLogReg }) => initLogReg()) },
+    '/profile/:username': { html: '/views/profile.html', init: (params) => import("/js/profileController.js").then(({ initProfileController }) => initProfileController(params)) },
+    '/about': { html: '/views/about-us.html', init: () => import("/js/about-us.js").then(({ initAbout }) => initAbout()) },
+    '/2fac': { html: '/views/2factor.html', init: () => import("/js/2fac.js").then(({ init2fac }) => init2fac()) },
+    '/GamePage': { html: '/views/game.html', init: () => import("/js/game.js").then(({ initGame }) => initGame()) },
+    '/a': { html: '/admin/index.html', init: () => import("/admin/js/admin.js").then(({ initAdmin }) => initAdmin()) },
+    '/forget-password/:token': { html: '/views/forgot-password.html', init: (params) => import("/password.js").then(({ initPassword }) => initPassword(params)) },
+    '/verify-email/:token': { html: '/views/verify_email.html', init: (params) => import("/verify-email.js").then(({ initVerifyEmail }) => initVerifyEmail(params)) },
+    '/recover-password': { html: '/views/recover-password.html', init: () => import("/js/recover-password.js").then(({ initRecoverPassword }) => initRecoverPassword()) },
+    '/callback/': { html: '/views/callback.html' },
+    '/404': { html: '/views/404.html' } // 404 sayfası için yeni rota eklendi
 };
 
 /* ======================[*] Router Fonksiyonu [*]====================== */
@@ -150,7 +150,7 @@ window.addEventListener('popstate', () => {
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     // console.log("Kullanıcı bilgisi güncellendi:", event.detail);
-    import("./profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
+    import("/js/profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
 });
 
 /* ======================[*] Kullanıcı Yetkilendirmesi Kontrolü [*]====================== */

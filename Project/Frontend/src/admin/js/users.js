@@ -1,4 +1,4 @@
-import { formatDate } from "./tools.js";
+import { formatDate } from "/admin/js/tools.js";
 
 export async function viewUserInfo(username) {
 	// Örnek veri kaynağı (gerçek API verisini burada çekebilirsiniz)

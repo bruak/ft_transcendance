@@ -1,4 +1,4 @@
-import { formatDate } from "./tools.js";
+import { formatDate } from "/admin/js/tools.js";
 import { showToast } from "/js/profileUI.js";
 
 export async function viewFriendInfo(username, friendname) {
@@ -20,7 +20,7 @@ export async function viewFriendInfo(username, friendname) {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const friend = await response.json(); // API'den dönen yanıt
 		// `users.message` altındaki diziye erişim
@@ -61,7 +61,7 @@ export async function updateFriend(username, frinedname) {
 	  });
   
 	  if (!response.ok) {
-		throw new Error(`API Error: ${response.status}`);
+		throw new Error(`API Error: ${response.error}`);
 	  }
   
 	  const user = await response.json();
@@ -136,7 +136,7 @@ export async function deleteFriend(username, friendname) {
 			});
 
 			if (!response.ok) {
-				throw new Error(`API Error: ${response.status}`);
+				throw new Error(`API Error: ${response.error}`);
 			}
 
 			// Silme işlemi başarılı
@@ -169,7 +169,7 @@ export async function fetchFriend() {
 			}
 		}); // API URL
 		if (!response.ok) {
-			throw new Error(`API Error: ${response.status}`);
+			throw new Error(`API Error: ${response.error}`);
 		}
 		const friends = await response.json(); // API'den dönen yanıt
 		// `users.message` altındaki diziye erişim
