@@ -32,18 +32,20 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		except requests.RequestException as e:
 			# Log the error or handle it as needed
 			print(f"Error sending notification: {e}")
-
-	async def save_match_data(self, winner):
-		score = f"{self.game_state['players']['player1']['score']}:{self.game_state['players']['player2']['score']}"
-		self.match.status = "finished"
-		self.match.score = score
-		self.match.winner = self.match.player1 if winner == "player1" else self.match.player2
-		self.match.updated_at = timezone.now()
-		await sync_to_async(self.match.save)()
-		await self.broadcast_game_status("game_over")
-		if self.match.match_type == 'T':
-			await self.handle_tournament_progression()
 		
+	async def save_match_data(self, winner):
+		try:
+			score = f"{self.game_state['players']['player1']['score']}:{self.game_state['players']['player2']['score']}"
+			self.match.status = "finished"
+			self.match.score = score
+			self.match.winner = self.match.player1 if winner == "player1" else self.match.player2
+			self.match.updated_at = timezone.now()
+			await sync_to_async(self.match.save)()
+			await self.broadcast_game_status("game_over")
+			if self.match.match_type == 'T':
+				await self.handle_tournament_progression()
+		except Exception as e:
+			print(f"Error saving match data: {e}")
 
 	async def handle_tournament_progression(self):
 		tournament = await sync_to_async(lambda: self.match.tournament)()
@@ -101,7 +103,8 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 				"guest": None,
 				"spectators": [],
 				"game_state": self.create_initial_game_state(),
-				"game_loop_running": False
+				"game_loop_running": False,
+				"game_finished": False
 			}
 
 		room_info = self.room_data[self.room_name]
@@ -131,12 +134,21 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 			elif self.channel_name in room_info["spectators"]:
 				room_info["spectators"].remove(self.channel_name)
 
-			if self.player_id in ['player1', 'player2'] and self.room_data.get(self.room_name, {}).get("game_loop_running"):
-				self.room_data[self.room_name]["game_loop_running"] = False
+			if self.player_id in ['player1', 'player2'] and room_info["game_finished"] == False:
 				self.match.status = "canceled"
 				await sync_to_async(self.match.save)()
+				if room_info["game_loop_running"]:
+					self.game_state['players']['player1']['score'] = 0 
+					self.game_state['players']['player2']['score'] = 0 
+					winner = "player2" if self.player_id == "player1" else "player1"
+					print("dflkbghdiuckngxdfjgpxdijrfrnhgv[ozdrunfgv[outnj']]",winner)
+					await self.save_match_data(winner)
+					room_info["game_loop_running"] = False
+
+
 			if room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"] and self.room_name in self.room_data:
 				del self.room_data[self.room_name]
+
 
 	async def receive(self, text_data=None, bytes_data=None):
 		if self.player_id == 'spectator':
@@ -229,6 +241,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 				self.update_ball_position()
 				if p2['score'] >= 5 or p1['score'] >= 5:
 					winner = "player1" if p1['score'] > p2['score'] else "player2"
+					room_info["game_finished"] = True
 					room_info["game_loop_running"] = False
 					await self.save_match_data(winner)
 					break

@@ -23,11 +23,9 @@ class GameView(View):
 				return JsonResponse({"error": get_translated_message("USERNAME_IS_REQUIRED", user_language)}, status=400)
 			match_query = Match.objects.filter(match_type='M',player2__isnull=True)
 
-			waiting_match = match_query.filter(player1=username, status='waiting').first()
-			if waiting_match:
-				return JsonResponse({"match_id": waiting_match.id, "detail_url": f"game/room_{waiting_match.id}/" }, status=200)
-
-			available_match = match_query.filter(status='waiting').first()
+			for match in match_query:
+				print("  match ",match)
+			available_match = match_query.filter(status='waiting').exclude(player1=username).first()
 			if available_match:
 				available_match.player2 = username
 				available_match.status = 'playing'
@@ -37,6 +35,13 @@ class GameView(View):
 					"match_id": available_match.id,
 					"detail_url": f"game/room_{available_match.id}/"
 				}, status=200)
+
+			cancelled_match = match_query.filter(player1=username, status='canceled').first()
+			if cancelled_match:
+				cancelled_match.status = 'waiting'
+				cancelled_match.updated_at = timezone.now()
+				cancelled_match.save()
+				return JsonResponse({"match_id": cancelled_match.id, "detail_url": f"game/room_{cancelled_match.id}/" }, status=200)
 
 			new_match = Match.objects.create(match_type='M', player1=username, status='waiting')
 			return JsonResponse({"match_id": new_match.id, "detail_url": f"game/room_{new_match.id}/" }, status=200)

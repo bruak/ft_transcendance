@@ -12,7 +12,10 @@ from rest_framework.parsers import JSONParser
 from django.db.models import Q
 import uuid
 import requests
+import os
 
+
+# Kontrol Edildi
 class AuthRequest(View):
 	@csrf_exempt
 	def singout(request):
@@ -71,6 +74,7 @@ class AuthRequest(View):
 					type="verify",
 					expiration=timezone.now() + timedelta(hours=24),
 				)
+				ip = os.getenv("DOMAIN")
 				mail_url = f"{ip}/verify-email/{token}"
 				headers = {"Accept-Language": user_language}
 				mail_data = {
@@ -212,6 +216,7 @@ class AuthRequest(View):
 		except Exception as e:
 			return JsonResponse({'error': get_translated_message("TOKEN_NOT_FOUND", user_language)}, status=403)
 
+	# Accsestoken'daki username dönem
 	@csrf_exempt
 	def validate_token(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -236,7 +241,6 @@ class AuthRequest(View):
 			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			mail = MailTokens.objects.get(type=type, token=token, status=True)
-			print(mail.status)
 			return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200) 	   
 		except MailTokens.DoesNotExist:
 			return JsonResponse({'error': get_translated_message('NOT_FOUND_USER', user_language)}, status=404)

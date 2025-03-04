@@ -275,8 +275,8 @@ export function initLogReg() {
      * @returns {boolean} - Karmaşıksa true, aksi halde false
      */
     function validatePasswordComplexity(password) {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return regex.test(password);
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+         return regex.test(password);
     }
 
     /**
@@ -565,6 +565,7 @@ export function initLogReg() {
                 isFormValid = false;
             }
 
+
             if (!username) {
                 showFieldError(document.getElementById('register-username'), 'Kullanıcı adı alanı zorunludur', 'username-error');
                 isFormValid = false;
@@ -578,10 +579,12 @@ export function initLogReg() {
             if (!password) {
                 showFieldError(document.getElementById('register-password'), 'Şifre alanı zorunludur', 'password-error');
                 isFormValid = false;
-            } else if (!validatePasswordComplexity(password)) {
+            } 
+            else if (!validatePasswordComplexity(password)) {
                 showFieldError(document.getElementById('register-password'), 'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.', 'password-error');
                 isFormValid = false;
             }
+
 
             if (!avatar) {
                 showFieldError(document.getElementById('register-avatar'), 'Profil fotoğrafı zorunludur', 'avatar-error');

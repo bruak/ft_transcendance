@@ -100,7 +100,7 @@ services:
     env_file:
       - .env
     ports:
-      - 8000:8000
+      - 8003:8000
     depends_on:
       - auth_db
     environment:
@@ -134,7 +134,7 @@ services:
     env_file:
       - .env
     ports:
-      - 8080:443
+      - 8000:443
     volumes:
       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars
       - ./Frontend:/run/nginx/html
@@ -185,22 +185,8 @@ services:
       - webnet
     env_file:
       - .env
-    depends_on:
-      - gateway_db
     environment:
       - DB_HOST=gateway_db
-      - POSTGRES_DB=gateway
-
-  gateway_db:
-    image: postgres:13
-    container_name: gateway_db
-    env_file:
-      - .env
-    networks:
-      - webnet
-    expose:
-      - 5432
-    environment:
       - POSTGRES_DB=gateway
 
   translation:
@@ -213,24 +199,10 @@ services:
       - webnet
     env_file:
       - .env
-    depends_on:
-      - translation_db
     environment:
       - DB_HOST=translation_db
       - POSTGRES_DB=translation
       - LANG=C.UTF-8
-
-  translation_db:
-    image: postgres:13
-    container_name: translation_db
-    env_file:
-      - .env
-    networks:
-      - webnet
-    expose:
-      - 5432
-    environment:
-      - POSTGRES_DB=translation
     
 # MONITORING START HERE
 # IT HAS TO DOIN FINE TUNES
@@ -306,20 +278,7 @@ services:
       - webnet
     env_file:
       - .env
-    depends_on:
-      - notification_db
     environment:
       - DB_HOST=notification_db
       - POSTGRES_DB=notification
  
-  notification_db:
-    image: postgres:13
-    container_name: notification_db
-    env_file:
-      - .env
-    networks:
-      - webnet
-    expose:
-      - 5432
-    environment:
-      - POSTGRES_DB=notification

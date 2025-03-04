@@ -49,7 +49,7 @@ function disposeObject(obj) {
     }
 }
 
-function cleanupGame() {
+export function cleanupGame() {
     console.log('Cleaning up game...');
     if (gameState.animationId) {
         cancelAnimationFrame(gameState.animationId);

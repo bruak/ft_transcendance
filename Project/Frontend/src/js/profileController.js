@@ -38,7 +38,7 @@ import {
   
   // Örnek olarak router, setState, getState gibi fonksiyonlar app.js'den import ediliyorsa:
   import { router, setState, getState } from "/js/app.js";
-  
+  import { cleanupGame  } from "/js/game.js";
   /**
    * Sayfa veya rota yüklendiğinde çağrılacak ana fonksiyon.
    * Eski "initProfile" fonksiyonunun temel mantığını barındırır.
@@ -48,7 +48,7 @@ import {
 	let socket = null;
   	const access_token = localStorage.getItem("accessToken");
 	// Initialize WebSocket connection
-	function initWebSocket() {
+	function initWebSocket(currentUser, userToLoad) {
 		if (socket) {
 			// Close existing connection if it exists
 			socket.close();
@@ -66,6 +66,9 @@ import {
 			console.log("WebSocket message:", message);
 
 			if (message === "friend_request") {
+				if (userToLoad === currentUser) {
+					showFriendRequestsSection(userToLoad);
+				}
 				updateNotifications();
 			}
 			else if (message === "create_tournaments" || message === "join_tournaments" || message === "start_tournaments") {
@@ -73,6 +76,7 @@ import {
 			}
 			else if (message === "recent_activities") {
 				loadRecentActivities();
+				loadPastGames(userToLoad);
 			}
 		};
 
@@ -98,7 +102,7 @@ import {
 	  const isOwnProfile = userToLoad === currentUser;
   
 	  // Initialize WebSocket for notifications
-	  initWebSocket();
+	  initWebSocket(currentUser,userToLoad);
 
 	  // 3) Profil verisini API'den çek ve UI güncelle
 	  await loadProfileData(userToLoad, isOwnProfile);
@@ -634,6 +638,7 @@ async function loadPastGames(userToLoad) {
 	// Örnek:
 	// friendSearchInput.removeEventListener('input', ...);
 	// setInterval veya setTimeout temizliği
+	cleanupGame();
 	console.log("Profile cleanup yapıldı (örnek).");
   }
 

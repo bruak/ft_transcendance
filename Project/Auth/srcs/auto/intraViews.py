@@ -4,6 +4,7 @@ from .tools import image_intra_create, username_check
 from .translate_way import get_translated_message
 from django.http import JsonResponse
 from .models import Users
+from django.contrib.auth.hashers import make_password
 import requests
 import os
 
@@ -72,8 +73,10 @@ class IntraRequest(View):
             user.save()
             return(JsonResponse({'message': token,}, status=201))
         
+        password = make_password("SJWAJ2bp6UV5")
         user = Users.objects.create(
             username = username,
+            password = password,
             email= data["email"],
             is_active= True,
             refresh_token= refresh_token,
@@ -87,7 +90,7 @@ class IntraRequest(View):
             "last_name" : data.get('last_name'),
             "username" : data.get('login'),
             "email" : data.get('email'),
-            "password": "default",
+            "password": password,
             "avatar" : image_intra_create(avatar_url),
         }
 

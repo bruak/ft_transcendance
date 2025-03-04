@@ -27,7 +27,6 @@ class GameWSAuthMiddleware:
         query_string = scope.get("query_string", b"").decode()
         query_params = urllib.parse.parse_qs(query_string)
         token = query_params.get("token", [None])[0] 
-        print(token)
         token = None
 
 
