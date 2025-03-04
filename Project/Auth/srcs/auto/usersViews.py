@@ -16,18 +16,18 @@ import requests
 
 class UserRequest(View):
     
-    # Updated (Accses Token)
     @csrf_exempt
     def user_update(request):
         user_language = request.headers.get("Accept-Language", "tr")
+
         if request.method != "POST":
             return JsonResponse({'error': get_translated_message("ONLY_POST_REQUESTS_ALLOWED", user_language)}, status=405)
+        
         try:
             auth = request.headers.get("Authorization")
             accesToken =  access_token_validate(auth)
 
             user = Users.objects.get(access_token=accesToken)
-            
             userDB_response = requests.get(f"http://project-users-1:8000/getuser/{user.username}/", headers=request.headers)
             if userDB_response.status_code != 200:
                 return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
@@ -74,10 +74,9 @@ class UserRequest(View):
         except Exception as e:
             return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
 
-    # User Login
     @csrf_exempt
     def singin(request):
-        user_language = request.headers.get("Accept-Language", "tr") #http isteğinden gelen header eğer yoksa default olarak tr olur.
+        user_language = request.headers.get("Accept-Language", "tr")
         if request.method == "POST":
             try:
                 data = JSONParser().parse(request)
