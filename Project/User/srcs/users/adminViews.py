@@ -14,7 +14,7 @@ class UserAdminRequest(View):
             return JsonResponse({"error": get_translated_message("ONLY_DELETE_REQUESTS_ALLOWED", user_language)}, status=405)
         try:
             user = User.objects.get(username=username)
-            user.delete()  # Delete the user
+            user.delete()
             return JsonResponse({"message": get_translated_message("SUCCESSFUL", user_language)}, status=200)
         except User.DoesNotExist:
             return JsonResponse({"error": get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
@@ -35,6 +35,7 @@ class UserAdminRequest(View):
         user_language = request.headers.get("Accept-Language", "tr")
         if request.method != "GET":
             return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+        
         try:
             user = User.objects.get(username=username)
             serializer = UserSerializer(user)

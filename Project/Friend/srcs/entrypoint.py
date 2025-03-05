@@ -6,6 +6,7 @@ import psycopg2
 from django.core.management import execute_from_command_line, call_command
 from django.contrib.auth import get_user_model
 from friend_service.settings import DEBUG
+
 def main():
     i = 0
     while 1:

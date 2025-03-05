@@ -132,6 +132,11 @@ document.addEventListener('click', (event) => {
             window.cleanupProfile();
             delete window.cleanupProfile;
         }
+        if (typeof window.cleanup === 'function')
+        {
+            window.cleanup();
+            delete window.cleanup;
+        }
         router(); // Sayfayı güncelle
     }
 });
@@ -143,6 +148,11 @@ window.addEventListener('popstate', () => {
     if (typeof window.cleanupProfile === 'function') {
         window.cleanupProfile();
         delete window.cleanupProfile;
+    }
+    if (typeof window.cleanup === 'function')
+    {
+        window.cleanup();
+        delete window.cleanup;
     }
     router();
 });

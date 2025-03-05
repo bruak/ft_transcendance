@@ -19,11 +19,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/GamePage" data-link>
-                            <i class="bi bi-controller" aria-hidden="true"></i> Game
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="/about" data-link>
                             <i class="bi bi-info-circle" aria-hidden="true"></i> About
                         </a>
@@ -112,10 +107,7 @@
                     </div>
                     <div class="col-md-4 text-center text-md-start">
                         <h1 id="profileNameDisplay" class="profile-name" id="profileHeader"></h1>
-                        <p class="title"><i class="bi bi-person" aria-hidden="true"></i> <span
-                                id="profileTitleDisplay"></span></p>
-                        <p><i class="bi bi-geo-alt" aria-hidden="true"></i> <span id="profileLocationDisplay"></span>
-                        </p>
+                        <p class="title"><i class="bi bi-person" aria-hidden="true"></i> <span id="profileTitleDisplay"></span></p>
                     </div>
                     <div class="col-md-4 text-center" id="profileActions">
                         <!-- Arkadaşlar Modalını açar -->
@@ -129,7 +121,7 @@
         </section>
 
         <!-- Oyun Seçenekleri Bölümü -->
-        <section class="my-5" aria-labelledby="gameOptionsHeader">
+        <section class="my-5" aria-labelledby="gameOptionsHeader" id="gameOptionsSection">
             <h2 class="text-center" id="gameOptionsHeader"><i class="bi bi-controller" aria-hidden="true"></i> Oyun
                 Seçenekleri</h2>
             <div class="card p-4 glass-effect" id="gameOptions" role="region" aria-label="Game options selection">
@@ -243,7 +235,7 @@
         </div>
 
         <!-- Aktif Turnuvalar -->
-        <section class="my-5" aria-labelledby="activeTournamentsHeader">
+        <section class="my-5" aria-labelledby="activeTournamentsHeader" id="activeTournamentsSection">
             <h2 class="text-center" id="activeTournamentsHeader"><i class="bi bi-trophy" aria-hidden="true"></i> Aktif
                 Turnuvalar</h2>
             <div class="accordion glass-effect position-relative" id="activeTournamentsAccordion"
@@ -268,7 +260,7 @@
 
         <!-- Son Etkinlikler -->
         <section class="my-5" aria-labelledby="recentActivitiesHeader">
-            <h2 class="text-center" id="recentActivitiesHeader">Son Etkinlikler</h2>
+            <h2 class="text-center bi bi-activity" id="recentActivitiesHeader">Oynanan maçlar</h2>
             <ul id="recentActivitiesList" class="list-group position-relative"
                 style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
                 role="list" aria-label="Recent activities"></ul>
@@ -278,7 +270,7 @@
 
         <!-- Geçmiş Oyunlar -->
         <section class="my-5" aria-labelledby="pastGamesHeader">
-            <h2 class="text-center" id="pastGamesHeader">Geçmiş Oyunlar</h2>
+            <h2 class="text-center bi bi-clock-history" id="pastGamesHeader"> Geçmiş Oyunlar</h2>
             <ul id="pastGamesList" class="list-group position-relative"
             style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
                 role="list" aria-label="Geçmiş oyunlar"></ul>
@@ -347,28 +339,19 @@
                     <div class="modal-body">
                         <form id="settingsForm">
                             <div class="mb-3">
-                                <label for="settingsEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="settingsEmail" aria-required="true">
-                            </div>
-                            <div class="mb-3">
-                                <label for="settingsPassword" class="form-label">Şifre</label>
-                                <input type="password" class="form-control" id="settingsPassword" aria-required="true">
-                            </div>
-                            <div class="mb-3">
                                 <label for="profileName" class="form-label">İsim</label>
-                                <input type="text" class="form-control" id="profileName" aria-required="true">
+                                <input type="text" class="form-control" id="settingsFname" aria-required="true">
                             </div>
                             <div class="mb-3">
-                                <label for="profileTitle" class="form-label">Başlık</label>
-                                <input type="text" class="form-control" id="profileTitle">
-                            </div>
-                            <div class="mb-3">
-                                <label for="profileLocation" class="form-label">Blog</label>
-                                <input type="text" class="form-control" id="profileLocation">
+                                <label for="profileTitle" class="form-label">Soyisim</label>
+                                <input type="text" class="form-control" id="settingsLname" aria-required="true">
                             </div>
                             <div class="mb-3">
                                 <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
-                                <input type="file" class="form-control" id="profileImage" accept="image/*">
+                                <input type="file" class="form-control" id="register-avatar" accept="image/*">
+                                <div class="text-center py-3">
+                                    <img id="avatar-preview" class="d-none mx-auto rounded-circle img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary" aria-label="Save settings">Kaydet</button>
                         </form>
@@ -381,6 +364,6 @@
 
     <!-- Footer -->
     <footer class="glass-effect text-center" role="contentinfo">
-        <p><i class="bi bi-code-slash" aria-hidden="true"></i> 2025 Tüm hakları saklı değildir.</p>
+        <p><i class="bi bi-code-slash" aria-hidden="true"></i> 2025 Tüm hakları satılıktır.</p>
     </footer>
 </div>

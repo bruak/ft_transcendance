@@ -1,3 +1,4 @@
+
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
@@ -8,6 +9,14 @@ import random
 from game.models import Match, Tournament
 from time import time
 import requests
+from django.conf import settings
+import redis
+
+redis_client = redis.StrictRedis(
+    host=getattr(settings, "REDIS_HOST", "redis"),
+    port=getattr(settings, "REDIS_PORT", 6379),
+    db=0
+)
 
 class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 	room_data = {}
@@ -18,19 +27,17 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		super().__init__(*args, **kwargs)
 		self.groups = []
 		self.speed_timer = 0
-		self.player_id = None  
+		self.player_id = None
 
 	async def update_match_status(self, new_status):
 		self.match.status = new_status
 		self.match.updated_at = timezone.now()
 		await sync_to_async(self.match.save)()
 
-		# Send POST request to notification service with error handling
 		try:
 			response = requests.post('http://notification:8000/create/', json={"message": "recent_activities"})
-			response.raise_for_status()  # Raise an exception for HTTP errors
+			response.raise_for_status()
 		except requests.RequestException as e:
-			# Log the error or handle it as needed
 			print(f"Error sending notification: {e}")
 		
 	async def save_match_data(self, winner):
@@ -54,7 +61,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		match_count = await sync_to_async(Match.objects.filter(tournament=tournament, status="finished").count)()
 		if int(match_count) == int(tournament.player_limit - 1):
 			tournament.status = "finished"
-			tournament.winner = current_winner  # Save the winner to the tournament model
+			tournament.winner = current_winner
 			tournament.updated_at = timezone.now()
 			await sync_to_async(tournament.save)()
 			return
@@ -113,6 +120,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		match_id = int(self.room_name.split("_")[1])
 		self.match = await sync_to_async(Match.objects.get)(id=match_id)
 		await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+		redis_client.sadd("online_users", self.scope["user"].username)
 		await self.accept()
 
 		await self.handle_player_connection(room_info)
@@ -123,6 +131,7 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 
 	async def disconnect(self, close_code):
 		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+		redis_client.srem("online_users", self.scope["user"].username)
 
 		if self.room_name in self.room_data:
 			room_info = self.room_data[self.room_name]
@@ -134,17 +143,13 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 			elif self.channel_name in room_info["spectators"]:
 				room_info["spectators"].remove(self.channel_name)
 
-			if self.player_id in ['player1', 'player2'] and room_info["game_finished"] == False:
-				self.match.status = "canceled"
-				await sync_to_async(self.match.save)()
-				if room_info["game_loop_running"]:
-					self.game_state['players']['player1']['score'] = 0 
-					self.game_state['players']['player2']['score'] = 0 
-					winner = "player2" if self.player_id == "player1" else "player1"
-					print("dflkbghdiuckngxdfjgpxdijrfrnhgv[ozdrunfgv[outnj']]",winner)
-					await self.save_match_data(winner)
-					room_info["game_loop_running"] = False
-
+			if room_info["game_loop_running"] and self.player_id in ['player1', 'player2']:
+				winner = "player2" if self.player_id == "player1" else "player1"
+				await self.save_match_data(winner)
+				room_info["game_loop_running"] = False
+				room_info["game_finished"] = True
+			elif self.player_id in ['player1', 'player2'] and room_info["game_finished"] == False and room_info["game_loop_running"] == False:
+				await self.update_match_status("canceled")
 
 			if room_info["host"] == 'disconnected' and room_info["guest"] == 'disconnected' and not room_info["spectators"] and self.room_name in self.room_data:
 				del self.room_data[self.room_name]

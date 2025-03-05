@@ -12,9 +12,9 @@ class UserSerializer(serializers.ModelSerializer):
             self.fields.pop('email')
 
     def create(self, validated_data):
-        # Gelen avatar verisini işliyoruz
+
         avatar = validated_data.get('avatar')
-        if not avatar:  # Eğer avatar gönderilmemişse varsayılan bir avatar atayın
+        if not avatar:
             validated_data['avatar'] = "/media/avatars/default.jpg"
         return super().create(validated_data)
 
@@ -22,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         request = self.context.get('request')
         if instance.avatar and request:
-            # Avatar alanına tam bir URL ekleyin
             representation['avatar'] = request.build_absolute_uri(instance.avatar)
         return representation
     
@@ -32,9 +31,9 @@ class AdminSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        # Gelen avatar verisini işliyoruz
+
         avatar = validated_data.get('avatar')
-        if not avatar:  # Eğer avatar gönderilmemişse varsayılan bir avatar atayın
+        if not avatar:
             validated_data['avatar'] = "/media/avatars/default.jpg"
         return super().create(validated_data)
 
@@ -42,6 +41,5 @@ class AdminSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         request = self.context.get('request')
         if instance.avatar and request:
-            # Avatar alanına tam bir URL ekleyin
             representation['avatar'] = request.build_absolute_uri(instance.avatar)
         return representation

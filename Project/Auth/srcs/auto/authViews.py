@@ -18,25 +18,6 @@ import os
 # Kontrol Edildi
 class AuthRequest(View):
 	@csrf_exempt
-	def singout(request):
-		user_language = request.headers.get("Accept-Language", "tr")
-		if request.method != "GET":
-			return JsonResponse({'error': get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
-		try:
-			header = request.headers.get("Authorization")
-			if header.startswith("Bearer "):
-				access_token = header.split(" ", 1)[1]
-			else:
-				return JsonResponse({'error': get_translated_message("INVALID_TOKEN_SIGNOUT", user_language)}, status=401)
-			user = Users.objects.get(access_token=access_token)
-			user.refresh_token = None
-			user.access_token = None
-			user.save()
-			return JsonResponse({'message': get_translated_message("USER_SIGNOUT_SUCCESS", user_language)}, status=200)
-		except Exception as e:
-			return (JsonResponse({'error': get_translated_message("USER_SIGNOUT_PROBLEM", user_language)}, status=500))
-
-	@csrf_exempt
 	def twofactor(request):
 		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
@@ -229,11 +210,11 @@ class AuthRequest(View):
 
 		try:
 			user = Users.objects.get(username=username)
+			if user.access_token != access_token:
+				return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
+			return JsonResponse({'valid': True, 'username' : username}, status = 200)
 		except:
 			return JsonResponse({'error': get_translated_message("USER_NOT_FOUND", user_language)}, status=404)
-		if user.access_token != access_token:
-			return JsonResponse({'error': get_translated_message("INVALID_TOKEN_VALIDATE", user_language)},status=401)
-		return JsonResponse({'valid': True, 'username' : username}, status = 200)
 
 	def validate_mail_token(request, type, token):
 		user_language = request.headers.get("Accept-Language", "tr")

@@ -10,7 +10,7 @@ from django.http import JsonResponse
 @csrf_exempt
 def handle_post(request):
 	user_language = request.headers.get("Accept-Language", "tr")
-	target_url = request.path  # Path middleware'den gelir
+	target_url = request.path
 	if request.content_type == "application/json":
 		if not request.body:
 			return JsonResponse({'error': get_translated_message("EMPTY_REQUEST_BODY", user_language)}, status=500)
@@ -41,14 +41,11 @@ def handle_delete(request):
 	target_url = request.path
 	try:
 		headers = {"Accept-Language": request.headers.get("Accept-Language", "tr"), "Authorization" : request.headers.get("Authorization", None)} 
-		# DELETE isteği gönderiyoruz
 		response = requests.delete(target_url, headers=headers)
-		
-		# Yanıtın boş olup olmadığını kontrol et
+
 		if response.text.strip() == '':
 			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
-		
-		# Yanıtı JSON olarak çözümle
+
 		response_json = response.json()
 
 		if response.status_code == 200 or response.status_code == 204:
@@ -68,10 +65,10 @@ def handle_get(request):
 		response = requests.get(target_url, headers=headers)
 		if response.status_code not in (200, 201):
 			return JsonResponse({'error': get_translated_message("REQUEST_FAILED", user_language), 'status_code': response.status_code, 'data': response.json()}, status=response.status_code)
-		# Yanıtın boş olup olmadığını kontrol et
+
 		if response.text.strip() == '':
 			return JsonResponse({'error': get_translated_message("EMPTY_RESPONSE_TARGET_URL", user_language)}, status=500)
-		# Yanıtı JSON olarak çözümle
+
 		try:
 			response_json = response.json()
 			if response_json.get('url') is not None:
@@ -84,7 +81,7 @@ def handle_get(request):
 
 def handle_formdata(request):
 	user_language = request.headers.get("Accept-Language", "tr")
-	target_url = request.path  # Path middleware'den gelir
+	target_url = request.path
 	try:
 		files = None
 		if request.FILES:

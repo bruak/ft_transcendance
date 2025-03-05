@@ -34,7 +34,7 @@ export async function apiGetUser(username) {
  * @returns {Promise<Object>}
  */
 export async function apiUpdateUserProfile(formData) {
-  const response = await fetch(`${apiBaseUrl}/user/update_profile/`, {
+  const response = await fetch(`${apiBaseUrl}/auth/put/`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -43,6 +43,9 @@ export async function apiUpdateUserProfile(formData) {
     },
     body: formData
   });
+  if (!response.ok) {
+    throw new Error(`Kullanıcı bilgisi güncellenirken hata: ${response.error}`);
+  }
   return response.json();
 }
 

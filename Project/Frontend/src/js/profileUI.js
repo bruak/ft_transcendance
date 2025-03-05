@@ -5,9 +5,12 @@
  * @param {Object} user - Sunucudan dönen kullanıcı verisi (user.data formatında)
  */
 
+const currentUser = localStorage.getItem("username") || null;
+
+
 import { apiListFriendRequests } from '/js/profileApi.js';
 
-export function updateProfileUI(user) {
+export function updateProfileUI(user, isOwnProfile) {
 	const userData = user.data;
 	if (!userData || typeof userData !== 'object') {
 	  console.error("Beklenen formatta user datası yok:", user);
@@ -17,24 +20,21 @@ export function updateProfileUI(user) {
 	// Profil isim alanları
 	const profileNameEl = document.getElementById('profileNameDisplay');
 	const profileTitleEl = document.getElementById('profileTitleDisplay');
-	const profileLocationEl = document.getElementById('profileLocationDisplay');
   
 	if (profileNameEl) {
 	  profileNameEl.textContent = `${userData.first_name} ${userData.last_name}`;
 	}
 	if (profileTitleEl) {
-	  profileTitleEl.textContent = userData.title || 'Ayarlanmamış';
-	}
-	if (profileLocationEl) {
-	  profileLocationEl.textContent = userData.location || 'Ayarlanmamış';
+	  profileTitleEl.textContent = userData.username || 'Ayarlanmamış';
 	}
   
 	// Profil fotoğrafları
-	const avatarUrl = userData.avatar || 'img/default-avatar.png';
+	const avatarUrl = userData.avatar || '/img/default-avatar.png';
+	const smallAvatarUrl = isOwnProfile ? userData.avatar : localStorage.getItem("profile_img") || '/img/default-avatar.png'; 
 	const profileImg = document.getElementById('profileImageDisplay');
 	const smallPhoto = document.getElementById('profileSmallPhoto');
 	if (profileImg) profileImg.src = avatarUrl;
-	if (smallPhoto) smallPhoto.src = avatarUrl;
+	if (smallPhoto) smallPhoto.src = smallAvatarUrl;
   }
 
 
@@ -160,10 +160,12 @@ export function updateProfileUI(user) {
 	}
 	let html = '<ul class="list-group">';
 	friendsArr.forEach(friendObj => {
+	  const successOrDanger = friendObj.online ? 'bg-success' : 'bg-danger';
+
 	  const friendUsername = friendObj.friendname;
 	  html += `
 		<li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
-		  <span><span class="badge bg-success me-2"><i class="bi bi-person-check"></i></span>${friendUsername}</span>
+		  <span><span class="badge ${successOrDanger} me-2"><i class="active bi bi-person"></i></span>${friendUsername}</span>
 		  ${
 			canRemove 
 			  ? `<button class="btn btn-sm btn-danger" data-friend="${friendUsername}">Kaldır</button>` 
@@ -250,7 +252,7 @@ export function updateProfileUI(user) {
    */
   export function renderRecentActivities(container, activities) {
 	if (!activities || activities.length === 0) {
-	  container.innerHTML = '<li class="list-group-item bg-dark text-white">Henüz etkinlik yok.</li>';
+	  container.innerHTML = '<li class="p-3 text-center">Henüz etkinlik yok.</li>';
 	  return;
 	}
 	container.innerHTML = activities.map(activity => {
@@ -267,7 +269,7 @@ export function updateProfileUI(user) {
   
   export function renderPastGames(container, games) {
     if (!games || games.length === 0) {
-        container.innerHTML = '<li class="list-group-item text-center text-white bg-dark">Henüz geçmiş oyun bulunmamaktadır.</li>';
+        container.innerHTML = '<li class="p-3 text-center">Henüz geçmiş oyun bulunmamaktadır.</li>';
         return;
     }
 
@@ -283,14 +285,96 @@ export function updateProfileUI(user) {
 
         const matchIcon = matchIcons[game.match_type] || "bi-question-circle"; // Varsayılan ikon
 
-        return `
-          <li class="list-group-item d-flex align-items-center bg-dark text-white p-3 border-0 rounded mb-2 shadow-sm">
-            <i class="bi ${matchIcon} fs-4 me-3 text-warning"></i>
-            <div class="flex-grow-1">
-              <strong class="fs-5">${game.player1} vs ${game.player2}</strong>
-            </div>
-            <span class="badge bg-success fs-6 px-3 py-2">${game.winner}</span>
-          </li>`;
+		const formattedDate = new Date(game.updated_at).toLocaleString();
+		return `
+<li class="game-card d-flex gap-3 p-4 mb-3 bg-dark-2 rounded-4 border border-dark">
+  <!-- Sol Taraf -->
+  <div class="d-flex flex-column flex-grow-1">
+	<div class="d-flex align-items-center gap-2 mb-2">
+	  <i class="bi ${matchIcon} fs-4 text-primary"></i>
+	  <small class="text-center date-font">${formattedDate}</small>
+	  
+	<div class="game-result ${game.winner === currentUser ? 'victory' : 'defeat'} ms-auto">
+		${game.winner === currentUser ? 'VICTORY' : 'DEFEAT'}
+	</div>
+	</div>
+	<div class="player-versus">
+	  <div class="player ${game.winner === game.player1 ? 'winner' : ''}">
+		${game.player1}
+	  </div>
+	  <div class="vs-badge text-xs">VS</div>
+	  <div class="player ${game.winner === game.player2 ? 'winner' : ''}">
+		${game.player2}
+	  </div>
+	</div>
+  </div>
+</li>
+
+<style>
+  .game-card {
+	transition: transform 0.2s;
+	background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+	color: white;
+	font-family: Arial, sans-serif;
+  }
+  
+  .player-versus {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	gap: 1rem;
+  }
+
+  .player {
+	padding: 8px 12px;
+	border-radius: 6px;
+	background: #333;
+	text-align: center;
+	transition: all 0.3s;
+  }
+
+  .player.winner {
+	background: #2a722a;
+	box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+  }
+
+  .vs-badge {
+	background: #444;
+	padding: 2px 10px;
+	border-radius: 20px;
+	font-weight: 700;
+	color: #888;
+  }
+
+  .game-result {
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 0.8rem;
+  }
+
+  .victory {
+	background: #28a745;
+	color: white;
+  }
+
+  .defeat {
+	background: #dc3545;
+	color: white;
+  }
+
+  .bg-dark-2 {
+	background-color: #1e1e1e;
+  }
+
+  .date-font {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.9rem;
+  }
+</style>
+
+`;
     }).join('');
 }
 
@@ -310,17 +394,18 @@ export function updateProfileUI(user) {
 		return `
 		<li class="list-group-item tournament-match-item">
 			<div class="match-players">
-				<i class="bi bi-trophy-fill text-warning me-2"></i>
+				<i class="bi bi-trophy-fill text-warning me-2" aria-hidden="true"></i>
 				<strong>${match.player1}</strong>
 				<span class="vs-text mx-2">VS</span>
 				<strong>${match.player2}</strong>
 			</div>
 			<div class="match-actions ms-auto">
-				<button class="btn btn-sm btn-success play-match" data-detailurl="${match.detail_url}">
-					<i class="bi bi-controller"></i> Maça Git
+				<button class="btn btn-sm btn-success play-match" data-detailurl="${match.detail_url}" aria-label="Join match">
+					<i class="bi bi-controller" aria-hidden="true"></i> Maça Git
 				</button>
 			</div>
-		</li>`;
+		</li>
+		`;
 	}).join('');
 }
 

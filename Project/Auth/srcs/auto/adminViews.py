@@ -69,8 +69,6 @@ class AdminRequest(View):
 		except Exception as e:
 			return JsonResponse({'error': get_translated_message("USER_UPDATE_ERROR", user_language), 'exception': str(e)}, status=500)
 
-
-
 	# Admin'mi Diye Kontrol
 	def validate_admin(request):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -106,7 +104,6 @@ class AdminRequest(View):
 			user = Users.objects.get(username=username)
 			
 			userDB_response = requests.get(f"http://project-users-1:8000/adminuser/{user.username}/", headers=headers)
-			print(userDB_response.status_code)
 			avatar_path = f"/app/{userDB_response.json().get('message').get('avatar')}"
 			# Kullanıcının avatarını ve diğer verilerini silme işlemi
 			if avatar_path != '/media/avatars/default.jpg' and avatar_path:
@@ -114,7 +111,6 @@ class AdminRequest(View):
 					os.remove(avatar_path)
 
 			user_response = requests.delete(f"http://project-users-1:8000/delete/{user.username}/", headers=request.headers)
-			print(user_response.status_code)
 			if user_response.status_code != 200:
 				return JsonResponse({'error': get_translated_message("USER_DELETE_ERROR", user_language)}, status=500)
 			user.delete()
@@ -131,7 +127,6 @@ class AdminRequest(View):
 			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			user = Users.objects.get(username=username)
-			print(user.is_active)
 			data = {
 				"is_active": user.is_active,
 				"status" : user.status,
@@ -216,7 +211,6 @@ class AdminRequest(View):
 		except MailTokens.DoesNotExist:
 			return JsonResponse({"error": get_translated_message("USER_DATA_FETCH_ERROR", language)}, status=500)
 		except Exception as e:
-			print(str(e))
 			return JsonResponse({'error': str(e)}, status=500)
 	
 	# Tüm TwoFactor List (Admin İçin) (Admin Kontrolu Edilicek)

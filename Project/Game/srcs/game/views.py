@@ -45,6 +45,7 @@ class GameView(View):
 
 			new_match = Match.objects.create(match_type='M', player1=username, status='waiting')
 			return JsonResponse({"match_id": new_match.id, "detail_url": f"game/room_{new_match.id}/" }, status=200)
+
 		except Exception as e:
 			return JsonResponse({"error ": str(e)}, status=500)
 
@@ -58,9 +59,9 @@ class GameView(View):
 			username = data.get('username')
 			if not username:
 				return JsonResponse({"error": get_translated_message("USERNAME_IS_REQUIRED", user_language)}, status=400)
-			match_query = Match.objects.filter(match_type='B', player1=username)
+			match_query = Match.objects.filter(match_type='S', player1=username)
 
-			waiting_match = match_query.filter(status='waiting').first()
+			waiting_match = match_query.filter(status='canceled').first()
 			if waiting_match:
 				return JsonResponse({"match_id": waiting_match.id, "detail_url": f"bot/room_{waiting_match.id}/" }, status=200)
 			
@@ -160,6 +161,8 @@ class GameView(View):
 				requests.post('http://notification:8000/create/', json={"message": "join_tournaments"})
 			except Exception as e:
 				pass
+
+
 	@csrf_exempt
 	def start_tournament_view(request, tournament_id):
 		user_language = request.headers.get("Accept-Language", "tr")
@@ -234,6 +237,9 @@ class GameView(View):
 	@csrf_exempt
 	def list_tournaments_view(request):
 		user_language = request.headers.get("Accept-Language", "tr")
+		if request.method != 'GET':
+			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+
 		try:
 			tournaments = Tournament.objects.filter(status__in=['upcoming', 'ongoing'])
 			tournaments_list = [
@@ -284,8 +290,10 @@ class GameView(View):
 
 	@csrf_exempt
 	def player_status_views(request, username):
+		user_language = request.headers.get("Accept-Language", "tr")
 		if request.method != 'GET':
-			return JsonResponse({"error": "Only GET requests are allowed."}, status=405)
+			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
+		
 		try:
 			p1_match = Match.objects.filter(player1=username, status='finished')
 			p2_match = Match.objects.filter(player2=username, status='finished')
@@ -298,7 +306,7 @@ class GameView(View):
 						"player2": match.player2,
 						"match_type": match.match_type,
 						"winner": match.winner,
-						"updated_at": match.updated_at,  # new field
+						"updated_at": match.updated_at,
 					})
 			if p2_match:
 				for match in p2_match:
@@ -308,9 +316,10 @@ class GameView(View):
 						"player2": match.player2,
 						"match_type": match.match_type,
 						"winner": match.winner,
-						"updated_at": match.updated_at,  # new field
+						"updated_at": match.updated_at,
 					})
 			match_list = sorted(match_list, key=lambda x: x["updated_at"], reverse=True)
 			return JsonResponse({"message": match_list}, status=200)
+		
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=500)

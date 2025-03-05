@@ -2,18 +2,18 @@ from django.db import models
 
 class Friends(models.Model):
     STATUS_CHOICES = [
-        ("pending", "Pending"),  # Bekleyen istek
-        ("accepted", "Accepted"),  # Kabul edilen arkadaşlık
-        ("rejected", "Rejected"),  # Reddedilen istek
-        ("blocked", "Blocked"),  # Engellenen kullanıcı
-        ("removed", "Removed"),  # Silinen arkadaşlık
+        ("pending", "Pending"),
+        ("accepted", "Accepted"),
+        ("rejected", "Rejected"),
+        ("blocked", "Blocked"),
+        ("removed", "Removed"),
     ]
 
-    username = models.CharField(max_length=150)  # Kullanıcı adı
-    friendname = models.CharField(max_length=150)  # Arkadaşın adı
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")  # Arkadaşlık durumu
-    created_at = models.DateTimeField(auto_now_add=True)  # İstek oluşturulma tarihi
-    updated_at = models.DateTimeField(auto_now=True)  # Son güncellenme tarihi
+    username = models.CharField(max_length=150)
+    friendname = models.CharField(max_length=150)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [

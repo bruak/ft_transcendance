@@ -285,3 +285,6 @@ msgstr "resim yükleme hatası"
 
 msgid "Please wait 2 minutes before sending a new code"
 msgstr "Yeni bir kod göndermeden önce lütfen 2 dakika bekleyin"
+
+msgid "Unknown error"
+msgstr "Bilinmeyen hata"

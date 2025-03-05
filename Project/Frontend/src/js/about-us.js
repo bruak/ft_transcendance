@@ -145,7 +145,6 @@ function setupPerformanceOptimizations() {
         const images = document.querySelectorAll('img[loading="lazy"]');
         if ('loading' in HTMLImageElement.prototype) {
             // Tarayıcı native lazy loading destekliyorsa, hiçbir şey yapma
-            console.log('Tarayıcı native lazy loading destekliyor');
         } else {
             // Tarayıcı lazy loading desteklemiyorsa, intersection observer kullan
             const imageObserver = new IntersectionObserver((entries) => {

@@ -8,12 +8,12 @@ from rest_framework import status
 
 class FriendRequestAdminView(View): 
 
-	#Admin frined status update
 	@csrf_exempt
 	def friend_update(request):
 		language = request.headers.get("Accept-Language", "tr")
 		if request.method != "POST":
 			return JsonResponse({"error": get_translated_message("ONLY_POST_REQUESTS_ALLOWED", language)}, status=405)
+
 		try:
 			data = JSONParser().parse(request)
 			username = data.get('username')
@@ -29,27 +29,33 @@ class FriendRequestAdminView(View):
 			friend.status = status
 			friend.save()
 			return JsonResponse({'message': get_translated_message("SUCCESSFUL", language)}, status=200)
+
 		except Friends.DoesNotExist:
 				return JsonResponse({"message": None}, status=404)	
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-	# Admin Delete
 	@csrf_exempt
 	def friend_delete(request, username, friendname):
 		language = request.headers.get("Accept-Language", "tr")
+		if request.method != "DELETE":
+			return JsonResponse({"error": get_translated_message("ONLY_DELETE_REQUESTS_ALLOWED", language)}, status=405)
+
 		try:
 			response = Friends.objects.get(username=username, friendname=friendname)
 			response.delete()
 			return JsonResponse({'message': get_translated_message("SUCCESSFUL", language)}, status=200)
+
 		except Friends.DoesNotExist:
 				return JsonResponse({"message": None}, status=200)	
 		except Exception as e:
 			return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-	
-	# (Admin Arkadaşlık Listesi List) (Admin) -> Düzeltilcek
+
 	def friend_info(request, username, friendname):
 		language = request.headers.get("Accept-Language", "tr")
+		if request.method != "GET":
+			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", language)}, status=405)
+
 		try:
 			response = Friends.objects.get(username=username, friendname=friendname)
 			modified_data = {
@@ -60,6 +66,7 @@ class FriendRequestAdminView(View):
 				"update" : response.updated_at,
 			}
 			return JsonResponse({"message": modified_data}, status=200)
+
 		except Friends.DoesNotExist:
 				return JsonResponse({"message": None}, status=200)	
 		except Exception as e:
@@ -67,14 +74,14 @@ class FriendRequestAdminView(View):
 
 	def friend_list(request):
 		language = request.headers.get("Accept-Language", "tr")
+		if request.method != "GET":
+			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", language)}, status=405)
+
 		try:
 			response = Friends.objects.all()
-
 			if not response:
 				return JsonResponse({'message': []}, safe=False, status=200)
-
 			modified_data = []
-
 			for friend in response:
 				modified_data.append({
 					"username": friend.username,

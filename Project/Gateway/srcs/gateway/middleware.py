@@ -8,6 +8,7 @@ SERVICES = {
     "game": "http://game:8000",
     "mail": "http://mail:8000",
     "friend": "http://friend:8000",
+    "notification": "http://notification:8000"
 }
 
 EXCLUDED_PATHS = [
@@ -22,12 +23,12 @@ EXCLUDED_PATHS = [
     "reset_password",
     "userexists",
     "validate_mail_token",
-    "api",  # değişicek
+    "api",
 ]
 
 ADMIN_PATHS = [
     # auth
-    "http://auth:8000/validate_admin/", #  bu admin diye kontrol edicek
+    "http://auth:8000/validate_admin/",
     "http://auth:8000/delete/",
     "http://auth:8000/adminput/",
     "http://auth:8000/listtwofactor/",
@@ -37,7 +38,6 @@ ADMIN_PATHS = [
     "http://auth:8000/mailinfo/",
 
     # Users
-    #"http://users:8000/list/",
     "http://users:8000/get/",
     "http://users:8000/adminuser/",
     "http://users:8000/delete/",
@@ -80,8 +80,8 @@ class ProxyMiddleware:
             
         print(f"Updated request path: {request.path}")
 
-        return None  # Continue to the view
-        """       - ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars - ./Frontend:/run/nginx/html """
+        return None
+        """- ./Auth/srcs/media/avatars:/run/nginx/html/src/media/avatars - ./Frontend:/run/nginx/html """
 
     def extract_service_and_path(self, request):
         """Extracts service name and remaining path from the request."""
