@@ -14,6 +14,7 @@
 - [Get Friends](#get-friends)
 - [Accept Friend Request](#accept-friend-request)
 - [Reject Friend Request](#reject-friend-request)
+- [Game Player Status] (#player-status)
 
 ---
 
