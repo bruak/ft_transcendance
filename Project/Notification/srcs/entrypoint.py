@@ -3,6 +3,7 @@ import sys
 from django.core.management import execute_from_command_line
 from notification_service.settings import DEBUG
 def main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "notification_service.settings")
     if DEBUG == False:
         # Son adım: DAPHNE ile server'ı başlatıyoruz
         host = os.environ.get("APP_HOST", "0.0.0.0")

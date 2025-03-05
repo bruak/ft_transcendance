@@ -274,10 +274,23 @@ export function initLogReg() {
      * @param {string} password - Girilen şifre
      * @returns {boolean} - Karmaşıksa true, aksi halde false
      */
-    function validatePasswordComplexity(password) {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
-         return regex.test(password);
+    function validatePasswordComplexity(input) {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+
+        if (!regex.test(input.value)) {
+            showFieldError(input, 'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.', 'password-error');
+            return false;
+        }
+
+        hideFieldError('password-error');
+        return true;
     }
+
+    // Kullanıcı şifreyi yazarken anlık validasyon
+    document.getElementById('register-password').addEventListener('input', function () {
+        validatePasswordComplexity(this);
+    });
+
 
     /**
      * Adım validasyonları ve buton olaylarını ayarlar
@@ -345,10 +358,9 @@ export function initLogReg() {
                 isValid = validateRequired(passwordConfirmInput, 'password-confirm-error', 'Lütfen şifrenizi tekrar giriniz') && isValid;
 
                 if (isValid) {
-                    // Şifre karmaşıklığını kontrol et
-                    if (!validatePasswordComplexity(passwordInput.value)) {
-                        showFieldError(passwordInput, 'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.', 'password-error');
-                        return;
+                    // Şifre karmaşıklığını element olarak kontrol edelim
+                    if (!validatePasswordComplexity(passwordInput)) {
+                        return; // Hata mesajı fonksiyonun içinde gösteriliyor
                     }
                     if (passwordInput.value !== passwordConfirmInput.value) {
                         showFieldError(passwordConfirmInput, 'Şifreler eşleşmiyor', 'password-confirm-error');
@@ -565,7 +577,6 @@ export function initLogReg() {
                 isFormValid = false;
             }
 
-
             if (!username) {
                 showFieldError(document.getElementById('register-username'), 'Kullanıcı adı alanı zorunludur', 'username-error');
                 isFormValid = false;
@@ -579,12 +590,10 @@ export function initLogReg() {
             if (!password) {
                 showFieldError(document.getElementById('register-password'), 'Şifre alanı zorunludur', 'password-error');
                 isFormValid = false;
-            } 
-            else if (!validatePasswordComplexity(password)) {
+            } else if (!validatePasswordComplexity(document.getElementById('register-password'))) {
                 showFieldError(document.getElementById('register-password'), 'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.', 'password-error');
                 isFormValid = false;
             }
-
 
             if (!avatar) {
                 showFieldError(document.getElementById('register-avatar'), 'Profil fotoğrafı zorunludur', 'avatar-error');
