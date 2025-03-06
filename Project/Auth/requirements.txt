@@ -4,4 +4,4 @@ djangorestframework
 django-cors-headers
 requests
 PyJWT
-daphne==4.0.0
+gunicorn

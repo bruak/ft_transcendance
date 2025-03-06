@@ -2,9 +2,6 @@ networks:
   webnet:
     driver: bridge
 
-volumes:
-  static_user:
-
 services:
   user_db:
     image: postgres:13
@@ -27,8 +24,6 @@ services:
       - webnet
     depends_on:
       - user_db
-    ports:
-      - 8001:8000
     env_file:
       - .env
     environment:
@@ -72,11 +67,7 @@ services:
       - webnet
     env_file:
       - .env
-    depends_on:
-      - mail_db
-    environment:
-      - DB_HOST=mail_db
-      - POSTGRES_DB=mail
+
 
   auth:
     build:
@@ -87,8 +78,6 @@ services:
       - webnet
     env_file:
       - .env
-    ports:
-      - 8003:8000
     depends_on:
       - auth_db
     environment:
@@ -136,10 +125,10 @@ services:
       - webnet
     env_file:
       - .env
-    ports:
-      - 8002:8000
     depends_on:
       - game_db
+    ports:
+      - 8000:8000
     environment:
       - DB_HOST=game_db
       - POSTGRES_DB=game
@@ -173,9 +162,6 @@ services:
       - webnet
     env_file:
       - .env
-    environment:
-      - DB_HOST=gateway_db
-      - POSTGRES_DB=gateway
 
   translation:
     build:
@@ -188,8 +174,6 @@ services:
     env_file:
       - .env
     environment:
-      - DB_HOST=translation_db
-      - POSTGRES_DB=translation
       - LANG=C.UTF-8
 
   notification:
@@ -199,11 +183,5 @@ services:
       - ./Notification/srcs:/app
     networks:
       - webnet
-    ports:
-      - 8004:8000
     env_file:
       - .env
-    environment:
-      - DB_HOST=notification_db
-      - POSTGRES_DB=notification
-    

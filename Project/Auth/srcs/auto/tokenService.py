@@ -2,9 +2,10 @@
 from datetime import timedelta
 from django.utils import timezone
 import jwt
+import os
 
-refresh_secret_key = "test_refresh_secret_1234abcd5678efgh"
-access_secret_key = "test_access_secret_5678ijkl9012mnop"
+refresh_secret_key = os.getenv("REFRESH_SECRET")
+access_secret_key = os.getenv("ACCESS_SECRET")
 
 class TokenService:
 

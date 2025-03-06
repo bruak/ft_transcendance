@@ -102,7 +102,6 @@ export async function router() {
     }
 
     if (!route) {
-        console.log("rota",route);
         route = routes['/404'];
     }
 
@@ -145,6 +144,20 @@ document.addEventListener('click', (event) => {
 /* ======================[*] Sayfa Yüklendiğinde ve Geri/İleri Butonlarına Basıldığında Router Fonksiyonunu Çağır [*]====================== */
 window.addEventListener('DOMContentLoaded', router);
 window.addEventListener('popstate', () => {
+
+    // Açık modalları kapat
+    document.querySelectorAll('.modal.show').forEach(function(modalEl) {
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) {
+        modalInstance.hide();
+        }
+    });
+    // Modal backdrop'ı kaldır
+    document.querySelectorAll('.modal-backdrop').forEach(function(backdropEl) {
+        backdropEl.remove();
+    });
+
+    
     if (typeof window.cleanupProfile === 'function') {
         window.cleanupProfile();
         delete window.cleanupProfile;
@@ -159,14 +172,12 @@ window.addEventListener('popstate', () => {
 
 /* ======================[*] Kullanıcı Bilgisi Güncellendiğinde Profil Bileşenini Güncelle [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
-    // console.log("Kullanıcı bilgisi güncellendi:", event.detail);
     import("/js/profile.js").then(({ updateProfileUI }) => updateProfileUI(event.detail));
 });
 
 /* ======================[*] Kullanıcı Yetkilendirmesi Kontrolü [*]====================== */
 document.addEventListener("stateChange:user", (event) => {
     if (!event.detail.token) {
-        // console.log("Kullanıcı oturum açmamış!");
         history.pushState(null, null, "/");
         router();
     }

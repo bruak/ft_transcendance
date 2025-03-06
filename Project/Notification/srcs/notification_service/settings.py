@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-lu0jj&us3b*v8jx+_c2m69p9z5logtf*k+uqidld4r20bc&ll4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ASGI_APPLICATION = 'notification_service.asgi.application'
 # Application definition

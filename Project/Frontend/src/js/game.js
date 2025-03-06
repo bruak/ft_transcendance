@@ -50,7 +50,6 @@ function disposeObject(obj) {
 }
 
 export function cleanupGame() {
-    console.log('Cleaning up game...');
     if (gameState.animationId) {
         cancelAnimationFrame(gameState.animationId);
     }
@@ -131,8 +130,8 @@ export function cleanupGame() {
 export function initGame() {
     cleanupGame();
     const roomName = getState('detail_url');
-
     if (roomName) {
+        console.log(roomName);
         if (roomName.split('/')[0] === 'local')
         {
             gameState.mode = 'local';
@@ -322,20 +321,16 @@ export function initGame() {
     // WebSocket
 
     const token = localStorage.getItem('accessToken');
-
+    
     if (token && roomName) {
 
         gameState.socket = new WebSocket(
             'wss://' + window.location.host + '/game/ws/' + roomName +
-            '?token=' + token, [], {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
-            } 
+            '?token=' + token
         );
+        
 
         gameState.socket.onopen = function () {
-            console.log('WebSocket connection opened.');
         };
         gameState.socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
@@ -367,7 +362,13 @@ export function initGame() {
         };
 
         gameState.socket.onclose = function () {
+            console.log('WebSocket connection closed');
         }
+
+        gameState.socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+        };
+        
     }
     // Controls
     const keyMap = {
@@ -467,12 +468,13 @@ export function initGame() {
 
 
     // Cleanup on route change
+    window.cleanup = cleanupGame;
     return () => {
         cleanupGame();
     };
 }
-window.cleanup = cleanupGame;
-window.addEventListener('beforeunload', cleanupGame);
+
+// window.addEventListener('beforeunload', cleanupGame);
 document.addEventListener('DOMContentLoaded', initGame);
 
 // Performance optimizasyonu için throttle fonksiyonu

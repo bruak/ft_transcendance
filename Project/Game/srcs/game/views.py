@@ -218,6 +218,7 @@ class GameView(View):
 		try:
 			tournament = Tournament.objects.get(id=tournament_id)
 			matches = tournament.matches.filter(status='waiting')
+			print(tournament.matches.first())
 			matches_list = [
 				{
 					"match_id": match.id,
@@ -228,6 +229,7 @@ class GameView(View):
 				}
 				for match in matches
 			]
+			print(matches_list)
 			return JsonResponse({"message": matches_list}, status=200)
 		except Tournament.DoesNotExist:
 			return JsonResponse({"error": get_translated_message("TOURNAMENT_NOT_FOUND", user_language)}, status=404)

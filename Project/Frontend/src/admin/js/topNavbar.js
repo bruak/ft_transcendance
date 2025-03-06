@@ -27,7 +27,6 @@ function initializeSearchForm() {
 	
 	document.getElementById('logout').addEventListener('click', function(event) {
 			event.preventDefault(); // Varsayılan işlem (yönlendirme) engellenir
-			console.log('Logout clicked!');
 			
 			singout();
 		});

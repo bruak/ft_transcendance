@@ -508,22 +508,17 @@ body {
 
 /* Oyun Seçenekleri Bölümü Stilleri */
 .profile-page .game-option-card {
+    position: relative;
+    padding-bottom: 60px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     background-color: var(--color-bg-dark);
-    /* Daha açık bir ton */
     border: 1px solid var(--color-primary-hover);
-    /* Kenar çizgisi daha ince ve transparan */
     border-radius: 200px;
-    /* Daha yumuşak köşeler */
     padding: 25px 20px;
     text-align: center;
     color: #e0e0e0;
-    /* Daha açık yazı rengi */
-    margin-bottom: 20px;
-    /* Kartların arasına boşluk ekleyin */
     box-shadow: 0 4px 10px var(--color-shadow);
-    /* Hafif gölgelendirme */
 }
 
 .profile-page .game-option-card h3 {

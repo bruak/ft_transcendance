@@ -70,13 +70,13 @@ import {
 		socket = new WebSocket(`wss://${host}/notification/ws/notification/?token=${access_token}`);
 
 		socket.onopen = () => {
-			console.log("WebSocket connected");
+
 		};
 
 		socket.onmessage = (e) => {
 			const data = JSON.parse(e.data);
 			const message = data.message;
-			console.log("WebSocket message:", message);
+
 
 			if (message === "friend_request") {
 				if (userToLoad === currentUser) {
@@ -193,7 +193,6 @@ import {
 	}
 	catch (err)
 	{
-		console.log("windos", window.location.pathname);
 		history.pushState(null, null, "/404");
 		router();
 		throw err;
@@ -759,9 +758,9 @@ async function loadPastGames(userToLoad) {
 
 		// Close WebSocket connection if it exists
 		if (socket) {
+
 			socket.close();
 			socket = null;
 		}
 
-		console.log("Profile cleanup completed.");
 	}

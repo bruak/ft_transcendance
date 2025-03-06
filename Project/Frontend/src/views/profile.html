@@ -1,5 +1,4 @@
 <div class="profile-page">
-    <!-- <link rel="stylesheet" href="/css/profile.css"> -->
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark glass-effect" style="position: sticky; top: 0; z-index: 999;"
         role="navigation" aria-label="Main navigation">
@@ -121,32 +120,32 @@
         </section>
 
         <!-- Oyun Seçenekleri Bölümü -->
-        <section class="my-5" aria-labelledby="gameOptionsHeader" id="gameOptionsSection">
+        <section class="my-5" aria-labelledby="gameOptionsHeader"  id="gameOptionsSection">
             <h2 class="text-center" id="gameOptionsHeader"><i class="bi bi-controller" aria-hidden="true"></i> Oyun
-                Seçenekleri</h2>
+            Seçenekleri</h2>
             <div class="card p-4 glass-effect" id="gameOptions" role="region" aria-label="Game options selection">
-                <div class="row">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3" >
                     <!-- Örnek Oyun Kartları (Yapay Zeka, Turnuva, Online, vb.) -->
-                    <section class="col-md-3 p-3 game-option-card" data-option="aiOptions">
-                        <h3><i class="bi bi-cpu" aria-hidden="true"></i> Yapay Zeka</h3>
-                        <p>Bota Karşı Oyna</p>
-                        <button class="btn btn-primary game-option-button" aria-label="Play against AI">Oyna</button>
+                    <section class="col game-option-card" data-option="aiOptions">
+                    <h3><i class="bi bi-cpu" aria-hidden="true"></i> Yapay Zeka</h3>
+                    <p>Yapay zekaya karşı oynuyorsunuz.</p>
+                    <button class="btn btn-primary game-option-button" aria-label="Play against AI">Oyna</button>
                     </section>
-                    <section class="col-md-3 p-3 game-option-card" data-option="tournamentOptions">
-                        <h3><i class="bi bi-trophy" aria-hidden="true"></i> Turnuva</h3>
-                        <p>Turnuva oluştur.</p>
-                        <button class="btn btn-primary game-option-button" aria-label="Create tournament">Oyna</button>
+                    <section class="col game-option-card" data-option="tournamentOptions">
+                    <h3><i class="bi bi-trophy" aria-hidden="true"></i> Turnuva</h3>
+                    <p>Yeni bir turnuva oluşturun ve arkadaşlarınızla veya diğer oyuncularla rekabet edin.</p>
+                    <button class="btn btn-primary game-option-button" aria-label="Create tournament">Ayarla</button>
                     </section>
-                    <section class="col-md-3 p-3 game-option-card" data-option="onlineOptions">
-                        <h3><i class="bi bi-globe" aria-hidden="true"></i> Online</h3>
-                        <p>Online Oyna</p>
-                        <button class="btn btn-primary game-option-button" aria-label="Play online">Oyna</button>
+                    <section class="col game-option-card" data-option="onlineOptions">
+                    <h3><i class="bi bi-globe" aria-hidden="true"></i> Online</h3>
+                    <p>Online olarak rastgele diğer oyuncularla karşılaşın.</p>
+                    <button class="btn btn-primary game-option-button" aria-label="Play online">Oyna</button>
                     </section>
-                    <section class="col-md-3 p-3 game-option-card" data-option="quickMatchOptions">
-                        <h3><i class="bi bi-lightning" aria-hidden="true"></i> Hızlı Kapışma</h3>
-                        <p>Lokalde Oyna</p>
-                        <button class="btn btn-primary game-option-button"
-                            aria-label="Play local quick match">Oyna</button>
+                    <section class="col game-option-card" data-option="quickMatchOptions">
+                    <h3><i class="bi bi-lightning" aria-hidden="true"></i> Hızlı Kapışma</h3>
+                    <p>Arkadaşınızla aynı bilgisayarda oynayın. Kontroller: <strong>W</strong>, <strong>S</strong> ve <strong>Yön Tuşları</strong>.</p>
+                    <button class="btn btn-primary game-option-button"
+                        aria-label="Play local quick match">Oyna</button>
                     </section>
                 </div>
             </div>
@@ -242,11 +241,7 @@
                 style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
                 role="region" aria-label="Active tournaments">
                 <!-- Turnuvalar dinamik olarak buraya eklenecek -->
-                <!-- <div class="text-center p-3">
-                <div class="spinner-border text-light" role="status">
-                <span class="visually-hidden">Yükleniyor...</span>
-                </div>
-            </div> -->
+
                 <div class="accordion-body bg-dark text-white">
                     <div class="row">
                         <!-- ...existing tournament info... -->
@@ -260,7 +255,7 @@
 
         <!-- Son Etkinlikler -->
         <section class="my-5" aria-labelledby="recentActivitiesHeader">
-            <h2 class="text-center bi bi-activity" id="recentActivitiesHeader">Oynanan maçlar</h2>
+            <h2 class="text-center bi bi-activity" id="recentActivitiesHeader"> Oynanan Maçlar</h2>
             <ul id="recentActivitiesList" class="list-group position-relative"
                 style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px; background: #222; color: white;"
                 role="list" aria-label="Recent activities"></ul>
@@ -339,15 +334,15 @@
                     <div class="modal-body">
                         <form id="settingsForm">
                             <div class="mb-3">
-                                <label for="profileName" class="form-label">İsim</label>
+                                <label for="settingsFname" class="form-label">İsim</label>
                                 <input type="text" class="form-control" id="settingsFname" aria-required="true">
                             </div>
                             <div class="mb-3">
-                                <label for="profileTitle" class="form-label">Soyisim</label>
+                                <label for="settingsLname" class="form-label">Soyisim</label>
                                 <input type="text" class="form-control" id="settingsLname" aria-required="true">
                             </div>
                             <div class="mb-3">
-                                <label for="profileImage" class="form-label">Profil Fotoğrafı</label>
+                                <label for="register-avatar" class="form-label">Profil Fotoğrafı</label>
                                 <input type="file" class="form-control" id="register-avatar" accept="image/*">
                                 <div class="text-center py-3">
                                     <img id="avatar-preview" class="d-none mx-auto rounded-circle img-thumbnail" style="max-width: 150px; max-height: 150px;" />

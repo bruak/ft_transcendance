@@ -6,15 +6,13 @@ def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gateway_service.settings")
 
     if DEBUG == False:
-        # Son adım: DAPHNE ile server'ı başlatıyoruz
         host = os.environ.get("APP_HOST", "0.0.0.0")
         port = os.environ.get("APP_PORT", "8000")
+        workers = os.environ.get("APP_WORKERS", "4")  
 
-        # Projenizdeki asgi uygulamasının yolunu yazın:
-        asgi_app_path = "gateway_service.asgi:application"
+        wsgi_app_path = "gateway_service.wsgi:application"
 
-        # daphne'yi çalıştır
-        cmd = f"daphne -b {host} -p {port} {asgi_app_path}"
+        cmd = f"gunicorn --bind {host}:{port} --workers {workers} {wsgi_app_path}"
         print(f"Sunucu başlatılıyor: {cmd}")
         os.system(cmd)
     else:

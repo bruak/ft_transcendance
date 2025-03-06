@@ -55,15 +55,13 @@ def main():
 
 
     if DEBUG == False:
-        # WSGI ile server'ı başlatıyoruz
+        # WSGI ile server'ı başlatıyoruzport
         host = os.environ.get("APP_HOST", "0.0.0.0")
         port = os.environ.get("APP_PORT", "8000")
-        workers = os.environ.get("APP_WORKERS", "4")  # CPU çekirdek sayısı x 2 + 1 önerilir
+        workers = os.environ.get("APP_WORKERS", "4")  
 
-        # Projenizdeki wsgi uygulamasının yolunu yazın:
         wsgi_app_path = "user_service.wsgi:application"
 
-        # gunicorn'u çalıştır
         cmd = f"gunicorn --bind {host}:{port} --workers {workers} {wsgi_app_path}"
         print(f"Sunucu başlatılıyor: {cmd}")
         os.system(cmd)

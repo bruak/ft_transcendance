@@ -275,7 +275,8 @@ export function initLogReg() {
      * @returns {boolean} - Karmaşıksa true, aksi halde false
      */
     function validatePasswordComplexity(input) {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+        const regex = /^(?=.*[a-zçğıöşü])(?=.*[A-ZÇĞİÖŞÜ])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-zÇĞİÖŞÜçğıöşü\d@$!%*?&._-]{8,}$/u;
+
 
         if (!regex.test(input.value)) {
             showFieldError(input, 'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.', 'password-error');
@@ -535,7 +536,6 @@ export function initLogReg() {
                     throw new Error(data?.message || "Giriş yapılamadı. Lütfen bilgilerinizi kontrol ediniz.");
                 }
 
-                console.log(data.message); // Backend'den gelen mesaj
 
                 history.pushState(null, null, "/2fac");  // Giriş yaptıktan sonra yönlendirilen sayfa
                 router();
@@ -634,7 +634,6 @@ export function initLogReg() {
                     throw new Error(data?.message || "Kayıt yapılamadı. Lütfen bilgilerinizi kontrol ediniz.");
                 }
 
-                console.log('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
                 // Kayıt başarılıysa giriş formuna dön
                 switchToLogin.click();
             } catch (error) {
@@ -720,7 +719,6 @@ export function initLogReg() {
                         localStorage.setItem('username', username);
                         localStorage.setItem('language', 'tr');
 
-                        console.log(access_token.token);
                         window.location.href = `/profile/${username}`;
                     } catch (error) {
                         console.error("Callback Error:", error);

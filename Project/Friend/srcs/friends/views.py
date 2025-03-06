@@ -154,7 +154,7 @@ class FriendRequestView(View):
 					modified_data.append({
 						"username": friend.username,
 						"friendname": friend.friendname,
-						"online": friend.username in online_users
+						"online": friend.friendname in online_users
 					})
 
 			return JsonResponse({'message': modified_data}, safe=False, status=status.HTTP_200_OK)
