@@ -131,7 +131,6 @@ export function initGame() {
     cleanupGame();
     const roomName = getState('detail_url');
     if (roomName) {
-        console.log(roomName);
         if (roomName.split('/')[0] === 'local')
         {
             gameState.mode = 'local';
@@ -362,7 +361,6 @@ export function initGame() {
         };
 
         gameState.socket.onclose = function () {
-            console.log('WebSocket connection closed');
         }
 
         gameState.socket.onerror = function (error) {

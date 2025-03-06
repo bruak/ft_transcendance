@@ -176,6 +176,19 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 		tournament = await sync_to_async(lambda: current_match.tournament)()
 		winner_user = current_match.player1 if winner_player_key == "player1" else current_match.player2
 
+		# Turnuvanın bitiş kontrolü 👇
+		match_count = await sync_to_async(Match.objects.filter(
+			tournament=tournament,
+			status="finished"
+		).count)()
+
+		if match_count == tournament.player_limit - 1:
+			tournament.status = "finished"
+			tournament.winner = winner_user
+			tournament.updated_at = timezone.now()
+			await sync_to_async(tournament.save)()
+			return  # Turnuva tamamlandıysa burada bitir.
+
 		waiting_match_qs = await sync_to_async(lambda: Match.objects.filter(
 			tournament=tournament,
 			status='waiting',
@@ -208,6 +221,13 @@ class BasePongConsumer(AsyncWebsocketConsumer, ABC):
 				"game_loop_running": False,
 				"game_finished": False
 			}
+
+		# Kazanan kullanıcıya Redis üzerinden bildirim gönder (örnek):
+		redis_client.publish(f"user_notifications_{winner_user.username}", json.dumps({
+			"type": "next_match_ready",
+			"room_name": new_room_name,
+			"match_id": waiting_match.id
+		}))
 
 
 
