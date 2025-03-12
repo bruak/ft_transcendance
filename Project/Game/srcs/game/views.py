@@ -217,8 +217,7 @@ class GameView(View):
 			return JsonResponse({"error": get_translated_message("ONLY_GET_REQUESTS_ALLOWED", user_language)}, status=405)
 		try:
 			tournament = Tournament.objects.get(id=tournament_id)
-			matches = tournament.matches.filter(status='waiting')
-			print(tournament.matches.first())
+			matches = tournament.matches.filter(status__in=['waiting','canceled'])
 			matches_list = [
 				{
 					"match_id": match.id,

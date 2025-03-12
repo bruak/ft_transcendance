@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.144.0/build/three.module.js';
-import { getState, router, setState } from './app.js';
+import { getState, router } from './app.js';
 
 
 function hideSpinner() {
@@ -34,7 +34,9 @@ let gameState = {
     joystickStickLeft: null,
     joystickStickRight: null,
     joystickBallLeft: null,
-    joystickBallRight: null
+    joystickBallRight: null,
+    GroupLeft: null,
+    GroupRight: null
 };
 
 function disposeObject(obj) {
@@ -122,8 +124,9 @@ export function cleanupGame() {
         joystickBaseRight: null,
         joystickStickLeft: null,
         joystickStickRight: null,
-        joystickBallLeft: null,
-        joystickBallRight: null
+        joystickBallRight: null,
+        GroupLeft: null,
+        GroupRight: null
     };
 }
 
@@ -279,6 +282,8 @@ export function initGame() {
     gameState.bottomWall.position.set(0, 1.5, -4.2);
     gameState.scene.add(gameState.bottomWall);
 
+    gameState.GroupLeft = new THREE.Group();
+    gameState.GroupRight = new THREE.Group();
 
     // **6. Joystick ve Butonlar (Farklı Stil)**
     const joystickBaseGeometry = new THREE.CylinderGeometry(1.2, 1.2, 0.3, 32);
@@ -297,11 +302,11 @@ export function initGame() {
     const joystickStickMaterial = new THREE.MeshStandardMaterial({ color: 0xdd0000 });
 
     gameState.joystickStickLeft = new THREE.Mesh(joystickStickGeometry, joystickStickMaterial);
-    gameState.joystickStickLeft.position.set(-7, 2.2, 6);
+    gameState.joystickStickLeft.position.set(0, 1.2, 0);
     gameState.scene.add(gameState.joystickStickLeft);
 
     gameState.joystickStickRight = gameState.joystickStickLeft.clone();
-    gameState.joystickStickRight.position.set(7, 2.2, 6);
+    gameState.joystickStickRight.position.set(0, 1.2, 0);
     gameState.scene.add(gameState.joystickStickRight);
 
 
@@ -310,13 +315,22 @@ export function initGame() {
     const joystickBallMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
 
     gameState.joystickBallLeft = new THREE.Mesh(joystickBallGeometry, joystickBallMaterial);
-    gameState.joystickBallLeft.position.set(-7, 3.2, 6);
+    gameState.joystickBallLeft.position.set(0, 2, 0);
     gameState.scene.add(gameState.joystickBallLeft);
 
     gameState.joystickBallRight = gameState.joystickBallLeft.clone();
-    gameState.joystickBallRight.position.set(7, 3.2, 6);
+    gameState.joystickBallRight.position.set(0, 2, 0);
     gameState.scene.add(gameState.joystickBallRight);
 
+    gameState.GroupLeft.add(gameState.joystickBallLeft);
+    gameState.GroupLeft.add(gameState.joystickStickLeft);
+    gameState.GroupLeft.position.set(-7, 1.2, 6);
+    gameState.scene.add(gameState.GroupLeft);
+
+    gameState.GroupRight.add(gameState.joystickBallRight);
+    gameState.GroupRight.add(gameState.joystickStickRight);
+    gameState.GroupRight.position.set(7, 1.2, 6);
+    gameState.scene.add(gameState.GroupRight);
     // WebSocket
 
     const token = localStorage.getItem('accessToken');
@@ -338,7 +352,20 @@ export function initGame() {
                 if (data.player_id) {
                     gameState.playerId = data.player_id;
                 }
-
+                const moveleft = state.players.player1.move_up ? 'up' : state.players.player1.move_down ? 'down' : null;
+                const moveright = state.players.player2.move_up ? 'up' : state.players.player2.move_down ? 'down' : null;
+                if (moveleft){
+                    moveJoystic(moveleft, 'left');
+                }
+                else{
+                    removejoystickStick('left');
+                }
+                if (moveright){
+                    moveJoystic(moveright, 'right');
+                }
+                else{
+                    removejoystickStick('right');
+                }
                 gameState.paddle1.position.z = state.players.player1.position;
                 gameState.paddle2.position.z = state.players.player2.position;
                 gameState.ball.position.set(state.ball.x, 1.5, state.ball.y);
@@ -465,17 +492,14 @@ export function initGame() {
     animate();
 
 
-    // Cleanup on route change
     window.cleanup = cleanupGame;
     return () => {
         cleanupGame();
     };
 }
 
-// window.addEventListener('beforeunload', cleanupGame);
 document.addEventListener('DOMContentLoaded', initGame);
 
-// Performance optimizasyonu için throttle fonksiyonu
 function throttle(func, limit) {
     let inThrottle;
     return function () {
@@ -485,6 +509,47 @@ function throttle(func, limit) {
             func.apply(context, args);
             inThrottle = true;
             setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+function moveJoystic(move, who) {
+    if (who === 'left') {
+        if (move === 'up' && gameState.GroupLeft.rotation.x > -0.4) {
+            gameState.GroupLeft.rotation.x -= 0.1;
+        } else if (move === 'down' && gameState.GroupLeft.rotation.x < 0.4) {
+            gameState.GroupLeft.rotation.x += 0.1;
+        }
+        console.log('GroupLeft',gameState.GroupLeft.rotation.x);
+    }
+    else if (who === 'right') {
+        if (move === 'up' && gameState.GroupRight.rotation.x > -0.4) {
+            gameState.GroupRight.rotation.x -= 0.1;
+        } else if (move === 'down' && gameState.GroupRight.rotation.x < 0.4) {
+            gameState.GroupRight.rotation.x += 0.1;
+        }
+    }
+}
+
+function removejoystickStick(who) {
+    const group = who === 'right' ? gameState.GroupRight : gameState.GroupLeft;
+    
+    const step = 0.1;        // bir adımda döndürme miktarı
+    const threshold = 0.1;   // 0’a yeterince yaklaştığımız “eşik” aralığı
+
+    if (Math.abs(group.rotation.x) < threshold) {
+        group.rotation.x = 0;
+    } 
+    else if (group.rotation.x > 0) {
+        group.rotation.x -= step;
+        if (group.rotation.x < 0) {
+            group.rotation.x = 0;
+        }
+    } 
+    else if (group.rotation.x < 0) {
+        group.rotation.x += step;
+        if (group.rotation.x > 0) {
+            group.rotation.x = 0;
         }
     }
 }
