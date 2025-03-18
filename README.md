@@ -1,180 +1,274 @@
+# ft_transcendence
 
----
+## 🌟 Proje Hakkında | About the Project
 
-# Auth Service API Documentation
+### 🇹🇷 Türkçe
 
-- [Sign Up](#sign-up)
-- [Sign In](#sign-in)
-- [Two-Factor Authentication](#two-factor-authentication)
-- [Sign Out](#sign-out)
-- [Get All Users](#get-all-users)
-- [Get Specific User](#get-specific-user)
-- [Send Friend Request](#send-friend-request)
-- [Get Friend Requests](#get-friend-requests)
-- [Get Friends](#get-friends)
-- [Accept Friend Request](#accept-friend-request)
-- [Reject Friend Request](#reject-friend-request)
+ft_transcendence, çok oyunculu bir Pong oyunu platformudur. Mikroservis mimarisi kullanılarak geliştirilmiş modern bir web uygulamasıdır. Kullanıcılar gerçek zamanlı olarak Pong oynayabilir, sohbet edebilir ve sosyal etkileşimde bulunabilirler.
 
----
+### 🇬🇧 English
 
-## <a name="sign-up"></a> 1. **Sign Up** - `POST /api/auth/signup/`
+ft_transcendence is a comprehensive multiplayer Pong game platform developed using microservices architecture. This modern web application allows users to play real-time Pong matches against other players while providing robust social features including friend management, real-time chat, and notifications. The application is fully containerized using Docker and Docker Compose, making it easily deployable and scalable.
 
-**Request Body**:  
-FormData type, includes a file upload.
+## 🏗️ Sistem Mimarisi | System Architecture
 
-**Headers**:
-- `Content-Type`: `multipart/form-data`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
+### Mikroservisler | Microservices:
 
-**Form Data Fields**:
-- `first_name` (Text)
-- `last_name` (Text)
-- `username` (Text)
-- `email` (Text)
-- `password` (Text)
-- `avatar` (File)
+1. **Frontend Service**
+   - Vanilla JavaScript tabanlı kullanıcı arayüzü
+   - SPA (Single Page Application) mimarisi
+   - Bootstrap ile responsive tasarım
+   - Modüler JavaScript yapısı
+   - Custom router implementation for client-side navigation
+   - Bootstrap-based responsive UI with modern design principles
+   - Modular JavaScript architecture with dynamic content loading
+   - Client-side state management
 
----
+2. **Auth Service**
+   - Kullanıcı kimlik doğrulama ve yetkilendirme
+   - OAuth2.0 entegrasyonu
+   - JWT token yönetimi
+   - Comprehensive authentication system with local and OAuth strategies
+   - Two-factor authentication (2FA) implementation
+   - Secure password management with encryption
+   - Session management using JWT tokens
 
-## <a name="sign-in"></a> 2. **Sign In** - `POST /api/auth/signin/`
+3. **Game Service**
+   - Pong oyun mantığı
+   - Real-time oyun eşleştirme
+   - Skor takibi
+   - Real-time Pong game implementation with WebSocket
+   - Player matchmaking system with game lobbies
+   - Game state synchronization across clients
+   - Game history and statistics tracking
+   - Spectator mode for watching ongoing matches
 
-**Request Body**:  
-JSON format.
+4. **User Service**
+   - Kullanıcı profil yönetimi
+   - Kullanıcı istatistikleri
+   - Full user profile management with customizable avatars
+   - User statistics tracking (wins, losses, ranking)
+   - User search functionality
+   - Profile visibility settings
+   - User activity logging
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
+5. **Friend Service**
+   - Arkadaşlık sistemi
+   - Sosyal etkileşimler
+   - Comprehensive friend management system
+   - Friend request handling (send, accept, reject)
+   - Friends list with online status indicators
+   - Blocking functionality
+   - Friend activity feed
 
-**Body Fields**:
-- `sign` (Text)
-- `password` (Text)
+6. **Notification Service**
+   - Real-time bildirimler
+   - Etkinlik takibi
+   - Real-time notification delivery system
+   - Multiple notification types (friend requests, game invites, etc.)
+   - Notification preferences management
+   - Read/unread status tracking
 
----
+7. **Mail Service**
+   - E-posta bildirimleri
+   - Doğrulama e-postaları
+   - Email verification for new accounts
+   - Password reset functionality
+   - System notifications and updates
+   - Email template system with multilingual support
 
-## <a name="two-factor-authentication"></a> 3. **Two-Factor Authentication** - `POST /api/auth/twofactor/`
+8. **Translation Service**
+   - Çoklu dil desteği
+   - Dinamik içerik çevirisi
+   - Multilingual support across the entire application
+   - Dynamic content translation
+   - Language preference settings
+   - Translation caching for performance optimization
 
-**Request Body**:  
-JSON format.
+9. **Gateway Service**
+   - API Gateway
+   - İstek yönlendirme
+   - Yük dengeleme
+   - Centralized API gateway for routing requests
+   - Request/response transformation
+   - Service discovery
+   - Load balancing across service instances
+   - Rate limiting and throttling protection
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
+10. **Monitoring Service**
+    - Sistem izleme
+    - Performans analizi
+    - Comprehensive system monitoring with Prometheus
+    - Performance metrics visualization with Grafana
+    - Real-time service health checks
+    - Automated alerting system
+    - Log aggregation and analysis
 
-**Body Fields**:
-- `username` (Text)
-- `code` (Text)
+## 🛠️ Teknoloji Yığını | Technology Stack
 
----
+### Backend:
+- Python (FastAPI)
+- PostgreSQL
+- Redis
+- WebSocket
+- JWT Authentication
 
-## <a name="sign-out"></a> 4. **Sign Out** - `GET /api/auth/signout/`
+### Frontend:
+- Vanilla JavaScript
+- HTML5
+- CSS3
+- Bootstrap 5
+- Fetch API
+- Custom Router
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+### DevOps:
+- Docker
+- Docker Compose
+- Nginx
+- Prometheus
+- Grafana
 
----
+## 🚀 Kurulum | Installation
 
-## <a name="get-all-users"></a> 5. **Get All Users** - `GET /api/user/get/`
+### Gereksinimler | Requirements:
+- Docker
+- Docker Compose
+- Make
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+### Kurulum Adımları | Installation Steps:
 
-**Response**:  
-Returns a list of all registered users.
+```bash
+# Projeyi klonlayın | Clone the project
+git clone [repository-url]
 
----
+# Proje dizinine gidin | Navigate to project directory
+cd ft_transcendence
 
-## <a name="get-specific-user"></a> 6. **Get Specific User** - `GET /api/user/getuser/<username>/`
+# Servisleri başlatın | Start services
+make up
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+# Servisleri durdurmak için | To stop services
+make down
+```
 
----
+## 🎮 Özellikler | Features
 
-## <a name="send-friend-request"></a> 7. **Send Friend Request** - `POST /api/friend/send_friend_request/`
+### 🇹🇷 Türkçe
+- Real-time Pong oyunu
+- Kullanıcı kimlik doğrulama ve yetkilendirme
+- Arkadaş sistemi ve sosyal özellikler
+- Real-time sohbet
+- Çoklu dil desteği
+- Performans izleme ve analitik
+- Responsive tasarım
 
-**Request Body**:  
-JSON format.
+### 🇬🇧 English
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+#### Core Features
+- **Real-time Pong Game**: Enjoy classic Pong gameplay with modern features including:
+  - Real-time multiplayer matches with WebSocket communication
+  - Game customization options (speed, difficulty)
+  - Match history and statistics
+  - Spectator mode for watching ongoing matches
+  - Tournament system for competitive play
 
-**Body Fields**:
-- `username` (Text)
-- `friend` (Text)
+- **User Management**:
+  - Comprehensive user profiles with customizable avatars
+  - User statistics and rankings
+  - Achievement system
+  - Activity history
 
----
+- **Authentication & Security**:
+  - Secure registration and login process
+  - OAuth2.0 integration for social login
+  - Two-factor authentication (2FA)
+  - Password recovery system
+  - Email verification
 
-## <a name="get-friend-requests"></a> 8. **Get Friend Requests** - `GET /api/friend/list_friend_requests/<username>/`
+- **Social Features**:
+  - Friend management system (add, remove, block)
+  - Real-time chat functionality (private and group)
+  - Online status indicators
+  - Game invitations
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+- **Multilingual Support**:
+  - Full application translation (English, Turkish, and more)
+  - User language preference settings
+  - Dynamic content translation
 
-**Response**:  
-Returns all friend requests sent to the user.
+- **Responsive Design**:
+  - Mobile-friendly interface
+  - Adaptive layouts for different screen sizes
+  - Consistent user experience across devices
 
----
+## 🔒 Güvenlik | Security
 
-## <a name="get-friends"></a> 9. **Get Friends** - `GET /api/friend/friends/<username>/`
+- JWT tabanlı kimlik doğrulama
+- OAuth2.0 entegrasyonu
+- Rate limiting
+- CORS politikaları
+- Güvenli şifre yönetimi
+- JWT-based authentication with proper token management
+- OAuth2.0 integration for secure third-party authentication
+- Comprehensive rate limiting to prevent abuse
+- Properly configured CORS policies
+- Secure password handling with encryption
+- Protection against common web vulnerabilities (XSS, CSRF)
+- Input validation and sanitization
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+## 📈 Ölçeklenebilirlik | Scalability
 
-**Response**:  
-Returns a list of the user's friends.
+- Mikroservis mimarisi
+- Yük dengeleme
+- Docker container orchestration
+- Önbellek yönetimi
+- Microservices architecture enabling horizontal scaling
+- Load balancing across service instances
+- Docker containerization for consistent deployment
+- Efficient caching strategies for performance optimization
+- Database connection pooling
+- Stateless service design for easy replication
 
----
+## 📊 API Documentation
 
-## <a name="accept-friend-request"></a> 10. **Accept Friend Request** - `POST /api/friend/accept_friend_request/`
+The ft_transcendence project provides comprehensive API endpoints for all services. Below are the core endpoints for the Auth and Friend services:
 
-**Request Body**:  
-JSON format.
+### Auth Service Endpoints
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+- `POST /api/auth/signup/` - Register a new user
+- `POST /api/auth/signin/` - Authenticate a user
+- `POST /api/auth/twofactor/` - Verify two-factor authentication
+- `GET /api/auth/signout/` - Sign out a user
 
-**Body Fields**:
-- `username` (Text)
-- `friendname` (Text)
+### User Service Endpoints
 
----
+- `GET /api/user/get/` - Get all users
+- `GET /api/user/getuser/<username>/` - Get a specific user's profile
 
-## <a name="reject-friend-request"></a> 11. **Reject Friend Request** - `POST /api/friend/reject_friend_request/`
+### Friend Service Endpoints
 
-**Request Body**:  
-JSON format.
+- `POST /api/friend/send_friend_request/` - Send a friend request
+- `GET /api/friend/list_friend_requests/<username>/` - List all friend requests
+- `GET /api/friend/friends/<username>/` - Get user's friends list
+- `POST /api/friend/accept_friend_request/` - Accept a friend request
+- `POST /api/friend/reject_friend_request/` - Reject a friend request
 
-**Headers**:
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-- `Accept-Language`: `tr`
-- `Authorization`: `Bearer <token>`
+For detailed request/response formats and authentication requirements, please refer to the full API documentation in each service's directory.
 
-**Body Fields**:
-- `username` (Text)
-- `friendname` (Text)
+## 🤝 Katkıda Bulunma | Contributing
 
----
+Projeye katkıda bulunmak için lütfen bir Issue açın veya Pull Request gönderin.
+
+We welcome contributions to the ft_transcendence project! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code follows our coding standards and includes appropriate tests.
+
+## 📝 Lisans | License
+
+none
